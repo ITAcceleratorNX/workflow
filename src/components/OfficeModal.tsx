@@ -159,7 +159,7 @@ export function OfficeModal({ office, isOpen, onClose }: OfficeModalProps) {
             <div className="flex items-center gap-2 text-gray-700">
               <MapPin className="w-5 h-5 text-coral" style={{ color: '#C95A1A' }} />
               <span style={{ fontFamily: "'Open Sans', sans-serif" }}>
-                {office.location} {office.address && `/ ${office.address}`}
+                {office.location} {office.address && ` ${office.address}`}
               </span>
             </div>
             {(office.class || office.year) && (

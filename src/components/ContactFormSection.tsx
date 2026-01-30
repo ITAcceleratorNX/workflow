@@ -3,7 +3,7 @@ import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { User, Building2, Phone } from "lucide-react"
 
-const CONTACT_EMAIL = "tobayakov.sh@tmk-limited.com"
+const API_URL = import.meta.env.VITE_API_URL || "https://api.workflow-service.kz"
 
 // Функция форматирования номера телефона в казахстанском формате: +7 (XXX) XXX-XX-XX
 const formatPhoneNumber = (value: string): string => {
@@ -36,25 +36,42 @@ export function ContactFormSection() {
     company: "",
     phone: "",
   })
+  const [isLoading, setIsLoading] = useState(false)
+  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    // Формируем тему и тело письма
-    const subject = encodeURIComponent("Новая заявка с сайта Workflow")
-    const body = encodeURIComponent(
-      `Новая заявка с сайта Workflow:\n\n` +
-      `Имя: ${formData.name}\n` +
-      `Компания: ${formData.company}\n` +
-      `Телефон: ${formData.phone}\n\n` +
-      `Дата: ${new Date().toLocaleString('ru-RU')}`
-    )
-    
-    // Открываем почтовый клиент
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`
-    
-    // Очистка формы
-    setFormData({ name: "", company: "", phone: "" })
+    setIsLoading(true)
+    setMessage(null)
+
+    try {
+      const response = await fetch(`${API_URL}/api/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          company: formData.company,
+          phone: formData.phone,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setMessage({ type: 'success', text: 'Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.' })
+        // Очистка формы
+        setFormData({ name: "", company: "", phone: "" })
+      } else {
+        setMessage({ type: 'error', text: data.message || 'Ошибка при отправке заявки. Попробуйте позже.' })
+      }
+    } catch (error) {
+      console.error('Ошибка отправки заявки:', error)
+      setMessage({ type: 'error', text: 'Ошибка при отправке заявки. Проверьте подключение к интернету и попробуйте снова.' })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,7 +125,7 @@ export function ContactFormSection() {
               color: '#2C3E50'
             }}
           >
-            Заполните форму и команда Workflow свяжется с вами
+            Заполните форму и команда Work Flow свяжется с вами
           </p>
           
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -215,7 +232,8 @@ export function ContactFormSection() {
               </div>
               <Button
                 type="submit"
-                className="flex items-center justify-center text-white font-bold h-11 md:h-[44px] text-sm md:text-[14px] w-full sm:w-[167px] btn-animate relative overflow-hidden"
+                disabled={isLoading}
+                className="flex items-center justify-center text-white font-bold h-11 md:h-[44px] text-sm md:text-[14px] w-full sm:w-[167px] btn-animate relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
                   background: 'linear-gradient(135deg, #1E3A5F 0%, #2D4A6B 100%)',
                   borderRadius: '8px',
@@ -227,9 +245,23 @@ export function ContactFormSection() {
                   boxShadow: '0 4px 12px rgba(30, 58, 95, 0.25)'
                 }}
               >
-                <span className="relative z-10">Отправить заявку</span>
+                <span className="relative z-10">
+                  {isLoading ? 'Отправка...' : 'Отправить заявку'}
+                </span>
               </Button>
             </div>
+            {message && (
+              <div
+                className={`p-3 rounded-lg text-sm ${
+                  message.type === 'success'
+                    ? 'bg-green-50 text-green-800 border border-green-200'
+                    : 'bg-red-50 text-red-800 border border-red-200'
+                }`}
+                style={{ fontFamily: "'Open Sans', sans-serif" }}
+              >
+                {message.text}
+              </div>
+            )}
           </form>
         </div>
       </div>

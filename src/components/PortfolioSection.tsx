@@ -60,12 +60,12 @@ export function PortfolioSection() {
                 transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundSize = '110%'
-                e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)'
+                e.currentTarget.style.backgroundSize = '200%'
+                e.currentTarget.style.transform = 'scale(1.05)'
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundSize = 'cover'
-                e.currentTarget.style.transform = 'translateY(0) scale(1)'
+                e.currentTarget.style.transform = 'scale(1)'
               }}
             >
               <div className="flex flex-col items-center gap-3 md:gap-[15px] w-full max-w-full md:max-w-[195px]">
