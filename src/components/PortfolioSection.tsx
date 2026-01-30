@@ -1,32 +1,23 @@
+import { useState } from "react"
 import { Button } from "./ui/button"
-import { openWhatsApp, WHATSAPP_MESSAGES } from "../lib/constants"
-
-const offices = [
-  {
-    id: 1,
-    name: "Teniz Towers",
-    image: "/teniz-towers.jpg",
-  },
-  {
-    id: 2,
-    name: "Orion",
-    image: "/orion.jpg",
-  },
-  {
-    id: 3,
-    name: "Koktem Towers",
-    image: "/koktem-towers.png",
-  },
-  {
-    id: 4,
-    name: "Venus",
-    image: "/venus.jpg",
-  },
-]
+import { officesData } from "../lib/officeData"
+import { OfficeModal } from "./OfficeModal"
 
 export function PortfolioSection() {
-  const handleDetails = (officeName: string) => {
-    openWhatsApp(WHATSAPP_MESSAGES.portfolio(officeName))
+  const [selectedOffice, setSelectedOffice] = useState<typeof officesData[0] | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const handleDetails = (officeId: number) => {
+    const office = officesData.find(o => o.id === officeId)
+    if (office) {
+      setSelectedOffice(office)
+      setIsModalOpen(true)
+    }
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedOffice(null)
   }
 
   return (
@@ -58,12 +49,12 @@ export function PortfolioSection() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full max-w-[1200px]">
-          {offices.map((office) => (
+          {officesData.map((office) => (
             <div
               key={office.id}
               className="relative flex flex-col justify-end items-center rounded-[20px] md:rounded-[50px] overflow-hidden min-h-[250px] md:min-h-[300px] p-5 md:p-[35px_83px] card-hover stagger-item group"
               style={{
-                backgroundImage: `linear-gradient(180deg, rgba(255, 255, 255, 0) 26.44%, rgba(255, 255, 255, 0.5) 92.79%), url(${office.image})`,
+                backgroundImage: `linear-gradient(180deg, rgba(255, 255, 255, 0) 26.44%, rgba(255, 255, 255, 0.5) 92.79%), url(${office.mainImage})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
@@ -89,7 +80,7 @@ export function PortfolioSection() {
                   {office.name}
                 </h3>
                 <Button
-                  onClick={() => handleDetails(office.name)}
+                  onClick={() => handleDetails(office.id)}
                   className="flex items-center justify-center bg-white font-normal text-xs md:text-sm lg:text-[13.9px] transition-all duration-300 hover:text-white hover:scale-105"
                   style={{
                     borderRadius: '50px',
@@ -117,6 +108,11 @@ export function PortfolioSection() {
           ))}
         </div>
       </div>
+      <OfficeModal
+        office={selectedOffice}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </section>
   )
 }
