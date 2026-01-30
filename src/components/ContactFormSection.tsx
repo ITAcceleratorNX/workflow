@@ -1,8 +1,34 @@
 import { useState } from "react"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
-import { openWhatsApp, WHATSAPP_MESSAGES } from "../lib/constants"
 import { User, Building2, Phone } from "lucide-react"
+
+const CONTACT_EMAIL = "tobayakov.sh@tmk-limited.com"
+
+// Функция форматирования номера телефона в казахстанском формате: +7 (XXX) XXX-XX-XX
+const formatPhoneNumber = (value: string): string => {
+  // Удаляем все нецифровые символы
+  const numbers = value.replace(/\D/g, '')
+  
+  // Если номер начинается с 8, заменяем на 7
+  let formatted = numbers.startsWith('8') ? '7' + numbers.slice(1) : numbers
+  
+  // Если номер не начинается с 7, добавляем 7
+  if (formatted && !formatted.startsWith('7')) {
+    formatted = '7' + formatted
+  }
+  
+  // Ограничиваем до 11 цифр (7 + 10 цифр)
+  formatted = formatted.slice(0, 11)
+  
+  // Форматируем: +7 (XXX) XXX-XX-XX
+  if (formatted.length === 0) return ''
+  if (formatted.length <= 1) return `+${formatted}`
+  if (formatted.length <= 4) return `+${formatted.slice(0, 1)} (${formatted.slice(1)}`
+  if (formatted.length <= 7) return `+${formatted.slice(0, 1)} (${formatted.slice(1, 4)}) ${formatted.slice(4)}`
+  if (formatted.length <= 9) return `+${formatted.slice(0, 1)} (${formatted.slice(1, 4)}) ${formatted.slice(4, 7)}-${formatted.slice(7)}`
+  return `+${formatted.slice(0, 1)} (${formatted.slice(1, 4)}) ${formatted.slice(4, 7)}-${formatted.slice(7, 9)}-${formatted.slice(9, 11)}`
+}
 
 export function ContactFormSection() {
   const [formData, setFormData] = useState({
@@ -14,17 +40,39 @@ export function ContactFormSection() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    openWhatsApp(WHATSAPP_MESSAGES.form(formData.name, formData.company, formData.phone))
+    // Формируем тему и тело письма
+    const subject = encodeURIComponent("Новая заявка с сайта Workflow")
+    const body = encodeURIComponent(
+      `Новая заявка с сайта Workflow:\n\n` +
+      `Имя: ${formData.name}\n` +
+      `Компания: ${formData.company}\n` +
+      `Телефон: ${formData.phone}\n\n` +
+      `Дата: ${new Date().toLocaleString('ru-RU')}`
+    )
+    
+    // Открываем почтовый клиент
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`
     
     // Очистка формы
     setFormData({ name: "", company: "", phone: "" })
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
+    const { name, value } = e.target
+    
+    if (name === 'phone') {
+      // Форматируем номер телефона
+      const formatted = formatPhoneNumber(value)
+      setFormData({
+        ...formData,
+        [name]: formatted,
+      })
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      })
+    }
   }
 
   return (
@@ -41,7 +89,7 @@ export function ContactFormSection() {
         <h2 
           className="font-bold tracking-[-2px] text-2xl md:text-4xl lg:text-[64px] w-full md:w-[520px] animate-slide-in-left text-elegant"
           style={{ 
-            lineHeight: '64px',
+            lineHeight: '1.2',
             fontFamily: "'Open Sans', sans-serif",
             fontWeight: 700,
             color: '#1E3A5F'
@@ -138,7 +186,8 @@ export function ContactFormSection() {
                   required
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="Телефон"
+                  placeholder="+7 (XXX) XXX-XX-XX"
+                  maxLength={18}
                   className="w-full pl-10 h-11 md:h-[44px] text-sm md:text-base transition-all duration-300"
                   style={{
                     background: '#FFFFFF',
