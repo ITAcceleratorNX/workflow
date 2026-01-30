@@ -49,7 +49,7 @@ export function OfficeModal({ office, isOpen, onClose }: OfficeModalProps) {
 
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % images.length)
-    }, 5000) // Меняем изображение каждые 5 секунд
+    }, 3000) // Меняем изображение каждые 5 секунд
 
     return () => clearInterval(interval)
   }, [isOpen, office, images.length])
