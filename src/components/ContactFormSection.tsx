@@ -3,7 +3,7 @@ import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { User, Building2, Phone } from "lucide-react"
 
-const API_URL = import.meta.env.VITE_API_URL || "https://api.workflow-service.kz"
+const API_URL = "https://workflow-back-zpk4.onrender.com"
 
 // Функция форматирования номера телефона в казахстанском формате: +7 (XXX) XXX-XX-XX
 const formatPhoneNumber = (value: string): string => {
