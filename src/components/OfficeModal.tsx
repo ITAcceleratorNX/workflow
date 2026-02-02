@@ -248,11 +248,6 @@ export function OfficeModal({ office, isOpen, onClose }: OfficeModalProps) {
                         Арендуемая площадь блока Work Flow: {office.detailedInfo.areaAndFormat.rentableArea}
                       </p>
                     )}
-                    {office.detailedInfo.areaAndFormat.totalBlockArea && (
-                      <p style={{ fontFamily: "'Open Sans', sans-serif" }}>
-                        Общая площадь блока: {office.detailedInfo.areaAndFormat.totalBlockArea}
-                      </p>
-                    )}
                     <p style={{ fontFamily: "'Open Sans', sans-serif" }}>
                       Формат аренды: {office.detailedInfo.areaAndFormat.format}
                     </p>

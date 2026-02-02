@@ -113,7 +113,6 @@ export const officesData: OfficeDetails[] = [
     format: "офисные пространства для корпоративных арендаторов",
     detailedInfo: {
       areaAndFormat: {
-        totalBlockArea: "около 5 148 м²",
         format: "офисные блоки под корпоративные и представительские офисы"
       },
       building: {
@@ -160,7 +159,6 @@ export const officesData: OfficeDetails[] = [
     format: "офисные блоки, возможна передача с ремонтом и мебелью",
     detailedInfo: {
       areaAndFormat: {
-        totalBlockArea: "порядка 12 767 м²",
         format: "в текущем состоянии либо с ремонтом и мебелью под срок заезда"
       },
       building: {
