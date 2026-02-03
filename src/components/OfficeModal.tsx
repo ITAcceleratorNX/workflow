@@ -13,15 +13,15 @@ export function OfficeModal({ office, isOpen, onClose }: OfficeModalProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showDetails, setShowDetails] = useState(false)
 
-  // Определяем images до использования в хуках
-  const images = office && office.images.length > 0 
+  // Определяем images до использования в хуках с безопасной проверкой
+  const images = office && office.images && Array.isArray(office.images) && office.images.length > 0 
     ? office.images 
-    : office 
-      ? [{ src: office.mainImage, alt: office.name }]
+    : office && office.mainImage
+      ? [{ src: office.mainImage, alt: office.name || 'Офис' }]
       : []
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && office) {
       document.body.style.overflow = "hidden"
       setCurrentImageIndex(0)
       setShowDetails(false)
@@ -31,7 +31,7 @@ export function OfficeModal({ office, isOpen, onClose }: OfficeModalProps) {
     return () => {
       document.body.style.overflow = ""
     }
-  }, [isOpen])
+  }, [isOpen, office])
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -49,21 +49,30 @@ export function OfficeModal({ office, isOpen, onClose }: OfficeModalProps) {
 
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % images.length)
-    }, 3000) // Меняем изображение каждые 5 секунд
+    }, 3000) // Меняем изображение каждые 3 секунды
 
     return () => clearInterval(interval)
   }, [isOpen, office, images.length])
 
   if (!isOpen || !office) return null
 
-  const currentImage = images[currentImageIndex]
+  // Безопасная проверка currentImage
+  const currentImage = images.length > 0 && currentImageIndex < images.length 
+    ? images[currentImageIndex] 
+    : images.length > 0 
+      ? images[0] 
+      : null
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % images.length)
+    if (images.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length)
+    }
   }
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
+    if (images.length > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
+    }
   }
 
   const handleShowDetails = () => {
@@ -100,31 +109,36 @@ export function OfficeModal({ office, isOpen, onClose }: OfficeModalProps) {
 
         {/* Карусель изображений */}
         <div className="relative w-full h-[300px] md:h-[400px] bg-gray-100 rounded-t-[24px] md:rounded-t-[32px] overflow-hidden">
-          {images.length > 0 && (
+          {currentImage ? (
             <>
               <img
                 src={currentImage.src}
-                alt={currentImage.alt}
+                alt={currentImage.alt || office.name}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Fallback если изображение не загрузилось
+                  const target = e.target as HTMLImageElement
+                  target.src = office.mainImage || '/og-image.jpg'
+                }}
               />
               {images.length > 1 && (
                 <>
                   <button
                     onClick={prevImage}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 hover:bg-white transition-all duration-200"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 hover:bg-white transition-all duration-200 z-10"
                     style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' }}
                   >
                     <ChevronLeft className="w-6 h-6 text-gray-700" />
                   </button>
                   <button
                     onClick={nextImage}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 hover:bg-white transition-all duration-200"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 hover:bg-white transition-all duration-200 z-10"
                     style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' }}
                   >
                     <ChevronRight className="w-6 h-6 text-gray-700" />
                   </button>
                   {/* Индикаторы */}
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
                     {images.map((_, index) => (
                       <div
                         key={index}
@@ -137,6 +151,10 @@ export function OfficeModal({ office, isOpen, onClose }: OfficeModalProps) {
                 </>
               )}
             </>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-400">
+              <span style={{ fontFamily: "'Open Sans', sans-serif" }}>Изображение не найдено</span>
+            </div>
           )}
         </div>
 

@@ -10,8 +10,26 @@ export function PortfolioSection() {
   const handleDetails = (officeId: number) => {
     const office = officesData.find(o => o.id === officeId)
     if (office) {
-      setSelectedOffice(office)
+      // Убеждаемся, что office имеет все необходимые поля
+      const officeWithDefaults = {
+        ...office,
+        images: office.images && Array.isArray(office.images) && office.images.length > 0 
+          ? office.images 
+          : office.mainImage 
+            ? [{ src: office.mainImage, alt: office.name }]
+            : [],
+        mainImage: office.mainImage || '/og-image.jpg',
+        name: office.name || 'Офис',
+        location: office.location || 'Алматы',
+        address: office.address || '',
+        cost: office.cost || 'по запросу',
+        format: office.format || '',
+        detailedInfo: office.detailedInfo || {}
+      }
+      setSelectedOffice(officeWithDefaults)
       setIsModalOpen(true)
+    } else {
+      console.error('Офис с ID', officeId, 'не найден')
     }
   }
 
