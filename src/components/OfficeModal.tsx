@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { X, ChevronLeft, ChevronRight, Building2, Users, DollarSign, Star, MapPin, Square } from "lucide-react"
+import {X, ChevronLeft, ChevronRight, Building2, Users, DollarSign, Star, MapPin, Square, Building} from "lucide-react"
 import type { OfficeDetails } from "../lib/officeData"
 import { Button } from "./ui/button"
 
@@ -206,6 +206,14 @@ export function OfficeModal({ office, isOpen, onClose }: OfficeModalProps) {
                 </span>
               </div>
             )}
+            {office.floors && (
+                <div className="flex items-center gap-2 text-gray-700">
+                  <Building className="w-5 h-5 text-coral" style={{ color: '#C95A1A' }} />
+                  <span style={{ fontFamily: "'Open Sans', sans-serif" }}>
+                  Этажность: {office.floors}
+                </span>
+                </div>
+            )}
             {office.capacity && (
               <div className="flex items-center gap-2 text-gray-700">
                 <Users className="w-5 h-5 text-coral" style={{ color: '#C95A1A' }} />
@@ -248,7 +256,7 @@ export function OfficeModal({ office, isOpen, onClose }: OfficeModalProps) {
           {/* Подробная информация (раскрывается при клике) */}
           {showDetails && office.detailedInfo && (
             <div className="space-y-6 pt-6 border-t border-gray-200">
-              {office.detailedInfo.areaAndFormat && (
+              {office.detailedInfo.areaAndFormat && office.detailedInfo.areaAndFormat.format && (
                 <div>
                   <h3
                     className="text-xl font-bold mb-3"
@@ -261,19 +269,27 @@ export function OfficeModal({ office, isOpen, onClose }: OfficeModalProps) {
                     Площадь и формат
                   </h3>
                   <div className="space-y-2 text-gray-700">
-                    {office.detailedInfo.areaAndFormat.rentableArea && (
+                    {office.detailedInfo.areaAndFormat.totalBlockArea && (
                       <p style={{ fontFamily: "'Open Sans', sans-serif" }}>
-                        Арендуемая площадь блока Work Flow: {office.detailedInfo.areaAndFormat.rentableArea}
+                        Общая площадь блока: {office.detailedInfo.areaAndFormat.totalBlockArea}
                       </p>
                     )}
                     <p style={{ fontFamily: "'Open Sans', sans-serif" }}>
                       Формат аренды: {office.detailedInfo.areaAndFormat.format}
                     </p>
+                    {office.detailedInfo.areaAndFormat.floors && (
+                      <p style={{ fontFamily: "'Open Sans', sans-serif" }}>
+                        Этажность: {office.detailedInfo.areaAndFormat.floors}
+                      </p>
+                    )}
                   </div>
                 </div>
               )}
 
               {office.detailedInfo.building && (
+                (office.detailedInfo.building.class || 
+                 office.detailedInfo.building.totalArea || 
+                 office.detailedInfo.building.location) && (
                 <div>
                   <h3
                     className="text-xl font-bold mb-3"
@@ -289,11 +305,6 @@ export function OfficeModal({ office, isOpen, onClose }: OfficeModalProps) {
                     {office.detailedInfo.building.class && (
                       <p style={{ fontFamily: "'Open Sans', sans-serif" }}>
                         Класс: {office.detailedInfo.building.class}
-                      </p>
-                    )}
-                    {office.detailedInfo.building.year && (
-                      <p style={{ fontFamily: "'Open Sans', sans-serif" }}>
-                        Год постройки: {office.detailedInfo.building.year}
                       </p>
                     )}
                     {office.detailedInfo.building.totalArea && (
@@ -313,7 +324,7 @@ export function OfficeModal({ office, isOpen, onClose }: OfficeModalProps) {
                     )}
                   </div>
                 </div>
-              )}
+              ))}
 
               {office.detailedInfo.infrastructure && office.detailedInfo.infrastructure.length > 0 && (
                 <div>

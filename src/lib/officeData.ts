@@ -16,13 +16,15 @@ export interface OfficeDetails {
   totalBlockArea?: string
   capacity?: string
   cost: string
-  format: string
+  format: string,
+  floors?: string,
   // Подробная информация
   detailedInfo: {
     areaAndFormat?: {
       rentableArea?: string
       totalBlockArea?: string
       format: string
+      floors?: string
     }
     building?: {
       class?: string
@@ -57,26 +59,15 @@ export const officesData: OfficeDetails[] = [
       { src: "/Venus/TMK_11439.jpg", alt: "Venus офис - вид 9" },
     ],
     location: "Алматы",
-    address: "ул. Елебекова 10/1",
+    address: "Медеуский район, ул. Елебекова 10/1",
     class: "B+",
     year: "2021",
     rentableArea: "1 900 м²",
     totalBlockArea: "2 100 м²",
     capacity: "~200 рабочих мест",
     cost: "по запросу",
-    format: "all inclusive",
+    format: "с фиксированным составом услуг",
     detailedInfo: {
-      areaAndFormat: {
-        rentableArea: "1 900 м²",
-        totalBlockArea: "2 100 м²",
-        format: "all inclusive с фиксированным составом услуг"
-      },
-      building: {
-        class: "B+",
-        year: "2021",
-        totalArea: "22 000 м²",
-        location: "Алматы, Медеуский район"
-      },
       infrastructure: [
         "6 переговорных комнат",
         "10 Zoom-будок",
@@ -105,23 +96,14 @@ export const officesData: OfficeDetails[] = [
       { src: "/Koktem Tower/TMK_11450.jpg", alt: "Koktem Towers офис - вид 5" },
     ],
     location: "Алматы",
-    address: "пр. Достык",
+    address: "Медеуский район, пр. Достык",
     class: "B+",
     year: "2005",
     totalBlockArea: "~5 148 м²",
     cost: "по запросу",
     format: "офисные пространства для корпоративных арендаторов",
+    floors: "13 этажей",
     detailedInfo: {
-      areaAndFormat: {
-        format: "офисные блоки под корпоративные и представительские офисы"
-      },
-      building: {
-        class: "B+",
-        year: "2005",
-        totalArea: "около 5 148 м²",
-        location: "Алматы, Медеуский район, пр. Достык",
-        floors: "13 этажей"
-      },
       engineering: [
         "Приточно-вытяжная вентиляция",
         "Центральное кондиционирование",
@@ -156,16 +138,9 @@ export const officesData: OfficeDetails[] = [
     address: "пр. Назарбаева 240Г",
     totalBlockArea: "~12 767 м²",
     cost: "по запросу",
-    format: "офисные блоки, возможна передача с ремонтом и мебелью",
+    floors: "11 этажей",
+    format: "в текущем состоянии либо с ремонтом и мебелью под срок заезда",
     detailedInfo: {
-      areaAndFormat: {
-        format: "в текущем состоянии либо с ремонтом и мебелью под срок заезда"
-      },
-      building: {
-        totalArea: "порядка 12 767 м²",
-        location: "Алматы, пр. Назарбаева 240Г",
-        floors: "11 этажей"
-      },
       environment: [
         "Развитая городская инфраструктура",
         "Сервисы и точки питания в пешей доступности"
@@ -192,15 +167,8 @@ export const officesData: OfficeDetails[] = [
     address: "деловой контур города",
     rentableArea: "300 м²",
     cost: "по запросу",
-    format: "компактный корпоративный офис",
+    format: "офис с возможностью адаптации пространства под бренд",
     detailedInfo: {
-      areaAndFormat: {
-        rentableArea: "300 м²",
-        format: "офис с возможностью адаптации пространства под бренд"
-      },
-      building: {
-        location: "Деловой контур Алматы"
-      },
       usageScenario: [
         "Корпоративный офис",
         "Баланс представительских зон и рабочих пространств",
