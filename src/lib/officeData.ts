@@ -66,7 +66,7 @@ export const officesData: OfficeDetails[] = [
     totalBlockArea: "2 100 м²",
     capacity: "~200 рабочих мест",
     cost: "по запросу",
-    format: "с фиксированным составом услуг",
+    format: "all inclusive с фиксированным составом услуг",
     detailedInfo: {
       infrastructure: [
         "6 переговорных комнат",
