@@ -60,6 +60,14 @@ export function ContactFormSection() {
       const data = await response.json()
 
       if (response.ok && data.success) {
+        // Отправляем событие Lead в Meta Pixel
+        if (typeof window !== 'undefined' && (window as any).fbq) {
+          (window as any).fbq('track', 'Lead', {
+            content_name: 'Заявка на офис',
+            content_category: 'Contact Form'
+          });
+        }
+        
         setMessage({ type: 'success', text: 'Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.' })
         // Очистка формы
         setFormData({ name: "", company: "", phone: "" })
