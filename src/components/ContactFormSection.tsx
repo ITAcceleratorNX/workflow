@@ -9,7 +9,7 @@ const API_URL = "https://workflow-back-zpk4.onrender.com"
 const formatPhoneNumber = (value: string): string => {
   // Удаляем все нецифровые символы
   const numbers = value.replace(/\D/g, '')
-  
+
   // Если номер начинается с 8, заменяем на 7
   let formatted = numbers.startsWith('8') ? '7' + numbers.slice(1) : numbers
   
@@ -17,10 +17,9 @@ const formatPhoneNumber = (value: string): string => {
   if (formatted && !formatted.startsWith('7')) {
     formatted = '7' + formatted
   }
-  
-  // Ограничиваем до 11 цифр (7 + 10 цифр)
+    // Ограничиваем до 11 цифр (7 + 10 цифр)
   formatted = formatted.slice(0, 11)
-  
+
   // Форматируем: +7 (XXX) XXX-XX-XX
   if (formatted.length === 0) return ''
   if (formatted.length <= 1) return `+${formatted}`
@@ -43,6 +42,7 @@ export function ContactFormSection() {
     e.preventDefault()
     setIsLoading(true)
     setMessage(null)
+      const eventId = crypto.randomUUID();
 
     try {
       const response = await fetch(`${API_URL}/api/contact`, {
@@ -54,6 +54,7 @@ export function ContactFormSection() {
           name: formData.name,
           company: formData.company,
           phone: formData.phone,
+          eventId: eventId,
         }),
       })
 
@@ -61,12 +62,14 @@ export function ContactFormSection() {
 
       if (response.ok && data.success) {
         // Отправляем событие Lead в Meta Pixel
-        if (typeof window !== 'undefined' && (window as any).fbq) {
-          (window as any).fbq('track', 'Lead', {
-            content_name: 'Заявка на офис',
-            content_category: 'Contact Form'
-          });
-        }
+          if (typeof window !== 'undefined' && (window as any).fbq) {
+              (window as any).fbq('track', 'Lead', {
+                  content_name: 'Заявка на офис',
+                  content_category: 'Contact Form'
+              }, {
+                  eventID: eventId
+              });
+          }
         
         setMessage({ type: 'success', text: 'Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.' })
         // Очистка формы
