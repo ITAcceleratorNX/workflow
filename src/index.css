@@ -177,14 +177,16 @@ html {
 
 /* Card hover effects */
 .card-hover {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.4s ease;
   will-change: transform;
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .card-hover:hover {
-  transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 20px 40px -10px rgba(30, 58, 95, 0.15), 0 0 0 1px rgba(201, 90, 26, 0.1);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 24px 48px -12px rgba(30, 58, 95, 0.18), 0 0 0 1px rgba(201, 90, 26, 0.12);
   border-color: rgba(201, 90, 26, 0.2);
 }
 

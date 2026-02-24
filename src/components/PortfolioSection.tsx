@@ -71,7 +71,7 @@ export function PortfolioSection() {
                   {carouselData.images.map((image, index) => (
                       <div
                           key={index}
-                          className="min-w-[220px] h-[150px] rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition duration-300"
+                          className="group/carousel min-w-[220px] h-[150px] rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 ease-out"
                       >
                           <img
                               src={image.src}
@@ -81,7 +81,7 @@ export function PortfolioSection() {
                               loading="lazy"
                               decoding="async"
                               fetchPriority={index < 3 ? 'high' : 'low'}
-                              className="w-full h-full object-cover hover:scale-110 transition duration-500"
+                              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover/carousel:scale-110"
                           />
                       </div>
                   ))}
@@ -92,35 +92,27 @@ export function PortfolioSection() {
             <div
               key={office.id}
               className="relative flex flex-col justify-end items-center rounded-[20px] md:rounded-[50px] overflow-hidden min-h-[250px] md:min-h-[300px] p-5 md:p-[35px_83px] card-hover stagger-item group"
-              style={{
-                backgroundImage: `linear-gradient(180deg, rgba(255, 255, 255, 0) 26.44%, rgba(255, 255, 255, 0.5) 92.79%), url(${office.mainImage})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundSize = '200%'
-                e.currentTarget.style.transform = 'scale(1.05)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundSize = 'cover'
-                e.currentTarget.style.transform = 'scale(1)'
-              }}
             >
-              <div className="flex flex-col items-center gap-3 md:gap-[15px] w-full max-w-full md:max-w-[195px]">
-                <h3 
-                  className="font-bold text-center text-[#040404] text-base md:text-xl lg:text-[24px] transition-transform duration-300 group-hover:scale-105"
-                  style={{ 
-                    lineHeight: '33px',
-                    fontFamily: "'Open Sans', sans-serif",
-                    fontWeight: 700
-                  }}
-                >
-                  {office.name}
-                </h3>
+              {/* Background layer with smooth zoom on hover */}
+              <div
+                className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-110"
+                style={{
+                  backgroundImage: `url(${office.mainImage})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
+              />
+              {/* Gradient overlay */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: 'linear-gradient(180deg, rgba(255, 255, 255, 0) 26.44%, rgba(255, 255, 255, 0.5) 92.79%)'
+                }}
+              />
+              <div className="relative flex flex-col items-center gap-3 md:gap-[15px] w-full max-w-full md:max-w-[195px]">
                 <Button
                   onClick={() => handleDetails(office.id)}
-                  className="flex items-center justify-center bg-white font-normal text-xs md:text-sm lg:text-[13.9px] transition-all duration-300 hover:text-white hover:scale-105"
+                  className="flex items-center justify-center bg-white font-normal text-xs md:text-sm lg:text-[13.9px] transition-all duration-300 ease-out hover:bg-[#C95A1A] hover:text-white hover:scale-105 hover:shadow-lg"
                   style={{
                     borderRadius: '50px',
                     padding: '11px 43px',
@@ -131,16 +123,8 @@ export function PortfolioSection() {
                     border: '1px solid rgba(0, 0, 0, 0.05)',
                     color: '#2C3E50'
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#C95A1A'
-                    e.currentTarget.style.color = '#FFFFFF'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = '#FFFFFF'
-                    e.currentTarget.style.color = '#2C3E50'
-                  }}
                 >
-                  Подробнее
+                    {office.name}
                 </Button>
               </div>
             </div>
