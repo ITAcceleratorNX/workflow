@@ -364,3 +364,18 @@ html {
   animation: scroll var(--scroll-duration, 12s) linear infinite;
 }
 
+/* Бесконечная карусель: 3 копии контента, сдвиг на 1/3 для бесшовного цикла */
+@keyframes scroll-infinite {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+.animate-scroll-infinite {
+  display: inline-flex;
+  animation: scroll-infinite var(--scroll-duration, 20s) linear infinite;
+}
+

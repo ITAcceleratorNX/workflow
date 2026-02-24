@@ -1,4 +1,5 @@
 import { residentsData } from "@/lib/residentsData"
+import { residentsCarouselImages } from "@/lib/residentsCarouselData"
 
 export function ResidentsSection() {
   return (
@@ -51,70 +52,79 @@ export function ResidentsSection() {
               ))}
             </div>
           </div>
-          {/* Информация о Workflow App */}
-          <div className="bg-white border border-gray-200 rounded-xl md:rounded-2xl p-6 md:p-8 lg:p-10 w-full shadow-sm hover:shadow-md transition-shadow duration-300">
-            <div className="flex flex-col gap-6 lg:gap-8">
-              {/* Заголовок + иконка рядом */}
-              <div className="flex items-center gap-4 md:gap-5">
-                <img
-                  src="/app-icon.webp"  // ← твоя текущая иконка
-                  // или замени на более подходящую, например:
-                  // src="https://thumbs.dreamstime.com/b/project-management-icons-set-collection-project-management-icons-blue-white-representing-various-aspects-such-as-428828481.jpg"
-                  alt="Workflow App"
-                  loading="lazy"
-                  decoding="async"
-                  className="w-12 h-12 md:w-16 md:h-16 object-contain flex-shrink-0"
-                />
-                <h3
-                    className="font-bold text-2xl md:text-3xl tracking-tight text-gray-900"
-                    style={{ fontFamily: "'Open Sans', sans-serif" }}
-                >
-                  Workflow App
-                </h3>
+          {/* Презентация Workflow App */}
+          <div className="w-full flex flex-col items-center gap-6 md:gap-10">
+            {/* Заголовок — как у основных секций */}
+            <div className="flex flex-col items-center gap-4 md:gap-6 text-center">
+              <img
+                src="/app-icon.webp"
+                alt="Workflow App"
+                loading="lazy"
+                decoding="async"
+                className="w-20 h-20 md:w-24 md:h-24 object-contain rounded-[20px] shadow-lg"
+              />
+              <h3
+                className="font-bold tracking-[-0.02em] text-xl md:text-3xl lg:text-[48px]"
+                style={{ fontFamily: "'Open Sans', sans-serif", color: "#1E3A5F" }}
+              >
+                WORKFLOW APP
+              </h3>
+              <p
+                className="text-sm md:text-base lg:text-lg max-w-[600px]"
+                style={{ fontFamily: "'Open Sans', sans-serif", color: "#2C3E50" }}
+              >
+                Новое мобильное приложение для управления офисной инфраструктурой — всё в одном месте
+              </p>
+            </div>
+
+            {/* Карусель — полноразмерные скриншоты */}
+            <div className="w-full overflow-hidden">
+              <div
+                className="flex gap-6 md:gap-8 animate-scroll-infinite"
+                style={{ ["--scroll-duration" as string]: "30s" }}
+              >
+                {[...residentsCarouselImages, ...residentsCarouselImages, ...residentsCarouselImages].map((image, index) => (
+                  <div
+                    key={index}
+                    className="flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-[60vw] lg:w-[50vw] max-w-[800px]"
+                  >
+                    <div className="relative aspect-[4/3] rounded-[20px] md:rounded-[32px] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group">
+                      <img
+                        src={image.src}
+                        alt={image.alt}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
+            </div>
 
-              {/* Описание и список */}
-              <div className="space-y-6">
-                <p
-                    className="text-base md:text-lg text-gray-700 leading-relaxed max-w-3xl"
-                    style={{ fontFamily: "'Open Sans', sans-serif" }}
+            {/* Возможности — компактные карточки */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 w-full">
+              {[
+                { title: "Бронирование", desc: "Переговорные комнаты и общие зоны в пару нажатий" },
+                { title: "Заявки FM", desc: "Регистрация, отслеживание и контроль facility management" },
+                { title: "Push-уведомления", desc: "Мгновенные оповещения о статусе заявок и бронирований" },
+                { title: "Роли и доступ", desc: "Гибкая система прав для сотрудников и администраторов" },
+                { title: "Аналитика", desc: "Дашборды, отчёты и ключевые KPI в реальном времени" },
+                { title: "Все платформы", desc: "Единый интерфейс на Web, iOS и Android" },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="rounded-2xl p-5 md:p-6 transition-all duration-300 hover:shadow-md"
+                  style={{ background: "linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%)" }}
                 >
-                  Единая платформа для управления офисной инфраструктурой. Объединяет ключевые сервисы, автоматизирует процессы и обеспечивает полный контроль в реальном времени.
-                </p>
-
-                <div className="space-y-4">
-                  <p className="font-semibold text-gray-900 text-lg">
-                    Основные возможности
+                  <p className="font-bold text-base md:text-lg mb-1" style={{ color: "#1E3A5F" }}>
+                    {item.title}
                   </p>
-
-                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-3 text-gray-700 text-base">
-                    <li className="flex items-start gap-3">
-                      <span className="text-blue-600 font-bold text-xl mt-0.5">•</span>
-                      Бронирование переговорных комнат и общих зон
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-blue-600 font-bold text-xl mt-0.5">•</span>
-                      Регистрация и контроль заявок facility management
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-blue-600 font-bold text-xl mt-0.5">•</span>
-                      Мгновенные push-уведомления о статусе
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-blue-600 font-bold text-xl mt-0.5">•</span>
-                      Система ролей и разграничение прав доступа
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-blue-600 font-bold text-xl mt-0.5">•</span>
-                      Аналитические дашборды и отчётность KPI
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-blue-600 font-bold text-xl mt-0.5">•</span>
-                      Единый интерфейс: Web, iOS, Android
-                    </li>
-                  </ul>
+                  <p className="text-sm md:text-base leading-relaxed" style={{ color: "#2C3E50" }}>
+                    {item.desc}
+                  </p>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
