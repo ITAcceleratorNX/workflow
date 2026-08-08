@@ -1,15 +1,19 @@
-import { useMemo, useState } from "react"
-import { Maximize } from "lucide-react"
+import { useMemo, useRef, useState } from "react"
+import { ChevronDown, ChevronUp, Maximize } from "lucide-react"
 import { Section, SectionHeading } from "../ui/Section"
 import { Reveal } from "../ui/Reveal"
 import { SmartImage } from "../ui/SmartImage"
 import { Lightbox } from "../ui/Lightbox"
+import { Button } from "../ui/button"
 import { cn } from "../../lib/utils"
 import {
   PHOTO_CATEGORY_LABELS,
   type PhotoCategory,
   type Property,
 } from "../../lib/properties"
+
+/** Сколько кадров показываем до нажатия «Показать все» */
+const PREVIEW_COUNT = 6
 
 const CATEGORY_ORDER: PhotoCategory[] = [
   "facade",
@@ -33,6 +37,8 @@ export function PropertyGallery({
 }) {
   const [activeCategory, setActiveCategory] = useState<PhotoCategory | "all">("all")
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+  const [expanded, setExpanded] = useState(false)
+  const gridRef = useRef<HTMLUListElement>(null)
 
   const categories = useMemo(
     () => CATEGORY_ORDER.filter((category) => property.photos.some((p) => p.category === category)),
@@ -47,6 +53,19 @@ export function PropertyGallery({
     [property.photos, activeCategory]
   )
 
+  /* Показываем первые кадры, остальные — по кнопке: галереи объектов бывают большими */
+  const visiblePhotos = expanded ? photos : photos.slice(0, PREVIEW_COUNT)
+
+  const selectCategory = (category: PhotoCategory | "all") => {
+    setActiveCategory(category)
+    setExpanded(false)
+  }
+
+  const collapse = () => {
+    setExpanded(false)
+    gridRef.current?.scrollIntoView({ block: "start", behavior: "smooth" })
+  }
+
   return (
     <Section tone="brand" size="md">
       <SectionHeading
@@ -60,20 +79,20 @@ export function PropertyGallery({
         <FilterChip
           label="Все"
           active={activeCategory === "all"}
-          onClick={() => setActiveCategory("all")}
+          onClick={() => selectCategory("all")}
         />
         {categories.map((category) => (
           <FilterChip
             key={category}
             label={PHOTO_CATEGORY_LABELS[category]}
             active={activeCategory === category}
-            onClick={() => setActiveCategory(category)}
+            onClick={() => selectCategory(category)}
           />
         ))}
       </Reveal>
 
-      <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {photos.map((photo, index) => (
+      <ul ref={gridRef} className="mt-6 grid scroll-mt-24 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {visiblePhotos.map((photo, index) => (
           <Reveal as="li" key={photo.src} delay={(index % 3) * 60}>
             <button
               type="button"
@@ -98,6 +117,23 @@ export function PropertyGallery({
           </Reveal>
         ))}
       </ul>
+
+      {photos.length > PREVIEW_COUNT && (
+        <div className="mt-8 flex justify-center">
+          {expanded ? (
+            <Button variant="outline" size="lg" onClick={collapse}>
+              Свернуть
+              <ChevronUp className="h-4 w-4" />
+            </Button>
+          ) : (
+            <Button variant="outline" size="lg" onClick={() => setExpanded(true)}>
+              Показать все фото
+              <span className="text-ink-soft">({photos.length})</span>
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      )}
 
       {lightboxIndex !== null && (
         <Lightbox

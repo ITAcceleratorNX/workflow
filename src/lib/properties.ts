@@ -100,11 +100,7 @@ export const ECOSYSTEM = {
   ],
 } as const
 
-/**
- * Фотографии Time Square: файлы кладутся в public/TimeSquare/
- * (ожидаемые имена — в public/TimeSquare/README.md).
- * Пока файла нет, галерея показывает подпись категории вместо битой картинки.
- */
+/** Фотографии Time Square — public/TimeSquare/ (см. README.md в этой папке). */
 const timeSquare: Property = {
   slug: "time-square",
   name: "Time Square",
@@ -114,9 +110,10 @@ const timeSquare: Property = {
   metaDescription:
     "Аренда офисов и коммерческих помещений в Алматы: бизнес-центр Time Square класса А на пересечении Аль-Фараби и Мендикулова, а также объекты Venus и Koktem Towers.",
   cover: "/TimeSquare/facade-1.webp",
-  coverAlt: "Фасад бизнес-центра Time Square в Алматы",
+  coverAlt: "Фасад бизнес-центра Time Square в Алматы на фоне гор Заилийского Алатау",
   heroPhoto: "/TimeSquare/facade-1.webp",
-  heroPhotoAlt: "Бизнес-центр Time Square класса А, микрорайон Самал-3, Алматы",
+  heroPhotoAlt:
+    "Бизнес-центр Time Square класса А в микрорайоне Самал-3 в Алматы с панорамой на горы Заилийского Алатау",
   address: "микрорайон Самал-3, 15/1, Алматы",
   shortLabel: "Класс А · Самал-3",
   description: [
@@ -149,20 +146,32 @@ const timeSquare: Property = {
     { icon: "infrastructure", label: "Развитая инфраструктура" },
   ],
   photos: [
-    { src: "/TimeSquare/facade-1.webp", alt: "Фасад бизнес-центра Time Square с дрона", category: "facade" },
-    { src: "/TimeSquare/facade-2.webp", alt: "Бизнес-центр Time Square с высоты, панорама на Заилийский Алатау", category: "facade" },
-    { src: "/TimeSquare/entrance-1.webp", alt: "Входная группа бизнес-центра Time Square", category: "entrance" },
-    { src: "/TimeSquare/entrance-2.webp", alt: "Вход в бизнес-центр Time Square со стороны Аль-Фараби", category: "entrance" },
-    { src: "/TimeSquare/hall-1.webp", alt: "Многосветный атриум Time Square под стеклянным куполом", category: "hall" },
-    { src: "/TimeSquare/hall-2.webp", alt: "Холл Time Square со скульптурной арт-инсталляцией", category: "hall" },
-    { src: "/TimeSquare/office-1.webp", alt: "Офисное помещение в бизнес-центре Time Square", category: "offices" },
-    { src: "/TimeSquare/office-2.webp", alt: "Офис с панорамным остеклением в Time Square", category: "offices" },
-    { src: "/TimeSquare/elevators-1.webp", alt: "Высокоскоростные лифты бизнес-центра Time Square", category: "elevators" },
-    { src: "/TimeSquare/common-1.webp", alt: "Общие зоны бизнес-центра Time Square", category: "common" },
-    { src: "/TimeSquare/common-2.webp", alt: "Зона отдыха в общественном пространстве Time Square", category: "common" },
-    { src: "/TimeSquare/parking-1.webp", alt: "Подземный паркинг бизнес-центра Time Square на 72 места", category: "parking" },
-    { src: "/TimeSquare/render-1.webp", alt: "Рендер проекта бизнес-центра Time Square", category: "renders" },
-    { src: "/TimeSquare/render-2.webp", alt: "Рендер общественных пространств Time Square", category: "renders" },
+    { src: "/TimeSquare/facade-1.webp", alt: "Бизнес-центр Time Square на пересечении Аль-Фараби и Мендикулова с панорамой на горы Заилийского Алатау", category: "facade" },
+    { src: "/TimeSquare/facade-2.webp", alt: "Комплекс Time Square в вечерней подсветке, вид с высоты", category: "facade" },
+    { src: "/TimeSquare/facade-3.webp", alt: "Бизнес-центр Time Square с дрона: вид на проспект Аль-Фараби", category: "facade" },
+    { src: "/TimeSquare/facade-4.webp", alt: "Аэросъёмка квартала с бизнес-центром Time Square в микрорайоне Самал-3", category: "facade" },
+    { src: "/TimeSquare/entrance-1.webp", alt: "Входная группа бизнес-центра Time Square с панорамным остеклением", category: "entrance" },
+    { src: "/TimeSquare/entrance-2.webp", alt: "Вход в Time Square с навесом и пешеходной зоной", category: "entrance" },
+    { src: "/TimeSquare/hall-1.webp", alt: "Многосветный атриум Time Square под стеклянным куполом со скульптурной арт-инсталляцией", category: "hall" },
+    { src: "/TimeSquare/hall-2.webp", alt: "Холл Time Square: арт-инсталляция и входы в коммерческие помещения", category: "hall" },
+    { src: "/TimeSquare/hall-3.webp", alt: "Стеклянный купол над атриумом бизнес-центра Time Square", category: "hall" },
+    { src: "/TimeSquare/hall-4.webp", alt: "Стойка ресепшн в холле бизнес-центра Time Square", category: "hall" },
+    { src: "/TimeSquare/office-1.webp", alt: "Свободное офисное помещение Time Square с панорамным остеклением", category: "offices" },
+    { src: "/TimeSquare/office-2.webp", alt: "Открытая планировка офисного блока в Time Square", category: "offices" },
+    { src: "/TimeSquare/office-3.webp", alt: "Помещение под офис в Time Square с высокими потолками", category: "offices" },
+    { src: "/TimeSquare/office-4.webp", alt: "Свободная площадь этажа в бизнес-центре Time Square", category: "offices" },
+    { src: "/TimeSquare/office-5.webp", alt: "Помещение под коммерцию на первом этаже Time Square", category: "offices" },
+    { src: "/TimeSquare/office-6.webp", alt: "Пример оформления офиса с переговорной в Time Square", category: "offices" },
+    { src: "/TimeSquare/common-1.webp", alt: "Общественная терраса с зоной отдыха на кровле Time Square", category: "common" },
+    { src: "/TimeSquare/common-2.webp", alt: "Кафе в общественной зоне бизнес-центра Time Square", category: "common" },
+    { src: "/TimeSquare/common-3.webp", alt: "Вечерняя лаунж-зона на террасе Time Square", category: "common" },
+    { src: "/TimeSquare/parking-1.webp", alt: "Подземный паркинг бизнес-центра Time Square на 72 машиноместа", category: "parking" },
+    { src: "/TimeSquare/parking-2.webp", alt: "Проезд подземного паркинга Time Square", category: "parking" },
+    { src: "/TimeSquare/parking-3.webp", alt: "Парковочные места подземного паркинга Time Square", category: "parking" },
+    { src: "/TimeSquare/render-1.webp", alt: "Рендер проекта Time Square: благоустройство внутреннего двора", category: "renders" },
+    { src: "/TimeSquare/render-2.webp", alt: "Рендер кабинета руководителя в Time Square", category: "renders" },
+    { src: "/TimeSquare/render-3.webp", alt: "Рендер фасада Time Square в вечерней подсветке", category: "renders" },
+    { src: "/TimeSquare/render-4.webp", alt: "Рендер входной группы и общественного пространства Time Square", category: "renders" },
   ],
 }
 
@@ -176,8 +185,9 @@ const venus: Property = {
     "Venus — бизнес-центр класса B+ в Медеуском районе Алматы, ул. Елебекова 10/1. Open Space и кабинетные планировки, потолки 3,9 м, наземный паркинг на 85 машиномест.",
   cover: "/venus.webp",
   coverAlt: "Фасад бизнес-центра Venus в Алматы",
-  heroPhoto: "/venus.webp",
-  heroPhotoAlt: "Бизнес-центр Venus класса B+, ул. Елебекова 10/1, Алматы",
+  heroPhoto: "/Venus/facade-drone-1.webp",
+  heroPhotoAlt:
+    "Бизнес-центр Venus класса B+ на ул. Елебекова 10/1 в Алматы, вид с дрона на фоне гор",
   address: "ул. Елебекова, 10/1, Медеуский район, Алматы",
   shortLabel: "Класс B+ · Медеуский район",
   description: [
@@ -214,16 +224,25 @@ const venus: Property = {
     { icon: "infrastructure", label: "Развитая инфраструктура" },
   ],
   photos: [
+    { src: "/Venus/facade-drone-1.webp", alt: "Бизнес-центр Venus с дрона: фасад со стороны улицы Елебекова и горы на горизонте", category: "facade" },
+    { src: "/Venus/facade-drone-2.webp", alt: "Аэросъёмка бизнес-центра Venus и прилегающей транспортной магистрали", category: "facade" },
     { src: "/venus.webp", alt: "Фасад бизнес-центра Venus в Медеуском районе Алматы", category: "facade" },
     { src: "/Venus/TMK_11292.webp", alt: "Холл бизнес-центра Venus со стойкой ресепшн", category: "hall" },
     { src: "/Venus/TMK_11435.webp", alt: "Входная зона офисного этажа бизнес-центра Venus", category: "hall" },
+    { src: "/Venus/elevators-1.webp", alt: "Лифтовой холл бизнес-центра Venus с зоной ресепшн", category: "elevators" },
+    { src: "/Venus/vacant-1.webp", alt: "Свободный офисный блок Venus с панорамным остеклением", category: "offices" },
+    { src: "/Venus/vacant-2.webp", alt: "Свободный офисный блок Venus с кабинетными перегородками", category: "offices" },
+    { src: "/Venus/TMK_11357.webp", alt: "Офисное помещение Venus с панорамным остеклением", category: "offices" },
+    { src: "/Venus/TMK_11439.webp", alt: "Офисный блок Open Space в бизнес-центре Venus", category: "offices" },
     { src: "/Venus/TMK_11297.webp", alt: "Коридор общих зон бизнес-центра Venus", category: "common" },
     { src: "/Venus/TMK_11311.webp", alt: "Конференц-зал бизнес-центра Venus", category: "common" },
     { src: "/Venus/TMK_11348.webp", alt: "Лаунж-зона с панорамными окнами в бизнес-центре Venus", category: "common" },
     { src: "/Venus/TMK_11352.webp", alt: "Зона отдыха для арендаторов бизнес-центра Venus", category: "common" },
+    { src: "/Venus/common-1.webp", alt: "Общая зона офисного этажа Venus с системами хранения", category: "common" },
+    { src: "/Venus/common-2.webp", alt: "Переговорные комнаты и зоны для звонков в бизнес-центре Venus", category: "common" },
+    { src: "/Venus/common-3.webp", alt: "Переговорная комната бизнес-центра Venus", category: "common" },
+    { src: "/Venus/common-4.webp", alt: "Просторная переговорная бизнес-центра Venus", category: "common" },
     { src: "/Venus/TMK_11397.webp", alt: "Кухня и зона питания в бизнес-центре Venus", category: "infrastructure" },
-    { src: "/Venus/TMK_11357.webp", alt: "Офисное помещение Venus с панорамным остеклением", category: "offices" },
-    { src: "/Venus/TMK_11439.webp", alt: "Офисный блок Open Space в бизнес-центре Venus", category: "offices" },
   ],
 }
 
@@ -275,8 +294,15 @@ const koktemTowers: Property = {
   ],
   photos: [
     { src: "/koktem-towers.webp", alt: "Фасад бизнес-центра Koktem Towers на проспекте Достык", category: "facade" },
+    { src: "/Koktem Tower/floor9-1.webp", alt: "Свободное помещение девятого этажа Koktem Towers с панорамным окном", category: "offices" },
+    { src: "/Koktem Tower/floor9-2.webp", alt: "Кабинет на девятом этаже Koktem Towers с видом на горы", category: "offices" },
+    { src: "/Koktem Tower/floor9-3.webp", alt: "Просторный кабинет девятого этажа Koktem Towers с панорамным остеклением", category: "offices" },
+    { src: "/Koktem Tower/floor9-4.webp", alt: "Помещение Open Space на девятом этаже Koktem Towers", category: "offices" },
+    { src: "/Koktem Tower/floor9-5.webp", alt: "Офисное пространство девятого этажа Koktem Towers с отделкой", category: "offices" },
     { src: "/Koktem Tower/TMK_11441.webp", alt: "Офисное помещение Koktem Towers с рабочими местами", category: "offices" },
     { src: "/Koktem Tower/TMK_11442.webp", alt: "Офис Open Space в бизнес-центре Koktem Towers", category: "offices" },
+    { src: "/Koktem Tower/floor9-common-1.webp", alt: "Коридор девятого этажа Koktem Towers с кабинетами", category: "common" },
+    { src: "/Koktem Tower/floor9-common-2.webp", alt: "Холл девятого этажа Koktem Towers с зоной ресепшн", category: "common" },
     { src: "/Koktem Tower/TMK_11444.webp", alt: "Общие зоны и коридор бизнес-центра Koktem Towers", category: "common" },
     { src: "/Koktem Tower/TMK_11445.webp", alt: "Холл этажа бизнес-центра Koktem Towers", category: "common" },
     { src: "/Koktem Tower/TMK_11450.webp", alt: "Коридор офисного этажа Koktem Towers", category: "common" },
