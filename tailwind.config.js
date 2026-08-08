@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'sf-pro': ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"SF Pro Display"', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -35,25 +35,48 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        navy: {
-          DEFAULT: "#1E3A5F",
-          light: "#2D4A6B",
-          dark: "#152A47",
+        /* Голубой — фон, секции, визуальная иерархия */
+        brand: {
+          50: "#F3F9FE",
+          100: "#E3F1FB",
+          200: "#C4E2F6",
+          300: "#93CBEE",
+          400: "#57ADE0",
+          500: "#2A8FCE",
+          600: "#1672AF",
+          700: "#125B8C",
+          800: "#124A70",
+          900: "#0E3552",
         },
-        coral: {
-          DEFAULT: "#C95A1A",
-          light: "#E67E22",
-          dark: "#A84815",
+        /* Оранжевый — основные кнопки и активные элементы */
+        orange: {
+          50: "#FFF6F0",
+          100: "#FFE9DA",
+          200: "#FFCFB0",
+          300: "#FFAC79",
+          400: "#FC8848",
+          500: "#F26B21",
+          600: "#DE5410",
+          700: "#B8400D",
+          800: "#933312",
+          900: "#772C13",
+          950: "#401306",
         },
-        sage: "#9FB8AD",
-        slate: "#8B9DC3",
-        cream: "#F5F3E7",
-        charcoal: "#2C3E50",
+        ink: {
+          DEFAULT: "#0E3552",
+          muted: "#587487",
+          soft: "#8AA0B2",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        card: "0 1px 2px rgba(14, 53, 82, 0.04), 0 8px 24px -12px rgba(14, 53, 82, 0.18)",
+        "card-hover": "0 2px 4px rgba(14, 53, 82, 0.05), 0 24px 48px -20px rgba(14, 53, 82, 0.28)",
+        float: "0 20px 60px -24px rgba(14, 53, 82, 0.45)",
       },
     },
   },

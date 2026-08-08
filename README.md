@@ -1,114 +1,110 @@
-# Workflow Landing Page
+# TMK WorkFlow
 
-Лендинг-страница для сервисных офисов премиум-класса Workflow в Алматы.
+Сайт коммерческой недвижимости TMK WorkFlow (Алматы): аренда офисных и
+коммерческих помещений в бизнес-центрах **Time Square**, **Venus** и
+**Koktem Towers**.
+
+Домен: https://tmk-workflow.kz/
+
+## Структура
+
+| Страница          | Маршрут           | Что на ней                                        |
+|-------------------|-------------------|---------------------------------------------------|
+| Главная           | `/`               | Хиро-блок, форматы офисных решений, сервисный офис, полный блок Time Square, переходы на Venus и Koktem Towers |
+| Venus             | `/venus`          | Полный блок объекта                                |
+| Koktem Towers     | `/koktem-towers`  | Полный блок объекта                                |
+| Политика          | `/privacy`        | Обработка персональных данных                      |
+
+Блок объекта одинаков для всех трёх страниц и идёт в порядке ТЗ: большое фото →
+информация → экосистема TMK → свободные площади и характеристики → преимущества →
+фотогалерея → запись на просмотр.
 
 ## Технологии
 
-- **React 19** - UI библиотека
-- **TypeScript** - типизация
-- **Vite** - сборщик
-- **Tailwind CSS** - стилизация
-- **Lucide React** - иконки
+- React 19 + TypeScript
+- Vite 7
+- Tailwind CSS 3 (палитра: голубой, белый, оранжевый)
+- React Router 7
+- Lucide React — иконки
+- Vercel Serverless Function — приём заявок
 
-## Функционал
-
-- ✅ Адаптивный дизайн для всех устройств
-- ✅ Интеграция с WhatsApp для связи
-- ✅ Форма заявки с отправкой в WhatsApp
-- ✅ Секции: Hero, Портфолио, Тарифы, Преимущества, Контакты
-
-## Установка и запуск
+## Запуск
 
 ```bash
-# Установка зависимостей
 npm install
-
-# Запуск dev сервера
 npm run dev
+```
 
-# Сборка для production
+Сборка и проверки:
+
+```bash
 npm run build
-
-# Просмотр production сборки
-npm run preview
 ```
 
-## Деплой на Vercel
-
-### Автоматический деплой через GitHub
-
-1. Загрузите проект в GitHub репозиторий
-2. Зайдите на [vercel.com](https://vercel.com)
-3. Нажмите "Add New Project"
-4. Импортируйте ваш GitHub репозиторий
-5. Vercel автоматически определит настройки:
-   - **Framework Preset:** Vite
-   - **Build Command:** `npm run build`
-   - **Output Directory:** `dist`
-   - **Install Command:** `npm install`
-6. Нажмите "Deploy"
-
-### Ручная настройка
-
-Если автоматическое определение не сработало, укажите вручную:
-- **Framework Preset:** Vite
-- **Root Directory:** `./` (или оставьте пустым)
-- **Build Command:** `npm run build`
-- **Output Directory:** `dist`
-- **Install Command:** `npm install`
-
-### Файлы конфигурации
-
-Проект уже содержит `vercel.json` с правильными настройками для деплоя.
-
-## Настройка WhatsApp
-
-Номер телефона для WhatsApp можно изменить в файле `src/lib/constants.ts`:
-```typescript
-export const WHATSAPP_PHONE = "77088241384"
+```bash
+npm run lint
 ```
 
-## Структура проекта
+## Где что лежит
 
 ```
 src/
-├── components/          # React компоненты
-│   ├── ui/             # Базовые UI компоненты
-│   ├── HeroSection.tsx
-│   ├── PortfolioSection.tsx
-│   ├── RatesSection.tsx
-│   ├── AdvantagesSection.tsx
-│   ├── ContactFormSection.tsx
-│   └── Footer.tsx
-├── lib/
-│   ├── constants.ts     # Константы (WhatsApp номер)
-│   └── utils.ts         # Утилиты
-├── App.tsx             # Главный компонент
-├── main.tsx            # Точка входа
-└── index.css           # Глобальные стили
+  lib/properties.ts      — весь контент объектов: тексты, площади, характеристики,
+                           преимущества, фотографии и alt-тексты
+  lib/homeContent.ts     — контент главной (хиро, форматы, сервисный офис)
+  lib/site.ts            — контакты, WhatsApp, обёртка над аналитикой
+  lib/leadForm.ts        — маска телефона, валидация, отправка заявки
+  components/property/   — секции блока объекта
+  components/home/       — секции главной страницы
+  components/lead/       — форма заявки и модальное окно
+api/lead.js              — приём заявки и отправка письма
 ```
 
-## Возможные проблемы при деплое
+Чтобы поправить текст, площадь или список фотографий объекта — правится только
+`src/lib/properties.ts`.
 
-### Ошибка сборки
+## Заявки с форм
 
-Если сборка падает на Vercel:
-1. Проверьте версию Node.js (используется Node 20, указано в `.nvmrc`)
-2. Убедитесь, что все зависимости установлены
-3. Проверьте логи сборки в Vercel Dashboard
+Формы отправляют `POST /api/lead`. Функция валидирует данные, отсекает ботов
+(honeypot + минимальное время заполнения + ограничение частоты по IP) и шлёт
+письмо через [Resend](https://resend.com).
 
-### Проблемы с путями
+Переменные окружения на Vercel:
 
-Если страница не загружается после деплоя:
-- Убедитесь, что `vercel.json` содержит правильные rewrites
-- Проверьте, что `outputDirectory` указан как `dist`
+| Переменная        | Обязательна | Значение по умолчанию                        |
+|-------------------|-------------|----------------------------------------------|
+| `RESEND_API_KEY`  | да          | —                                            |
+| `LEAD_TO_EMAIL`   | нет         | `yerlepessov.t@tmk-limited.com`              |
+| `LEAD_FROM_EMAIL` | нет         | `TMK WorkFlow <noreply@tmk-workflow.kz>`     |
 
-### Проблемы с изображениями
+Домен отправителя должен быть подтверждён в Resend, иначе письма не уйдут.
 
-Если изображения не загружаются:
-- Убедитесь, что файлы в папке `public/` закоммичены в Git
-- Проверьте пути к изображениям в коде
+В письме передаются: объект, страница, источник формы, имя, компания, телефон,
+email и комментарий.
 
-## Лицензия
+## Фотографии
 
-Private
+- `public/TimeSquare/` — фото Time Square, ожидаемые имена файлов описаны
+  в [public/TimeSquare/README.md](public/TimeSquare/README.md)
+- `public/Venus/`, `public/Koktem Tower/` — фото Venus и Koktem Towers
+- `public/venus.webp`, `public/koktem-towers.webp` — фасады для обложек
+
+Если файла нет, на его месте выводится подписанная заглушка — вёрстка не ломается.
+
+Оптимизация изображений:
+
+```bash
+npm run convert-images
+```
+
+## Аналитика
+
+`track()` из `src/lib/site.ts` отправляет события в `dataLayer`, `gtag`, `ym`
+и `fbq`, если счётчик подключён на странице. События: `lead_form_open`,
+`lead_submit`, `phone_click`, `whatsapp_click`. Идентификатор Яндекс.Метрики
+задаётся переменной `VITE_YM_COUNTER_ID`.
+
+## Деплой
+
+Vercel, framework preset **Vite**. Настройки в `vercel.json`: сборка в `dist`,
+SPA-rewrite всех маршрутов кроме `/api/*`.

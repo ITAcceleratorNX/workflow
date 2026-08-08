@@ -1,36 +1,26 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
-import { HeroSection } from "./components/HeroSection"
-import { PortfolioSection } from "./components/PortfolioSection"
-import { RatesSection } from "./components/RatesSection"
-import { AdvantagesSection } from "./components/AdvantagesSection"
-import { ContactFormSection } from "./components/ContactFormSection"
-import { Footer } from "./components/Footer"
-import { ThankYouPage } from "./components/ThankYouPage"
-import {ResidentsSection} from "@/components/ResidentsSection.tsx";
+import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { Layout, ScrollToTop } from "./components/layout/Layout"
+import { LeadFormProvider } from "./components/lead/LeadFormProvider"
+import { HomePage } from "./pages/HomePage"
+import { PropertyPage } from "./pages/PropertyPage"
+import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage"
+import { NotFoundPage } from "./pages/NotFoundPage"
 
-function HomePage() {
-  return (
-    <div className="min-h-screen bg-white w-full max-w-[1440px] mx-auto relative">
-      <HeroSection />
-      <PortfolioSection />
-      <RatesSection />
-      <AdvantagesSection />
-        <ResidentsSection />
-      <ContactFormSection />
-      <Footer />
-    </div>
-  )
-}
-
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/thank-you" element={<ThankYouPage />} />
-      </Routes>
+      <ScrollToTop />
+      <LeadFormProvider>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/venus" element={<PropertyPage slug="venus" />} />
+            <Route path="/koktem-towers" element={<PropertyPage slug="koktem-towers" />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Layout>
+      </LeadFormProvider>
     </BrowserRouter>
   )
 }
-
-export default App

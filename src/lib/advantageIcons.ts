@@ -1,0 +1,37 @@
+import {
+  ArrowUpDown,
+  Award,
+  Briefcase,
+  Building2,
+  Car,
+  LayoutGrid,
+  MapPin,
+  MoveVertical,
+  PanelsTopLeft,
+  Settings2,
+  ShieldCheck,
+  ShoppingBag,
+  Snowflake,
+  TrainFront,
+  Wind,
+  type LucideIcon,
+} from "lucide-react"
+import type { AdvantageIcon } from "./properties"
+
+export const ADVANTAGE_ICONS: Record<AdvantageIcon, LucideIcon> = {
+  class: Award,
+  glazing: PanelsTopLeft,
+  engineering: Settings2,
+  elevator: ArrowUpDown,
+  parking: Car,
+  security: ShieldCheck,
+  management: Briefcase,
+  infrastructure: Building2,
+  location: MapPin,
+  cooling: Snowflake,
+  ventilation: Wind,
+  ceiling: MoveVertical,
+  layout: LayoutGrid,
+  mall: ShoppingBag,
+  transport: TrainFront,
+}

@@ -18,4 +18,7 @@ export default defineConfig({
   optimizeDeps: {
     include: ['react', 'react-dom'],
   },
+  server: {
+    port: Number(process.env.PORT) || 5173,
+  },
 })
