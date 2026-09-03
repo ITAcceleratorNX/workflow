@@ -15,6 +15,7 @@ const fromEmail = () => process.env.LEAD_FROM_EMAIL || "TMK WorkFlow <noreply@tm
 const PROPERTIES = ["Time Square", "Venus", "Koktem Towers"]
 const PHONE_PATTERN = /^\+7\d{10}$/
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/
+/* Зеркало MIN_FILL_MS в src/lib/leadForm.ts — менять значения вместе */
 const MIN_FILL_MS = 3000
 
 /* Простое ограничение частоты по IP. В serverless живёт в пределах тёплого инстанса. */

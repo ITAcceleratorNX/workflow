@@ -26,6 +26,27 @@ interface AnalyticsWindow extends Window {
   fbq?: (...args: unknown[]) => void
 }
 
+/**
+ * Событие успешной отправки формы «Записаться на просмотр» для Google Tag Manager.
+ * Персональные данные не передаются — только факт отправки и выбранный объект.
+ * Вызывать после подтверждения от сервера, а не по клику на кнопку.
+ */
+export function trackFormSubmitSuccess(property: string) {
+  if (typeof window === "undefined") return
+  const w = window as AnalyticsWindow
+
+  try {
+    w.dataLayer = w.dataLayer ?? []
+    w.dataLayer.push({
+      event: "form_submit_success",
+      form_name: "viewing_request",
+      object: property,
+    })
+  } catch {
+    /* аналитика не должна ломать интерфейс */
+  }
+}
+
 export function track(event: string, payload: TrackPayload = {}) {
   if (typeof window === "undefined") return
   const w = window as AnalyticsWindow

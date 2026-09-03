@@ -4,7 +4,7 @@ import { Check, CircleAlert, Send } from "lucide-react"
 import { Button, LinkButton } from "../ui/button"
 import { WhatsAppIcon } from "../ui/WhatsAppIcon"
 import { cn } from "../../lib/utils"
-import { CONTACTS, track, whatsappLink } from "../../lib/site"
+import { CONTACTS, track, trackFormSubmitSuccess, whatsappLink } from "../../lib/site"
 import { PROPERTY_OPTIONS } from "../../lib/properties"
 import {
   EMPTY_LEAD,
@@ -79,7 +79,11 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
 
     if (result.ok) {
       setStatus("success")
-      track("lead_submit", { source, property: values.property })
+      /* Отсечённую антиспамом отправку показываем как успешную, но в аналитику не считаем */
+      if (result.accepted) {
+        trackFormSubmitSuccess(values.property)
+        track("lead_submit", { source, property: values.property })
+      }
       onSuccess?.()
     } else {
       setStatus("error")

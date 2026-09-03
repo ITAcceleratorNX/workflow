@@ -114,9 +114,26 @@ export interface SubmitLeadPayload extends LeadFormValues {
   elapsedMs: number
 }
 
+/**
+ * Минимальное время заполнения формы, мс. Зеркало MIN_FILL_MS в api/lead.js:
+ * сервер молча подтверждает более быстрые отправки, поэтому те же правила нужны
+ * и на клиенте — чтобы не засчитать бота как заявку в аналитике.
+ */
+export const MIN_FILL_MS = 3000
+
 export interface SubmitLeadResult {
   ok: boolean
+  /**
+   * Заявка реально принята в работу. false, если её отсекла антиспам-проверка:
+   * сервер в этом случае отвечает 200, чтобы не подсказывать боту, что он раскрыт.
+   */
+  accepted: boolean
   error?: string
+}
+
+/** Повторяет антиспам-правила api/lead.js: honeypot и мгновенная отправка. */
+function isAcceptedLead(payload: SubmitLeadPayload): boolean {
+  return !payload.website.trim() && payload.elapsedMs >= MIN_FILL_MS
 }
 
 export async function submitLead(payload: SubmitLeadPayload): Promise<SubmitLeadResult> {
@@ -138,10 +155,10 @@ export async function submitLead(payload: SubmitLeadPayload): Promise<SubmitLead
     } catch {
       /* тело ответа может быть пустым */
     }
-    return { ok: false, error: message }
+    return { ok: false, accepted: false, error: message }
   }
 
-  return { ok: true }
+  return { ok: true, accepted: isAcceptedLead(payload) }
 }
 
 export const SUCCESS_MESSAGE =
