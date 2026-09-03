@@ -16,7 +16,8 @@ export function Footer() {
           <div>
             <Link to="/" className="flex items-center gap-2.5">
               <img
-                src="/app-icon-white.webp"
+                src="/logo-white-40.webp"
+                srcSet="/logo-white-40.webp 1x, /logo-white-80.webp 2x, /logo-white-120.webp 3x"
                 alt=""
                 className="h-10 w-10 object-contain"
                 width={40}

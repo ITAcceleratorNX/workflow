@@ -38,9 +38,10 @@ export function Header() {
             aria-label="TMK WorkFlow — главная"
           >
             <img
-              src="/app-icon.webp"
+              src="/logo-40.webp"
+              srcSet="/logo-40.webp 1x, /logo-80.webp 2x, /logo-120.webp 3x"
               alt=""
-              className="h-10 w-10 rounded-lg object-cover"
+              className="h-10 w-10 rounded-lg object-contain"
               width={40}
               height={40}
             />
