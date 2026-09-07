@@ -27,7 +27,7 @@ import { Button } from "../../components/ui/button"
 import { cn } from "../../lib/utils"
 import { ChipsInput, Field, FieldBlock, NumberInput, SelectInput, TextArea, TextInput } from "./fields"
 import { ProcessingBadge, QualityBadge, StatusBadge } from "./Badges"
-import { dash, formatDateTime, formatPhone } from "../format"
+import { dash, formatDateTime, formatPhone, telHref } from "../format"
 import { draftFrom, emptyDraft } from "../leadDraft"
 import type { Lead, LeadDraft } from "../types"
 
@@ -58,12 +58,18 @@ export function LeadModal({ lead, onClose, onSave }: LeadModalProps) {
   const [showErrors, setShowErrors] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
+  const [activeSection, setActiveSection] = useState("request")
+  /* На телефоне данные заявки сначала показываются сводкой: до «Обработки»
+     иначе две прокрутки, а правят эти поля редко. */
+  const [editingRequest, setEditingRequest] = useState(false)
   const bodyRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setDraft(initial)
     setShowErrors(false)
     setError("")
+    setEditingRequest(false)
+    setActiveSection("request")
   }, [initial])
 
   const dirty = useMemo(() => JSON.stringify(draft) !== JSON.stringify(initial), [draft, initial])
@@ -120,8 +126,36 @@ export function LeadModal({ lead, onClose, onSave }: LeadModalProps) {
     ...(showsDeal(draft.status) ? [{ id: "deal", title: "Сделка" }] : []),
   ]
 
+  /**
+   * Переход к разделу. Прокрутка мгновенная: плавная в Chrome не отрабатывает
+   * вверх по вложенной области, из-за чего возврат к «Обработке» просто ничего
+   * не делал. Для навигации по разделам мгновенный переход и уместнее анимации.
+   */
   const scrollTo = (id: string) => {
-    bodyRef.current?.querySelector(`#section-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })
+    const body = bodyRef.current
+    const element = body?.querySelector(`#section-${id}`)
+    if (!body || !element) return
+
+    setActiveSection(id)
+    const top = element.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop - 8
+    body.scrollTo({ top, behavior: "auto" })
+  }
+
+  /* Какой раздел сейчас перед глазами. Считаем от верха области прокрутки,
+     а не от offsetTop: секции лежат в собственном контексте позиционирования. */
+  const trackActiveSection = () => {
+    const body = bodyRef.current
+    if (!body) return
+
+    const line = body.getBoundingClientRect().top + 80
+    let current = sections[0].id
+
+    for (const section of sections) {
+      const element = body.querySelector(`#section-${section.id}`)
+      if (element && element.getBoundingClientRect().top <= line) current = section.id
+    }
+
+    setActiveSection(current)
   }
 
   async function handleSave() {
@@ -156,26 +190,61 @@ export function LeadModal({ lead, onClose, onSave }: LeadModalProps) {
       >
         <ModalHeader lead={lead} draft={draft} onClose={requestClose} />
 
-        <nav className="flex shrink-0 gap-1 overflow-x-auto border-b border-brand-100 bg-white px-4 py-2 no-scrollbar sm:px-6">
-          {sections.map((section) => (
-            <button
-              key={section.id}
-              type="button"
-              onClick={() => scrollTo(section.id)}
-              className="whitespace-nowrap rounded-lg px-3 py-1.5 text-[13px] font-medium text-ink-muted transition-colors hover:bg-brand-50 hover:text-brand-800"
-            >
-              {section.title}
-            </button>
-          ))}
+        {/* Переход по разделам. Оформлены кнопками: плоский текст читался как подпись,
+            и до нужного раздела листали руками. */}
+        <nav
+          aria-label="Разделы карточки"
+          className="flex shrink-0 gap-1.5 overflow-x-auto border-b border-brand-100 bg-white px-4 py-2.5 no-scrollbar sm:px-6"
+        >
+          {sections.map((section) => {
+            const active = activeSection === section.id
+            return (
+              <button
+                key={section.id}
+                type="button"
+                aria-current={active || undefined}
+                onClick={() => scrollTo(section.id)}
+                className={cn(
+                  "whitespace-nowrap rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors",
+                  active
+                    ? "border-orange-500 bg-orange-50 text-orange-700"
+                    : "border-brand-200 bg-white text-ink-muted hover:border-brand-400 hover:text-brand-800"
+                )}
+              >
+                {section.title}
+              </button>
+            )
+          })}
         </nav>
 
         <div
           ref={bodyRef}
+          onScroll={trackActiveSection}
           /* min-h-0 обязателен: без него флекс не даёт середине сжаться и плющит шапку с подвалом */
           className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-brand-50/40 p-4 sm:p-6"
         >
           {/* 6.1. Данные заявки */}
-          <Block id="request" title="Данные заявки" note="Приходят из формы сайта или заполняются вручную">
+          <Block
+            id="request"
+            title="Данные заявки"
+            note="Приходят из формы сайта или заполняются вручную"
+            action={
+              /* Переключатель нужен только на узком экране: на широком поля и так помещаются */
+              <button
+                type="button"
+                onClick={() => setEditingRequest((open) => !open)}
+                className="shrink-0 rounded-lg px-2 py-1 text-[13px] font-semibold text-brand-700 transition-colors hover:bg-brand-50 sm:hidden"
+              >
+                {editingRequest ? "Свернуть" : "Изменить"}
+              </button>
+            }
+          >
+            {/* Сводка вместо полей: только на телефоне и только пока правку не включили */}
+            <div className={cn("sm:hidden", editingRequest && "hidden")}>
+              <RequestSummary draft={draft} />
+            </div>
+
+            <div className={cn(editingRequest ? "block" : "hidden", "sm:block")}>
             <div className="grid gap-x-4 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
               <Field label="Имя контактного лица" required error={invalid("name") ? "Обязательное поле" : undefined}>
                 <TextInput value={draft.name} onChange={(value) => set("name", value)} invalid={invalid("name")} />
@@ -215,6 +284,8 @@ export function LeadModal({ lead, onClose, onSave }: LeadModalProps) {
                   rows={2}
                 />
               </Field>
+            </div>
+
             </div>
 
             {lead && <RequestMeta lead={lead} />}
@@ -554,12 +625,14 @@ function Block({
   title,
   note,
   accent,
+  action,
   children,
 }: {
   id: string
   title: string
   note?: string
   accent?: boolean
+  action?: React.ReactNode
   children: React.ReactNode
 }) {
   return (
@@ -571,11 +644,59 @@ function Block({
         accent ? "border-orange-200 ring-1 ring-orange-100" : "border-brand-100"
       )}
     >
-      <header className="mb-4">
-        <h3 className="text-[15px] font-bold text-brand-900">{title}</h3>
-        {note && <p className="mt-0.5 text-[13px] text-ink-soft">{note}</p>}
+      <header className="mb-4 flex items-start justify-between gap-3">
+        <div>
+          <h3 className="text-[15px] font-bold text-brand-900">{title}</h3>
+          {note && <p className="mt-0.5 text-[13px] text-ink-soft">{note}</p>}
+        </div>
+        {action}
       </header>
       {children}
     </section>
+  )
+}
+
+/**
+ * Сводка заявки для телефона. Полный набор полей занимает больше двух экранов,
+ * а правят их редко: сначала показываем то, что нужно прочитать перед звонком,
+ * поля разворачиваются по кнопке.
+ */
+function RequestSummary({ draft }: { draft: LeadDraft }) {
+  const rows: Array<{ label: string; value: string; href?: string }> = [
+    { label: "Телефон", value: formatPhone(draft.phone), href: draft.phone ? telHref(draft.phone) : undefined },
+    { label: "Email", value: dash(draft.email), href: draft.email ? `mailto:${draft.email}` : undefined },
+    {
+      label: "Объект",
+      value: [draft.property, draft.office_format].filter(Boolean).join(" · ") || "—",
+    },
+  ]
+
+  if (draft.contact_role) rows.splice(2, 0, { label: "Должность", value: draft.contact_role })
+
+  return (
+    <div className="space-y-3">
+      <dl className="space-y-2">
+        {rows.map((row) => (
+          <div key={row.label} className="flex items-baseline justify-between gap-3">
+            <dt className="text-[12px] uppercase tracking-wide text-ink-soft">{row.label}</dt>
+            <dd className="min-w-0 text-right text-[14px] font-medium text-ink">
+              {row.href ? (
+                <a href={row.href} className="text-brand-700 underline-offset-4 hover:underline">
+                  {row.value}
+                </a>
+              ) : (
+                <span className="break-words">{row.value}</span>
+              )}
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      {draft.form_comment && (
+        <p className="rounded-xl bg-brand-50/70 px-3 py-2 text-[14px] leading-relaxed text-ink">
+          {draft.form_comment}
+        </p>
+      )}
+    </div>
   )
 }
