@@ -12,7 +12,15 @@
  * Оба намеренно вынесены в окружение и не хранятся в коде: репозиторий публичный,
  * а токен — единственная защита открытого адреса от посторонних записей.
  * Если переменные не заданы, заявка просто уходит на почту, как раньше.
+ *
+ * Третий параллельный канал — CRM (раздел 15 ТЗ «CRM для сайта TMK WorkFlow»):
+ *   DATABASE_URL — база CRM. Без неё заявка идёт только на почту и в реестр.
+ * Ни один из трёх каналов не заменяет другие и не может отменить отправку формы.
  */
+
+import { createSiteLead } from "./_lib/leads.js"
+import { isDatabaseConfigured } from "./_lib/db.js"
+import { AD_PARAMS, officeFormatFromSource } from "../shared/crm.js"
 
 /* Читаем окружение в момент запроса, а не при загрузке модуля:
    иначе значение фиксируется раньше, чем окружение успевает настроиться. */
@@ -22,8 +30,6 @@ const registryUrl = () => process.env.LEADS_REGISTRY_URL || ""
 const registryToken = () => process.env.LEADS_REGISTRY_TOKEN || ""
 
 const PROPERTIES = ["Time Square", "Venus", "Koktem Towers"]
-/* Метки рекламы: клиент сохраняет их в cookie при первом заходе (src/lib/attribution.ts) */
-const AD_PARAMS = ["gclid", "utm_source", "utm_campaign", "utm_term"]
 const PHONE_PATTERN = /^\+7\d{10}$/
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/
 /* Зеркало MIN_FILL_MS в src/lib/leadForm.ts — менять значения вместе */
@@ -209,6 +215,26 @@ async function sendToRegistry(lead, adParams) {
   }
 }
 
+/**
+ * Создаёт лид в CRM (раздел 15 ТЗ). Как и реестр, никогда не бросает исключение:
+ * недоступная база не должна мешать заявке уйти на почту.
+ */
+async function saveToCrm(lead, adParams) {
+  if (!isDatabaseConfigured()) {
+    console.warn("DATABASE_URL не задан — лид в CRM не создан")
+    return
+  }
+
+  try {
+    await createSiteLead(
+      { ...lead, officeFormat: officeFormatFromSource(lead.source) },
+      adParams
+    )
+  } catch (error) {
+    console.error("Не удалось создать лид в CRM", error)
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST")
@@ -257,16 +283,19 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Требуется согласие на обработку персональных данных" })
   }
 
+  /* Ключ проверяем, но заявку из-за него не теряем: реестр и CRM должны
+     получить её в любом случае — это три независимых канала (раздел 15 ТЗ). */
   const apiKey = process.env.RESEND_API_KEY
-  if (!apiKey) {
-    console.error("RESEND_API_KEY не задан — заявка не отправлена", lead)
-    return res.status(500).json({ error: "Сервис отправки временно недоступен" })
-  }
+  if (!apiKey) console.error("RESEND_API_KEY не задан — письмо не отправлено")
 
-  /* Письмо и реестр идут параллельно, чтобы реестр не добавлял задержки к форме.
-     Дожидаемся обоих: serverless-инстанс замораживается сразу после ответа,
-     и незавершённый запрос к реестру просто не уйдёт. */
-  const [emailed] = await Promise.all([sendEmail(lead, apiKey), sendToRegistry(lead, adParams)])
+  /* Три канала идут параллельно, чтобы реестр и CRM не добавляли задержки к форме.
+     Дожидаемся всех: serverless-инстанс замораживается сразу после ответа,
+     и незавершённая запись просто не уйдёт. */
+  const [emailed] = await Promise.all([
+    apiKey ? sendEmail(lead, apiKey) : false,
+    sendToRegistry(lead, adParams),
+    saveToCrm(lead, adParams),
+  ])
 
   if (!emailed) {
     return res.status(502).json({ error: "Не удалось отправить заявку" })

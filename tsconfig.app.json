@@ -8,6 +8,10 @@
     "types": ["vite/client"],
     "skipLibCheck": true,
 
+    /* shared/crm.js — общий справочник для браузера и серверных функций.
+       Это обычный JavaScript, типы выводятся из JSDoc. */
+    "allowJs": true,
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -27,8 +31,9 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@shared/*": ["./shared/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "shared"]
 }
