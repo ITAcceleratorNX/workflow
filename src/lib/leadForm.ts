@@ -1,3 +1,4 @@
+import { readAdParams } from "./attribution"
 import { PROPERTY_OPTIONS } from "./properties"
 
 /** Точки открытия формы (раздел 9.1 ТЗ) — источник передаётся вместе с заявкой. */
@@ -144,6 +145,8 @@ export async function submitLead(payload: SubmitLeadPayload): Promise<SubmitLead
       ...payload,
       phone: toE164(payload.phone),
       sourceLabel: LEAD_SOURCE_LABELS[payload.source],
+      /* Метки рекламы живут в cookie, а не в форме, — читаем в момент отправки */
+      ...readAdParams(),
     }),
   })
 

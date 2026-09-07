@@ -5,14 +5,25 @@
  *   RESEND_API_KEY   — обязательный, ключ API resend.com
  *   LEAD_TO_EMAIL    — куда слать заявки (по умолчанию yerlepessov.t@tmk-limited.com)
  *   LEAD_FROM_EMAIL  — отправитель на подтверждённом в Resend домене
+ *
+ * Дублирование заявок в реестр обращений (ТЗ Bankai.Agency от 04.09.2026):
+ *   LEADS_REGISTRY_URL   — адрес приёмника (Google Apps Script)
+ *   LEADS_REGISTRY_TOKEN — общий секрет приёмника
+ * Оба намеренно вынесены в окружение и не хранятся в коде: репозиторий публичный,
+ * а токен — единственная защита открытого адреса от посторонних записей.
+ * Если переменные не заданы, заявка просто уходит на почту, как раньше.
  */
 
 /* Читаем окружение в момент запроса, а не при загрузке модуля:
    иначе значение фиксируется раньше, чем окружение успевает настроиться. */
 const toEmail = () => process.env.LEAD_TO_EMAIL || "yerlepessov.t@tmk-limited.com"
 const fromEmail = () => process.env.LEAD_FROM_EMAIL || "TMK WorkFlow <noreply@tmk-workflow.kz>"
+const registryUrl = () => process.env.LEADS_REGISTRY_URL || ""
+const registryToken = () => process.env.LEADS_REGISTRY_TOKEN || ""
 
 const PROPERTIES = ["Time Square", "Venus", "Koktem Towers"]
+/* Метки рекламы: клиент сохраняет их в cookie при первом заходе (src/lib/attribution.ts) */
+const AD_PARAMS = ["gclid", "utm_source", "utm_campaign", "utm_term"]
 const PHONE_PATTERN = /^\+7\d{10}$/
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/
 /* Зеркало MIN_FILL_MS в src/lib/leadForm.ts — менять значения вместе */
@@ -44,6 +55,18 @@ const escapeHtml = (value) =>
     .replace(/"/g, "&quot;")
 
 const clean = (value, maxLength = 500) => String(value ?? "").trim().slice(0, maxLength)
+
+/** Пустые поля в реестр не отправляем — по ТЗ все они, кроме токена, необязательные. */
+const withoutEmpty = (fields) => Object.fromEntries(Object.entries(fields).filter(([, value]) => value))
+
+function pickAdParams(body) {
+  const params = {}
+  for (const key of AD_PARAMS) {
+    const value = clean(body[key], 300)
+    if (value) params[key] = value
+  }
+  return params
+}
 
 const leadRows = (lead) => [
   ["Объект", lead.property],
@@ -109,6 +132,83 @@ function buildEmailHtml(lead) {
 </html>`
 }
 
+/** Письмо менеджеру. Возвращает признак успеха, ошибки логирует сама. */
+async function sendEmail(lead, apiKey) {
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: fromEmail(),
+        to: [toEmail()],
+        reply_to: lead.email || undefined,
+        subject: `Заявка с сайта — ${lead.property} — ${lead.name}`,
+        text: buildEmailText(lead),
+        html: buildEmailHtml(lead),
+        /* Уникальный идентификатор не даёт Gmail схлопывать похожие заявки в одну */
+        headers: { "X-Entity-Ref-ID": crypto.randomUUID() },
+      }),
+    })
+
+    if (!response.ok) {
+      const details = await response.text()
+      console.error("Resend вернул ошибку", response.status, details)
+      return false
+    }
+
+    return true
+  } catch (error) {
+    console.error("Ошибка отправки заявки", error)
+    return false
+  }
+}
+
+/**
+ * Дублирует заявку в реестр обращений. Никогда не бросает исключение:
+ * недоступный реестр не должен влиять ни на письмо, ни на то, что видит человек.
+ */
+async function sendToRegistry(lead, adParams) {
+  const url = registryUrl()
+  const token = registryToken()
+
+  if (!url || !token) {
+    console.warn("LEADS_REGISTRY_URL или LEADS_REGISTRY_TOKEN не заданы — заявка в реестр не ушла")
+    return
+  }
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      /* Кодировку указываем явно, иначе кириллица придёт в реестр нечитаемой */
+      headers: { "Content-Type": "application/json; charset=utf-8" },
+      body: JSON.stringify({
+        token,
+        ...withoutEmpty({
+          name: lead.name,
+          phone: lead.phone,
+          email: lead.email,
+          company: lead.company,
+          property: lead.property,
+          comment: lead.comment,
+          ...adParams,
+        }),
+      }),
+    })
+
+    /* Apps Script отвечает редиректом на googleusercontent — fetch проходит по нему сам */
+    const data = await response.json().catch(() => null)
+
+    if (!response.ok || data?.ok === false) {
+      console.error("Реестр не принял заявку", response.status, data?.error ?? "")
+    }
+  } catch (error) {
+    console.error("Не удалось отправить заявку в реестр", error)
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST")
@@ -143,6 +243,8 @@ export default async function handler(req, res) {
     sourceLabel: clean(body.sourceLabel, 160),
   }
 
+  const adParams = pickAdParams(body)
+
   if (!lead.name) return res.status(400).json({ error: "Укажите имя" })
   if (!PHONE_PATTERN.test(lead.phone)) return res.status(400).json({ error: "Некорректный телефон" })
   if (lead.email && !EMAIL_PATTERN.test(lead.email)) {
@@ -161,36 +263,16 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Сервис отправки временно недоступен" })
   }
 
-  try {
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: fromEmail(),
-        to: [toEmail()],
-        reply_to: lead.email || undefined,
-        subject: `Заявка с сайта — ${lead.property} — ${lead.name}`,
-        text: buildEmailText(lead),
-        html: buildEmailHtml(lead),
-        /* Уникальный идентификатор не даёт Gmail схлопывать похожие заявки в одну */
-        headers: { "X-Entity-Ref-ID": crypto.randomUUID() },
-      }),
-    })
+  /* Письмо и реестр идут параллельно, чтобы реестр не добавлял задержки к форме.
+     Дожидаемся обоих: serverless-инстанс замораживается сразу после ответа,
+     и незавершённый запрос к реестру просто не уйдёт. */
+  const [emailed] = await Promise.all([sendEmail(lead, apiKey), sendToRegistry(lead, adParams)])
 
-    if (!response.ok) {
-      const details = await response.text()
-      console.error("Resend вернул ошибку", response.status, details)
-      return res.status(502).json({ error: "Не удалось отправить заявку" })
-    }
-
-    return res.status(200).json({ ok: true })
-  } catch (error) {
-    console.error("Ошибка отправки заявки", error)
+  if (!emailed) {
     return res.status(502).json({ error: "Не удалось отправить заявку" })
   }
+
+  return res.status(200).json({ ok: true })
 }
 
 function safeParse(value) {
