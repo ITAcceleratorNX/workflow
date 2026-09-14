@@ -1,40 +1,25 @@
-/** Контент главной страницы: разделы 5.1–5.3 ТЗ */
+/** Контент главной страницы */
 
 export const HERO = {
   eyebrow: "КОММЕРЧЕСКАЯ НЕДВИЖИМОСТЬ · АЛМАТЫ",
-  title: "Офисы для бизнеса в Алматы",
+  title: "Офисы для бизнеса",
+  titleAccent: "в Алматы",
   description:
     "Подберём офис, сервисное пространство или решение под ключ под задачи вашей компании. Сопроводим от заявки до заезда.",
   cta: "Подобрать офис",
-  image: "/Carousel/TMK_11440.jpg.webp",
-  imageAlt: "Современное офисное пространство TMK WorkFlow в Алматы",
+  objectsLine: "Time Square · Venus · Koktem Towers",
 } as const
 
-export const OFFICE_FORMATS = {
-  eyebrow: "ФОРМАТЫ ОФИСНЫХ РЕШЕНИЙ",
-  title: "Под разные задачи бизнеса",
-  description:
-    "Эти форматы помогают точнее описать запрос в заявке — выбор формата не ограничивает каталог.",
-  cards: [
-    {
-      title: "Офис",
-      text: "Классический офис в бизнес-центре. Подберём площадь и планировку под задачи команды.",
-    },
-    {
-      title: "Сервисный офис",
-      text: "Готовое пространство с мебелью, интернетом и обслуживанием. Можно сразу начинать работу.",
-    },
-    {
-      title: "Офис под ключ",
-      text: "Подбор помещения, планировка и подготовка рабочего пространства к заезду.",
-    },
-  ],
-} as const
-
-export const SERVICED_OFFICE = {
-  title: "Сервисный офис",
-  text: "Готовое рабочее пространство с мебелью, интернетом и обслуживанием. Можно заехать и начать работу без подготовки офиса с нуля.",
-  cta: "Подобрать сервисный офис",
-  image: "/Carousel/TMK_11483.jpg.webp",
-  imageAlt: "Сервисный офис с мебелью и зоной отдыха в Алматы",
-} as const
+/**
+ * Короткие клипы для Hero-нарезки (public/hero/).
+ * Чередуем экстерьеры с дрона и светлые интерьеры офисов.
+ */
+export const HERO_CLIPS = [
+  { mp4: "/hero/ext-02.mp4", webm: "/hero/ext-02.webm", poster: "/hero/ext-02.jpg" },
+  { mp4: "/hero/int-04.mp4", webm: "/hero/int-04.webm", poster: "/hero/int-04.jpg" },
+  { mp4: "/hero/ext-05.mp4", webm: "/hero/ext-05.webm", poster: "/hero/ext-05.jpg" },
+  { mp4: "/hero/int-05.mp4", webm: "/hero/int-05.webm", poster: "/hero/int-05.jpg" },
+  { mp4: "/hero/ext-01.mp4", webm: "/hero/ext-01.webm", poster: "/hero/ext-01.jpg" },
+  { mp4: "/hero/int-01.mp4", webm: "/hero/int-01.webm", poster: "/hero/int-01.jpg" },
+  { mp4: "/hero/int-06.mp4", webm: "/hero/int-06.webm", poster: "/hero/int-06.jpg" },
+] as const

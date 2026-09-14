@@ -27,6 +27,10 @@ export const LEAD_MODAL_TITLES: Record<LeadSource, { title: string; description:
     title: "Подобрать офис",
     description: "Оставьте контакты — подберём подходящие варианты и вернёмся с предложением.",
   },
+  "home-select-office": {
+    title: "Подобрать офис",
+    description: "Оставьте заявку — подберём подходящий бизнес-центр и формат офиса под задачи вашей компании.",
+  },
   "serviced-office": {
     title: "Подобрать сервисный офис",
     description: "Расскажем о свободных сервисных пространствах и условиях заезда.",

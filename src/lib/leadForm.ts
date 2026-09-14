@@ -4,6 +4,7 @@ import { PROPERTY_OPTIONS } from "./properties"
 /** Точки открытия формы (раздел 9.1 ТЗ) — источник передаётся вместе с заявкой. */
 export type LeadSource =
   | "hero-select-office"
+  | "home-select-office"
   | "serviced-office"
   | "viewing"
   | "header-contact"
@@ -12,6 +13,7 @@ export type LeadSource =
 
 export const LEAD_SOURCE_LABELS: Record<LeadSource, string> = {
   "hero-select-office": "Хиро-блок — кнопка «Подобрать офис»",
+  "home-select-office": "Главная — блок карты — кнопка «Подобрать офис»",
   "serviced-office": "Блок «Сервисный офис» — кнопка «Подобрать сервисный офис»",
   viewing: "Форма записи на просмотр",
   "header-contact": "Верхняя панель — кнопка «Связаться с нами»",

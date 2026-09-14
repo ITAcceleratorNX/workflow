@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, NavLink } from "react-router-dom"
+import { Link, NavLink, useLocation } from "react-router-dom"
 import { Menu, Phone, X } from "lucide-react"
 import { Button, LinkButton } from "../ui/button"
 import { WhatsAppIcon } from "../ui/WhatsAppIcon"
@@ -9,7 +9,11 @@ import { PROPERTIES } from "../../lib/properties"
 import { useLeadForm } from "../../lib/leadFormContext"
 
 export function Header() {
+  const { pathname } = useLocation()
+  const isHome = pathname === "/"
   const [menuOpen, setMenuOpen] = useState(false)
+  /** На главной: true, пока Hero ещё в зоне видимости */
+  const [overHero, setOverHero] = useState(isHome)
   const { openLeadForm } = useLeadForm()
 
   useEffect(() => {
@@ -18,6 +22,39 @@ export function Header() {
       document.body.style.overflow = ""
     }
   }, [menuOpen])
+
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [pathname])
+
+  useEffect(() => {
+    if (!isHome) {
+      setOverHero(false)
+      return
+    }
+
+    setOverHero(true)
+
+    const hero = document.getElementById("home-hero-section")
+    if (!hero) {
+      setOverHero(false)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        /* Пока Hero занимает заметную часть экрана — шапку прячем */
+        setOverHero(entry.isIntersecting && entry.intersectionRatio > 0.45)
+      },
+      { threshold: [0, 0.45, 0.6, 1] }
+    )
+
+    observer.observe(hero)
+    return () => observer.disconnect()
+  }, [isHome])
+
+  /* На Hero шапка скрыта; при открытом мобильном меню — всегда видна */
+  const hideOnHero = isHome && overHero && !menuOpen
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     cn(
@@ -28,7 +65,16 @@ export function Header() {
     )
 
   return (
-    <header className="sticky top-0 z-50 border-b border-brand-100 bg-white/95 backdrop-blur">
+    <header
+      className={cn(
+        "z-50 transition-[transform,opacity,background-color,border-color,box-shadow] duration-300 ease-out",
+        isHome ? "fixed inset-x-0 top-0" : "sticky top-0 border-b border-brand-100 bg-white/95 backdrop-blur",
+        isHome &&
+          (hideOnHero
+            ? "pointer-events-none -translate-y-full border-transparent bg-transparent opacity-0"
+            : "translate-y-0 border-b border-brand-100 bg-white/95 opacity-100 shadow-sm backdrop-blur")
+      )}
+    >
       <div className="container-site">
         <div className="flex h-16 items-center justify-between gap-4 lg:h-20">
           <Link

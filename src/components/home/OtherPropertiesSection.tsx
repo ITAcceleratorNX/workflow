@@ -13,7 +13,7 @@ export function OtherPropertiesSection({ properties }: { properties: Property[] 
     <Section tone="white" size="lg">
       <SectionHeading
         eyebrow="Другие объекты"
-        title="Ещё два бизнес-центра в Алматы"
+        title="Другие бизнес-центры TMK WorkFlow"
         description="Откройте страницу объекта, чтобы посмотреть свободные площади, характеристики и фотографии."
       />
 

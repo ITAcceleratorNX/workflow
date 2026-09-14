@@ -73,6 +73,86 @@
   transform: none;
 }
 
+/* Hero: ровно на весь экран на всех устройствах (с учётом мобильной панели браузера) */
+.hero-screen {
+  height: 100vh;
+  min-height: 100vh;
+  height: 100svh;
+  min-height: 100svh;
+  height: 100dvh;
+  min-height: 100dvh;
+}
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hero-fade-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hero-fade {
+  opacity: 0;
+  animation: hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (min-width: 640px) {
+  .hero-fade {
+    animation-name: hero-fade-in-right;
+  }
+}
+
+.hero-fade-1 { animation-delay: 0.12s; }
+.hero-fade-2 { animation-delay: 0.28s; }
+.hero-fade-3 { animation-delay: 0.44s; }
+.hero-fade-4 { animation-delay: 0.6s; }
+
+/* Маркеры БЦ на мини-карте главной */
+.bc-map-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.bc-map-marker__pin {
+  display: flex;
+  height: 40px;
+  width: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: #f26b21;
+  color: #fff;
+  box-shadow: 0 10px 24px -8px rgba(14, 53, 82, 0.55);
+}
+
+.bc-map-tooltip {
+  padding: 4px 8px !important;
+  border: none !important;
+  border-radius: 8px !important;
+  background: #0e3552 !important;
+  color: #fff !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 8px 20px -10px rgba(14, 53, 82, 0.5) !important;
+}
+
+.bc-map-tooltip::before {
+  border-top-color: #0e3552 !important;
+}
+
 /* Плавное увеличение фотографий в галереях и карточках */
 .zoom-media img {
   transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
@@ -101,6 +181,11 @@
     opacity: 1;
     transform: none;
     transition: none;
+  }
+
+  .hero-fade {
+    opacity: 1;
+    animation: none;
   }
 
   .zoom-media img {

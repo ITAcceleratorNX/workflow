@@ -334,6 +334,6 @@ export const showsDesiredLocation = (property) => property === PROPERTY_OTHER
  */
 export function officeFormatFromSource(source) {
   if (source === "serviced-office") return "Сервисный офис"
-  if (source === "hero-select-office") return "Офис"
+  if (source === "hero-select-office" || source === "home-select-office") return "Офис"
   return "Не определился"
 }

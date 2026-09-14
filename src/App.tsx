@@ -17,6 +17,7 @@ function SiteRoutes() {
       <Layout>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/time-square" element={<PropertyPage slug="time-square" />} />
           <Route path="/venus" element={<PropertyPage slug="venus" />} />
           <Route path="/koktem-towers" element={<PropertyPage slug="koktem-towers" />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
