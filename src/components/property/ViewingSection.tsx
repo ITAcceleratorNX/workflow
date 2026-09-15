@@ -9,26 +9,30 @@ import { useLeadForm } from "../../lib/leadFormContext"
 import type { Property } from "../../lib/properties"
 
 /**
- * Запись на просмотр и контакты (разделы 5.11 / 6.7 / 7.7 ТЗ).
- * Поле «Интересующий объект» подставляется автоматически.
+ * Запись на просмотр и контакты.
+ * На странице объекта — с названием БЦ и предзаполненным полем;
+ * на главной — без названия конкретного объекта.
  */
 export function ViewingSection({
   property,
-  level: Heading,
+  level: Heading = "h2",
 }: {
-  property: Property
-  level: "h2" | "h3"
+  property?: Property
+  level?: "h2" | "h3"
 }) {
   const { openLeadForm } = useLeadForm()
+  const sectionId = property ? `viewing-${property.slug}` : "viewing"
+  const title = property ? `Посмотрите ${property.name} вживую` : "Посмотрите вживую"
+  const whatsappText = property
+    ? `Здравствуйте! Хочу записаться на просмотр помещений в ${property.name}.`
+    : "Здравствуйте! Хочу записаться на просмотр офисов TMK WorkFlow."
 
   return (
-    <Section id={`viewing-${property.slug}`} tone="deep" size="lg">
+    <Section id={sectionId} tone="deep" size="lg">
       <div className="grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:gap-16">
         <Reveal>
           <p className="eyebrow text-brand-300">Запись на просмотр</p>
-          <Heading className="mt-3 text-3xl text-white sm:text-4xl">
-            Посмотрите {property.name} вживую
-          </Heading>
+          <Heading className="mt-3 text-3xl text-white sm:text-4xl">{title}</Heading>
           <p className="mt-4 text-base leading-relaxed text-brand-100">
             Оставьте заявку — согласуем удобное время, покажем свободные помещения и ответим на
             вопросы по условиям аренды.
@@ -37,7 +41,12 @@ export function ViewingSection({
           <div className="mt-8 space-y-4">
             <a
               href={CONTACTS.phoneHref}
-              onClick={() => track("phone_click", { placement: "viewing", property: property.name })}
+              onClick={() =>
+                track("phone_click", {
+                  placement: "viewing",
+                  property: property?.name ?? "home",
+                })
+              }
               className="flex items-center gap-3 text-lg font-semibold text-white transition hover:text-orange-400"
             >
               <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10">
@@ -56,18 +65,24 @@ export function ViewingSection({
             </a>
             <div className="flex flex-wrap gap-3">
               <Button
-                onClick={() => openLeadForm({ source: "property-contact", property: property.name })}
+                onClick={() =>
+                  openLeadForm({
+                    source: property ? "property-contact" : "home-select-office",
+                    property: property?.name,
+                  })
+                }
               >
                 Связаться с нами
               </Button>
               <LinkButton
-                href={whatsappLink(
-                  `Здравствуйте! Хочу записаться на просмотр помещений в ${property.name}.`
-                )}
+                href={whatsappLink(whatsappText)}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() =>
-                  track("whatsapp_click", { placement: "viewing", property: property.name })
+                  track("whatsapp_click", {
+                    placement: "viewing",
+                    property: property?.name ?? "home",
+                  })
                 }
                 variant="outline"
                 className="border-white/25 bg-transparent text-white hover:border-white/50 hover:bg-white/10"
@@ -81,8 +96,11 @@ export function ViewingSection({
 
         <Reveal delay={120}>
           <div className="rounded-2xl bg-white p-6 shadow-float sm:p-8">
-            {/* key сбрасывает состояние формы при переходе между объектами */}
-            <LeadForm key={property.slug} source="viewing" defaultProperty={property.name} />
+            <LeadForm
+              key={property?.slug ?? "home"}
+              source="viewing"
+              defaultProperty={property?.name}
+            />
           </div>
         </Reveal>
       </div>

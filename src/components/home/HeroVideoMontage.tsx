@@ -126,8 +126,9 @@ export function HeroVideoMontage() {
         </>
       )}
 
-      <div className="absolute inset-0 bg-gradient-to-l from-brand-950/95 via-brand-950/55 to-brand-950/20 sm:from-brand-950/90 sm:via-brand-950/40 sm:to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-brand-950/80 via-transparent to-brand-950/40 sm:from-brand-950/50 sm:to-brand-950/25" />
+      {/* Равномерное затемнение фона ~35–40% */}
+      <div className="absolute inset-0 bg-brand-950/40" />
+      <div className="absolute inset-0 bg-black/15" />
     </div>
   )
 }

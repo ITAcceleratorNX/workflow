@@ -1,7 +1,9 @@
 import { Seo } from "../components/layout/Layout"
 import { HeroSection } from "../components/home/HeroSection"
+import { OfficeFormatsSection } from "../components/home/OfficeFormatsSection"
 import { PropertyCardsSection } from "../components/home/PropertyCardsSection"
 import { MapLeadSection } from "../components/home/MapLeadSection"
+import { ViewingSection } from "../components/property/ViewingSection"
 
 const HOME_SEO = {
   title: "TMK WorkFlow — офисы и коммерческие помещения в аренду в Алматы",
@@ -14,8 +16,10 @@ export function HomePage() {
     <>
       <Seo title={HOME_SEO.title} description={HOME_SEO.description} path="/" />
       <HeroSection />
+      <OfficeFormatsSection />
       <PropertyCardsSection />
       <MapLeadSection />
+      <ViewingSection />
     </>
   )
 }

@@ -93,26 +93,9 @@
   }
 }
 
-@keyframes hero-fade-in-right {
-  from {
-    opacity: 0;
-    transform: translateX(28px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
 .hero-fade {
   opacity: 0;
   animation: hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@media (min-width: 640px) {
-  .hero-fade {
-    animation-name: hero-fade-in-right;
-  }
 }
 
 .hero-fade-1 { animation-delay: 0.12s; }
@@ -120,37 +103,42 @@
 .hero-fade-3 { animation-delay: 0.44s; }
 .hero-fade-4 { animation-delay: 0.6s; }
 
-/* Маркеры БЦ на мини-карте главной */
+/* Метки БЦ на мини-карте главной */
 .bc-map-marker {
   background: transparent !important;
   border: none !important;
 }
 
+.bc-map-marker__wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.bc-map-marker__label {
+  max-width: 140px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: #0e3552;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  box-shadow: 0 8px 18px -10px rgba(14, 53, 82, 0.55);
+}
+
 .bc-map-marker__pin {
   display: flex;
-  height: 40px;
-  width: 40px;
+  height: 34px;
+  width: 34px;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
+  border-radius: 12px;
   background: #f26b21;
   color: #fff;
-  box-shadow: 0 10px 24px -8px rgba(14, 53, 82, 0.55);
-}
-
-.bc-map-tooltip {
-  padding: 4px 8px !important;
-  border: none !important;
-  border-radius: 8px !important;
-  background: #0e3552 !important;
-  color: #fff !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
-  box-shadow: 0 8px 20px -10px rgba(14, 53, 82, 0.5) !important;
-}
-
-.bc-map-tooltip::before {
-  border-top-color: #0e3552 !important;
+  box-shadow: 0 10px 22px -8px rgba(14, 53, 82, 0.55);
 }
 
 /* Плавное увеличение фотографий в галереях и карточках */
