@@ -49,7 +49,7 @@ export function drawCover(
   context.drawImage(image, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight)
 }
 
-/* Сколько декодированных кадров держим одновременно: 48 × 1280×720 ≈ 180 МБ */
+/* Сколько декодированных кадров держим одновременно: 48 × 1600×900 ≈ 280 МБ, 48 × 720×960 ≈ 130 МБ */
 const DEFAULT_CACHE_SIZE = 48
 /* Сколько кадров вперёд и назад декодируем заранее, пока человек прокручивает */
 const DECODE_AHEAD = 6
@@ -58,7 +58,8 @@ const LOAD_STRIDES = [32, 16, 8, 4, 2, 1]
 
 export class FrameSequence {
   readonly count: number
-  loadedCount = 0
+  /** Сколько кадров обработано загрузкой — включая недоступные, которые пропустили */
+  settledCount = 0
   loadedBytes = 0
   /** Сколько раз нужного кадра ещё не было и показали соседний */
   misses = 0
@@ -93,17 +94,27 @@ export class FrameSequence {
     return order
   }
 
+  /**
+   * Загружает недостающие кадры. После прерывания (signal) повторный вызов
+   * докачивает только то, чего ещё нет. Недоступный кадр пропускается —
+   * вместо него покажется соседний, а загрузка не останавливается.
+   */
   async load(onProgress?: () => void, signal?: AbortSignal, concurrency = 6) {
-    const queue = FrameSequence.loadOrder(this.count)
+    const queue = FrameSequence.loadOrder(this.count).filter((index) => !this.blobs[index])
 
     const worker = async () => {
-      while (queue.length && !this.disposed) {
+      while (queue.length && !this.disposed && !signal?.aborted) {
         const index = queue.shift()!
-        const response = await fetch(this.urlFor(index), { signal })
-        const blob = await response.blob()
-        this.blobs[index] = blob
-        this.loadedCount++
-        this.loadedBytes += blob.size
+        try {
+          const response = await fetch(this.urlFor(index), { signal })
+          if (!response.ok) throw new Error(String(response.status))
+          const blob = await response.blob()
+          this.blobs[index] = blob
+          this.loadedBytes += blob.size
+        } catch {
+          if (signal?.aborted) return
+        }
+        this.settledCount++
         onProgress?.()
       }
     }
@@ -132,10 +143,16 @@ export class FrameSequence {
     return undefined
   }
 
-  dispose() {
-    this.disposed = true
+  /** Освобождает декодированные кадры (самое тяжёлое в памяти), скачанные файлы остаются */
+  releaseDecoded() {
     this.bitmaps.forEach((bitmap) => bitmap.close())
     this.bitmaps.clear()
+    this.lastIndex = -1
+  }
+
+  dispose() {
+    this.disposed = true
+    this.releaseDecoded()
     this.blobs = []
   }
 

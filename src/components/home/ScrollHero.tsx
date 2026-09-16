@@ -3,6 +3,7 @@ import { ArrowDown, ArrowUpRight } from "lucide-react"
 import { Action } from "../ui/Action"
 import { actionArrowClass } from "../ui/actionVariants"
 import { Appear } from "../motion/Appear"
+import { ScrollHeroMedia } from "./ScrollHeroMedia"
 import { TextReveal } from "../motion/TextReveal"
 import { EASE, MOTION_OK, gsap, useGSAP } from "../../lib/motion"
 import { SCROLL_HERO } from "../../lib/homeContent"
@@ -22,7 +23,7 @@ const CHAPTER_STEP = 2.6
 const CHAPTER_HOLD = 1.7
 const FINALE_START = CHAPTER_START + CHAPTER_STEP * SCROLL_HERO.chapters.length
 /* Последний отрезок прокрутки финал просто стоит — время нажать кнопку.
-   Длину шкалы задают твины медиа и полосы прогресса: они идут от 0 до TIMELINE_END */
+   Длину шкалы задаёт полоса прогресса: она идёт от 0 до TIMELINE_END */
 const TIMELINE_END = FINALE_START + 1.6
 
 /* Точки смены номера в счётчике: первый экран, главы, финал */
@@ -44,12 +45,12 @@ function checkpointAt(time: number) {
 
 /**
  * Hero главной: сцена закреплена на экране, пока прокручивается высокая обёртка.
- * Сейчас под текстами кадр-заглушка с медленным «наездом камеры»;
- * на этапе видео его место займут кадры ролика, привязанные к той же прокрутке.
+ * Прокрутка ведёт пролёт по офису (кадры ролика) и сменяет главы с текстами.
  */
 export function ScrollHero() {
   const wrapperRef = useRef<HTMLElement>(null)
-  const mediaRef = useRef<HTMLDivElement>(null)
+  /* Прогресс сцены 0…1: пишет ScrollTrigger, читает медиа-слой в каждом кадре */
+  const progressRef = useRef(0)
   const scrimRef = useRef<HTMLDivElement>(null)
   const openingRef = useRef<HTMLDivElement>(null)
   const finaleRef = useRef<HTMLDivElement>(null)
@@ -61,7 +62,7 @@ export function ScrollHero() {
   const introReady = useIntroPhase() !== "loading"
   const { openLeadForm } = useLeadForm()
   const scrollToElement = useScrollToElement()
-  const { opening, chapters, finale, poster } = SCROLL_HERO
+  const { opening, chapters, finale } = SCROLL_HERO
 
   useGSAP(
     () => {
@@ -79,6 +80,7 @@ export function ScrollHero() {
             end: "bottom bottom",
             scrub: true,
             onUpdate: (self) => {
+              progressRef.current = self.progress
               const index = checkpointAt(self.progress * TIMELINE_END)
               if (index !== shownIndex && counterRef.current) {
                 shownIndex = index
@@ -89,7 +91,6 @@ export function ScrollHero() {
         })
 
         timeline
-          .fromTo(mediaRef.current, { scale: 1.04 }, { scale: 1.22, duration: TIMELINE_END }, 0)
           .fromTo(railRef.current, { scaleX: 0 }, { scaleX: 1, duration: TIMELINE_END }, 0)
           .to(hintRef.current, { autoAlpha: 0, duration: 0.3 }, 0)
           .to(openingRef.current, { autoAlpha: 0, y: -80, duration: 1, ease: "power2.in" }, OPENING_OUT)
@@ -127,17 +128,7 @@ export function ScrollHero() {
       className="relative h-[440svh] bg-graphite-950 sm:h-[520svh] motion-reduce:!h-svh"
     >
       <div className="sticky top-0 h-svh overflow-hidden">
-        {/* Медиа-слой: пока кадр-заглушка, позже — видео по прокрутке */}
-        <div ref={mediaRef} className="absolute inset-0 will-change-transform">
-          <img
-            src={poster.src}
-            srcSet={poster.srcSet}
-            sizes="100vw"
-            alt=""
-            fetchPriority="high"
-            className="h-full w-full object-cover"
-          />
-        </div>
+        <ScrollHeroMedia progressRef={progressRef} />
 
         {/* Затемнение: сверху под шапку, снизу под тексты и слева под главы */}
         <div

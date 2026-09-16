@@ -105,7 +105,7 @@ function FramesPlayer({
         loadedBytes: sequence.loadedBytes,
         totalBytes: variant.bytes,
         loadSeconds,
-        position: `кадр ${indexRef.current + 1} из ${variant.count} · загружено ${sequence.loadedCount}`,
+        position: `кадр ${indexRef.current + 1} из ${variant.count} · загружено ${sequence.settledCount}`,
         quality: `промахов декодирования: ${sequence.misses}`,
       })
     }, 250)
