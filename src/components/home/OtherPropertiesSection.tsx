@@ -1,69 +1,72 @@
 import { Link } from "react-router-dom"
-import { ArrowRight, MapPin } from "lucide-react"
-import { Section, SectionHeading } from "../ui/Section"
-import { Reveal } from "../ui/Reveal"
+import { ArrowUpRight, MapPin } from "lucide-react"
+import { SectionTitle } from "../ui/SectionTitle"
 import { SmartImage } from "../ui/SmartImage"
-import { buttonVariants } from "../ui/buttonVariants"
+import { actionVariants } from "../ui/actionVariants"
+import { Appear } from "../motion/Appear"
 import { cn } from "../../lib/utils"
 import type { Property } from "../../lib/properties"
 
 /** Переходы на другие объекты (раздел 5.12 ТЗ): обложки - фотографии фасада снаружи. */
 export function OtherPropertiesSection({ properties }: { properties: Property[] }) {
   return (
-    <Section tone="white" size="lg">
-      <SectionHeading
-        eyebrow="Другие объекты"
-        title="Другие бизнес-центры TMK WorkFlow"
-        description="Откройте страницу объекта, чтобы посмотреть свободные площади, характеристики и фотографии."
-      />
+    <section className="bg-ivory-50 py-24 sm:py-32">
+      <div className="shell">
+        <SectionTitle
+          label="Другие объекты"
+          title={
+            <>
+              Другие бизнес-центры <span className="accent-serif text-ochre-700">TMK WorkFlow</span>
+            </>
+          }
+          description="Откройте страницу объекта, чтобы посмотреть свободные площади, характеристики и фотографии."
+        />
 
-      <div className="mt-10 grid gap-6 lg:grid-cols-2">
-        {properties.map((property, index) => (
-          <Reveal key={property.slug} delay={index * 100}>
-            <Link
-              to={property.path}
-              className="zoom-media group relative flex h-full min-h-[360px] flex-col justify-end overflow-hidden rounded-3xl shadow-card transition hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 sm:min-h-[440px]"
-            >
-              <div className="absolute inset-0">
-                <SmartImage
-                  src={property.cover}
-                  alt={property.coverAlt}
-                  placeholderLabel={`Фасад - ${property.name}`}
-                  sizes="(max-width: 1024px) 100vw, 50vw"
+        <div className="mt-16 grid gap-6 lg:grid-cols-2">
+          {properties.map((property, index) => (
+            <Appear key={property.slug} delay={index * 0.1}>
+              <Link
+                to={property.path}
+                className="group relative flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-3xl bg-graphite-900 text-ivory-50 sm:aspect-[4/3]"
+              >
+                <div className="absolute inset-0">
+                  <SmartImage
+                    src={property.cover}
+                    alt={property.coverAlt}
+                    placeholderLabel={`Фасад - ${property.name}`}
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="transition-transform duration-1200 ease-out-expo group-hover:scale-105"
+                  />
+                </div>
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 bg-gradient-to-b from-transparent via-graphite-950/20 via-40% to-graphite-950/90"
                 />
-              </div>
-              <div
-                aria-hidden="true"
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(14,53,82,0.1) 30%, rgba(14,53,82,0.9) 100%)",
-                }}
-              />
 
-              <div className="relative p-6 sm:p-8">
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-200">
-                  {property.shortLabel}
-                </p>
-                <h3 className="mt-2 text-3xl text-white sm:text-4xl">{property.name}</h3>
-                <p className="mt-2 flex items-start gap-2 text-sm text-brand-100">
-                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-orange-400" />
-                  {property.address}
-                </p>
-                <span
-                  className={cn(
-                    buttonVariants({ variant: "primary", size: "md" }),
-                    "mt-6 pointer-events-none"
-                  )}
-                >
-                  Смотреть {property.name}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </span>
-              </div>
-            </Link>
-          </Reveal>
-        ))}
+                <div className="relative p-6 sm:p-10">
+                  <p className="label text-graphite-300">{property.shortLabel}</p>
+                  <h3 className="mt-4 text-display-md font-medium text-ivory-50 transition-colors duration-600 group-hover:text-ochre-300">
+                    {property.name}
+                  </h3>
+                  <p className="mt-3 flex items-start gap-2 text-graphite-200">
+                    <MapPin className="mt-1 h-4 w-4 shrink-0 text-ochre-400" />
+                    {property.address}
+                  </p>
+                  <span
+                    className={cn(
+                      actionVariants({ variant: "glass" }),
+                      "pointer-events-none mt-8 group-hover:border-white/50 group-hover:bg-white/[0.14]"
+                    )}
+                  >
+                    Смотреть {property.name}
+                    <ArrowUpRight className="h-4 w-4 transition-transform duration-400 ease-out-expo group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  </span>
+                </div>
+              </Link>
+            </Appear>
+          ))}
+        </div>
       </div>
-    </Section>
+    </section>
   )
 }

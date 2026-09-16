@@ -1,7 +1,9 @@
-import { Info, Square } from "lucide-react"
-import { Button } from "../ui/button"
-import { Section } from "../ui/Section"
-import { Reveal } from "../ui/Reveal"
+import { ArrowUpRight, Info } from "lucide-react"
+import { Action } from "../ui/Action"
+import { actionArrowClass } from "../ui/actionVariants"
+import { SectionTitle } from "../ui/SectionTitle"
+import { Appear } from "../motion/Appear"
+import { TextReveal } from "../motion/TextReveal"
 import { useLeadForm } from "../../lib/leadFormContext"
 import type { Property } from "../../lib/properties"
 
@@ -15,7 +17,7 @@ import type { Property } from "../../lib/properties"
  */
 export function AvailabilityAndSpecs({
   property,
-  level: Heading,
+  level,
 }: {
   property: Property
   level: "h2" | "h3"
@@ -23,87 +25,79 @@ export function AvailabilityAndSpecs({
   const { openLeadForm } = useLeadForm()
 
   return (
-    <Section tone="brand" size="md">
-      <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
-        <div>
-          <Reveal>
-            <p className="eyebrow">Свободно к аренде</p>
-            <Heading className="mt-3 text-2xl sm:text-3xl">Доступные площади</Heading>
-          </Reveal>
+    <section id={`availability-${property.slug}`} className="bg-ivory-100 py-24 sm:py-32">
+      <div className="shell">
+        <SectionTitle
+          as={level}
+          label="Свободно к аренде"
+          title={
+            <>
+              Доступные <span className="accent-serif text-ochre-700">площади</span>
+            </>
+          }
+          description={property.splitNote}
+        />
 
-          <ul className="mt-6 space-y-3">
-            {property.availability.map((item, index) => (
-              <Reveal as="li" key={`${item.area}-${index}`} delay={index * 70}>
-                <div className="flex items-center gap-4 rounded-2xl border border-brand-100 bg-white p-5 shadow-card transition hover:border-orange-200">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-orange-500">
-                    <Square className="h-5 w-5" />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    {/* Площадь и ставка в одной строке: арендатор сверяет их вместе */}
-                    <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
-                      <p className="text-xl font-bold text-brand-900 sm:text-2xl">{item.area}</p>
-                      <p className="text-[15px] font-semibold text-orange-600">{item.rate}</p>
-                    </div>
-                    <p className="mt-1 text-sm text-ink-muted">{item.note}</p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </ul>
-
-          {property.variantsNote && (
-            <Reveal delay={120}>
-              <p className="mt-4 flex gap-3 rounded-2xl border border-brand-200 bg-white p-4 text-sm leading-relaxed text-ink-muted">
-                <Info className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" aria-hidden />
-                <span>{property.variantsNote}</span>
-              </p>
-            </Reveal>
-          )}
-
-          {property.splitNote && (
-            <Reveal delay={130}>
-              <p className="mt-4 text-[15px] font-semibold text-brand-800">{property.splitNote}</p>
-            </Reveal>
-          )}
-
-          <Reveal delay={140}>
-            <Button
-              size="lg"
-              className="mt-6 w-full sm:w-auto"
-              onClick={() => openLeadForm({ source: "viewing", property: property.name })}
+        {/* Площадь, назначение и ставка в одной строке: арендатор сверяет их вместе */}
+        <Appear as="ul" stagger={0.08} className="mt-16 border-t border-graphite-950/15">
+          {property.availability.map((item, index) => (
+            <li
+              key={`${item.area}-${index}`}
+              className="grid gap-2 border-b border-graphite-950/15 py-6 md:grid-cols-12 md:items-baseline md:gap-6 md:py-8"
             >
-              Записаться на просмотр
-            </Button>
-          </Reveal>
-        </div>
+              <p className="numeric text-display-md font-medium md:col-span-4">{item.area}</p>
+              <p className="text-graphite-600 md:col-span-4">{item.note}</p>
+              <p className="numeric text-lead font-medium text-ochre-700 md:col-span-4 md:text-right lg:text-title">
+                {item.rate}
+              </p>
+            </li>
+          ))}
+        </Appear>
 
-        <div>
-          <Reveal>
-            <p className="eyebrow">Характеристики</p>
-            <Heading className="mt-3 text-2xl sm:text-3xl">Краткая карточка объекта</Heading>
-          </Reveal>
+        {property.variantsNote && (
+          <Appear delay={0.1}>
+            <p className="mt-8 flex max-w-4xl gap-3 rounded-2xl bg-ivory-50 p-5 text-graphite-600">
+              <Info className="mt-1 h-4 w-4 shrink-0 text-ochre-700" aria-hidden />
+              <span>{property.variantsNote}</span>
+            </p>
+          </Appear>
+        )}
 
-          <Reveal delay={80}>
-            <div className="mt-6 overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-card">
-              <dl>
-                {property.specs.map((spec, index) => (
-                  <div
-                    key={spec.label}
-                    className={`flex flex-col gap-1 px-5 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6 ${
-                      index % 2 === 1 ? "bg-brand-50/60" : ""
-                    }`}
-                  >
-                    <dt className="text-sm text-ink-muted">{spec.label}</dt>
-                    <dd className="text-[15px] font-semibold text-brand-900 sm:text-right">
-                      {spec.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </Reveal>
+        <Appear delay={0.15} className="mt-10">
+          <Action
+            variant="dark"
+            size="lg"
+            className="w-full sm:w-auto"
+            onClick={() => openLeadForm({ source: "viewing", property: property.name })}
+          >
+            Записаться на просмотр
+            <ArrowUpRight className={actionArrowClass} />
+          </Action>
+        </Appear>
+
+        <div className="mt-24 grid gap-10 sm:mt-32 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-4">
+            <Appear className="flex items-center gap-4">
+              <span aria-hidden="true" className="h-px w-12 bg-ochre-500" />
+              <p className="label text-ochre-700">Характеристики</p>
+            </Appear>
+            <TextReveal as={level} className="mt-6 text-display-md font-medium">
+              Краткая карточка <span className="accent-serif text-ochre-700">объекта</span>
+            </TextReveal>
+          </div>
+
+          <Appear delay={0.1} className="lg:col-span-7 lg:col-start-6">
+            <dl className="grid border-t border-graphite-950/15 sm:grid-cols-2 sm:gap-x-8">
+              {property.specs.map((spec) => (
+                <div key={spec.label} className="border-b border-graphite-950/15 py-5">
+                  <dt className="text-sm text-graphite-500">{spec.label}</dt>
+                  <dd className="mt-1 text-lg font-medium">{spec.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </Appear>
         </div>
       </div>
-    </Section>
+    </section>
   )
 }

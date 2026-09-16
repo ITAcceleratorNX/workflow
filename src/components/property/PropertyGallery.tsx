@@ -1,10 +1,10 @@
 import { useMemo, useRef, useState } from "react"
 import { ChevronDown, ChevronUp, Maximize } from "lucide-react"
-import { Section, SectionHeading } from "../ui/Section"
-import { Reveal } from "../ui/Reveal"
+import { Action } from "../ui/Action"
+import { SectionTitle } from "../ui/SectionTitle"
 import { SmartImage } from "../ui/SmartImage"
 import { Lightbox } from "../ui/Lightbox"
-import { Button } from "../ui/button"
+import { Appear } from "../motion/Appear"
 import { cn } from "../../lib/utils"
 import { useScrollToElement } from "../../lib/smoothScroll"
 import {
@@ -13,7 +13,7 @@ import {
   type Property,
 } from "../../lib/properties"
 
-/** Сколько кадров показываем до нажатия «Показать все» */
+/** Сколько кадров показываем до нажатия «Показать все»: ровно заполняет сетку с большим первым фото */
 const PREVIEW_COUNT = 6
 
 const CATEGORY_ORDER: PhotoCategory[] = [
@@ -70,73 +70,82 @@ export function PropertyGallery({
   }
 
   return (
-    <Section tone="brand" size="md">
-      <SectionHeading
-        eyebrow="Фотографии"
-        title={`Как выглядит ${property.name}`}
-        description="Нажмите на фотографию, чтобы открыть её в увеличенном виде."
-        level={level}
-      />
-
-      <Reveal className="mt-8 flex gap-2 overflow-x-auto pb-2 no-scrollbar" delay={60}>
-        <FilterChip
-          label="Все"
-          active={activeCategory === "all"}
-          onClick={() => selectCategory("all")}
+    <section className="bg-graphite-950 py-24 text-ivory-50 sm:py-32">
+      <div className="shell">
+        <SectionTitle
+          as={level}
+          tone="dark"
+          label="Фотографии"
+          title={
+            <>
+              Как выглядит <span className="accent-serif text-ochre-300">{property.name}</span>
+            </>
+          }
+          description="Нажмите на фотографию, чтобы открыть её в увеличенном виде."
         />
-        {categories.map((category) => (
-          <FilterChip
-            key={category}
-            label={PHOTO_CATEGORY_LABELS[category]}
-            active={activeCategory === category}
-            onClick={() => selectCategory(category)}
-          />
-        ))}
-      </Reveal>
 
-      <ul ref={gridRef} className="mt-6 grid scroll-mt-24 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {visiblePhotos.map((photo, index) => (
-          <Reveal as="li" key={photo.src} delay={(index % 3) * 60}>
-            <button
-              type="button"
-              onClick={() => setLightboxIndex(index)}
-              className="zoom-media group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl bg-brand-100 shadow-card transition hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
-            >
-              <SmartImage
-                src={photo.src}
-                alt={photo.alt}
-                placeholderLabel={PHOTO_CATEGORY_LABELS[photo.category]}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              />
-              <span className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-brand-900/85 to-transparent p-4 text-left">
-                <span className="text-sm font-medium text-white">
-                  {PHOTO_CATEGORY_LABELS[photo.category]}
-                </span>
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/15 text-white opacity-0 transition group-hover:opacity-100">
-                  <Maximize className="h-4 w-4" />
-                </span>
-              </span>
-            </button>
-          </Reveal>
-        ))}
-      </ul>
+        <Appear delay={0.1} className="no-scrollbar mt-12 flex gap-2 overflow-x-auto pb-2">
+          <FilterChip label="Все" active={activeCategory === "all"} onClick={() => selectCategory("all")} />
+          {categories.map((category) => (
+            <FilterChip
+              key={category}
+              label={PHOTO_CATEGORY_LABELS[category]}
+              active={activeCategory === category}
+              onClick={() => selectCategory(category)}
+            />
+          ))}
+        </Appear>
 
-      {photos.length > PREVIEW_COUNT && (
-        <div className="mt-8 flex justify-center">
-          {expanded ? (
-            <Button variant="outline" size="lg" onClick={collapse}>
-              Свернуть
-              <ChevronUp className="h-4 w-4" />
-            </Button>
-          ) : (
-            <Button variant="outline" size="lg" onClick={() => setExpanded(true)}>
-              Показать все фото
-              <span className="text-ink-soft">({photos.length})</span>
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-      )}
+        {/* Первое фото крупное: на широком экране 6 кадров ровно заполняют сетку 3×3 */}
+        <Appear delay={0.15}>
+          <ul
+            ref={gridRef}
+            className="mt-6 grid scroll-mt-28 auto-rows-[260px] grid-cols-1 gap-3 sm:auto-rows-[220px] sm:grid-cols-2 lg:auto-rows-[260px] lg:grid-cols-3"
+          >
+            {visiblePhotos.map((photo, index) => (
+              <li key={photo.src} className={cn(index === 0 && "sm:col-span-2 sm:row-span-2")}>
+                <button
+                  type="button"
+                  onClick={() => setLightboxIndex(index)}
+                  aria-label={`Открыть фото: ${photo.alt}`}
+                  className="group relative block h-full w-full overflow-hidden rounded-2xl bg-graphite-900"
+                >
+                  <SmartImage
+                    src={photo.src}
+                    alt={photo.alt}
+                    placeholderLabel={PHOTO_CATEGORY_LABELS[photo.category]}
+                    sizes={index === 0 ? "(max-width: 640px) 100vw, 66vw" : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"}
+                    className="transition-transform duration-1200 ease-out-expo group-hover:scale-105"
+                  />
+                  <span className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-graphite-950/80 to-transparent p-4 text-left">
+                    <span className="text-sm text-ivory-50">{PHOTO_CATEGORY_LABELS[photo.category]}</span>
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/10 text-ivory-50 opacity-0 backdrop-blur-md transition-opacity duration-400 group-hover:opacity-100">
+                      <Maximize className="h-4 w-4" />
+                    </span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </Appear>
+
+        {photos.length > PREVIEW_COUNT && (
+          <div className="mt-10 flex justify-center">
+            {expanded ? (
+              <Action variant="glass" size="lg" onClick={collapse}>
+                Свернуть
+                <ChevronUp className="h-4 w-4" />
+              </Action>
+            ) : (
+              <Action variant="glass" size="lg" onClick={() => setExpanded(true)}>
+                Показать все фото
+                <span className="numeric text-graphite-400">{photos.length}</span>
+                <ChevronDown className="h-4 w-4" />
+              </Action>
+            )}
+          </div>
+        )}
+      </div>
 
       {lightboxIndex !== null && (
         <Lightbox
@@ -146,7 +155,7 @@ export function PropertyGallery({
           onNavigate={setLightboxIndex}
         />
       )}
-    </Section>
+    </section>
   )
 }
 
@@ -165,10 +174,10 @@ function FilterChip({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        "shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition",
+        "h-11 shrink-0 rounded-full border px-5 text-sm transition-colors duration-400",
         active
-          ? "border-orange-500 bg-orange-500 text-white"
-          : "border-brand-200 bg-white text-brand-800 hover:border-brand-400"
+          ? "border-ochre-500 bg-ochre-500 text-graphite-950"
+          : "border-white/15 text-graphite-200 hover:border-white/40 hover:text-ivory-50"
       )}
     >
       {label}

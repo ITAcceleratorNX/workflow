@@ -44,14 +44,14 @@ export function Lightbox({ photos, index, onClose, onNavigate }: LightboxProps) 
       role="dialog"
       aria-modal="true"
       aria-label={photo.alt}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-brand-900/95 p-4 sm:p-8"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-graphite-950/95 p-4 backdrop-blur-sm sm:p-8"
       onClick={onClose}
     >
       <button
         type="button"
         onClick={onClose}
         aria-label="Закрыть просмотр"
-        className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+        className="absolute right-4 top-4 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/[0.06] text-ivory-50 transition-colors hover:border-white/50 hover:bg-white/[0.14]"
       >
         <X className="h-5 w-5" />
       </button>
@@ -65,7 +65,7 @@ export function Lightbox({ photos, index, onClose, onNavigate }: LightboxProps) 
               event.stopPropagation()
               goPrev()
             }}
-            className="absolute left-2 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:left-6"
+            className="absolute left-2 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/[0.06] text-ivory-50 transition-colors hover:border-white/50 hover:bg-white/[0.14] sm:left-6"
           >
             <ChevronLeft className="h-6 w-6" />
           </button>
@@ -76,7 +76,7 @@ export function Lightbox({ photos, index, onClose, onNavigate }: LightboxProps) 
               event.stopPropagation()
               goNext()
             }}
-            className="absolute right-2 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6"
+            className="absolute right-2 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/[0.06] text-ivory-50 transition-colors hover:border-white/50 hover:bg-white/[0.14] sm:right-6"
           >
             <ChevronRight className="h-6 w-6" />
           </button>
@@ -90,11 +90,11 @@ export function Lightbox({ photos, index, onClose, onNavigate }: LightboxProps) 
         <img
           src={photo.src}
           alt={photo.alt}
-          className="max-h-[75vh] w-auto max-w-full rounded-xl object-contain shadow-2xl"
+          className="max-h-[75vh] w-auto max-w-full rounded-2xl object-contain"
         />
-        <figcaption className="text-center text-sm text-brand-100">
+        <figcaption className="text-center text-sm text-graphite-300">
           {photo.alt}
-          <span className="ml-2 text-brand-300">
+          <span className="numeric ml-3 text-graphite-500">
             {index + 1} / {photos.length}
           </span>
         </figcaption>

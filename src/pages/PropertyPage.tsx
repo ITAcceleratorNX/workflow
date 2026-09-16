@@ -15,13 +15,15 @@ export function PropertyPage({ slug }: { slug: PropertySlug }) {
         path={property.path}
         image={property.cover}
       />
+      {/* key: при переходе между объектами секции пересоздаются, и появление проигрывается заново */}
       <PropertyShowcase
+        key={slug}
         property={property}
         headingLevel="h1"
         eyebrow={property.shortLabel}
         priority
       />
-      <OtherPropertiesSection properties={others} />
+      <OtherPropertiesSection key={`others-${slug}`} properties={others} />
     </>
   )
 }

@@ -1,9 +1,12 @@
-import { Section, SectionHeading } from "../ui/Section"
-import { Reveal } from "../ui/Reveal"
+import { SectionTitle } from "../ui/SectionTitle"
+import { Appear } from "../motion/Appear"
 import { ADVANTAGE_ICONS } from "../../lib/advantageIcons"
 import type { Property } from "../../lib/properties"
 
-/** Основные преимущества иконками с короткими подписями (5.9 / 6.5 / 7.5 ТЗ). */
+/**
+ * Основные преимущества иконками с короткими подписями (5.9 / 6.5 / 7.5 ТЗ).
+ * Линия над каждым пунктом вместо рамок: неполный последний ряд не выглядит оборванным.
+ */
 export function AdvantagesGrid({
   property,
   level,
@@ -12,26 +15,34 @@ export function AdvantagesGrid({
   level: "h2" | "h3"
 }) {
   return (
-    <Section tone="white" size="md">
-      <SectionHeading eyebrow="Преимущества" title="Основные преимущества" level={level} />
+    <section className="bg-ivory-50 py-24 sm:py-32">
+      <div className="shell">
+        <SectionTitle
+          as={level}
+          label="Преимущества"
+          title={
+            <>
+              Основные <span className="accent-serif text-ochre-700">преимущества</span>
+            </>
+          }
+        />
 
-      <ul className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {property.advantages.map((advantage, index) => {
-          const Icon = ADVANTAGE_ICONS[advantage.icon]
-          return (
-            <Reveal as="li" key={advantage.label} delay={(index % 4) * 60}>
-              <div className="flex h-full flex-col gap-3 rounded-2xl border border-brand-100 bg-white p-5 shadow-card transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:shadow-card-hover">
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-                  <Icon className="h-5 w-5" />
-                </span>
-                <p className="text-sm font-medium leading-snug text-brand-900 sm:text-[15px]">
-                  {advantage.label}
-                </p>
-              </div>
-            </Reveal>
-          )
-        })}
-      </ul>
-    </Section>
+        <Appear
+          as="ul"
+          stagger={0.05}
+          className="mt-16 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-5"
+        >
+          {property.advantages.map((advantage) => {
+            const Icon = ADVANTAGE_ICONS[advantage.icon]
+            return (
+              <li key={advantage.label} className="border-t border-graphite-950/15 pt-5">
+                <Icon className="h-6 w-6 text-ochre-700" strokeWidth={1.5} aria-hidden />
+                <p className="mt-6 font-medium leading-snug">{advantage.label}</p>
+              </li>
+            )
+          })}
+        </Appear>
+      </div>
+    </section>
   )
 }
