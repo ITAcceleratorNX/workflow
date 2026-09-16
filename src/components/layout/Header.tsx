@@ -7,6 +7,7 @@ import { cn } from "../../lib/utils"
 import { CONTACTS, WHATSAPP_DEFAULT_MESSAGE, track, whatsappLink } from "../../lib/site"
 import { PROPERTIES } from "../../lib/properties"
 import { useLeadForm } from "../../lib/leadFormContext"
+import { useScrollLock } from "../../lib/smoothScroll"
 
 export function Header() {
   const { pathname } = useLocation()
@@ -16,12 +17,7 @@ export function Header() {
   const [overHero, setOverHero] = useState(isHome)
   const { openLeadForm } = useLeadForm()
 
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : ""
-    return () => {
-      document.body.style.overflow = ""
-    }
-  }, [menuOpen])
+  useScrollLock(menuOpen)
 
   useEffect(() => {
     setMenuOpen(false)

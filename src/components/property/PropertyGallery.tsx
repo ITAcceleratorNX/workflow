@@ -6,6 +6,7 @@ import { SmartImage } from "../ui/SmartImage"
 import { Lightbox } from "../ui/Lightbox"
 import { Button } from "../ui/button"
 import { cn } from "../../lib/utils"
+import { useScrollToElement } from "../../lib/smoothScroll"
 import {
   PHOTO_CATEGORY_LABELS,
   type PhotoCategory,
@@ -61,9 +62,11 @@ export function PropertyGallery({
     setExpanded(false)
   }
 
+  const scrollToElement = useScrollToElement()
+
   const collapse = () => {
     setExpanded(false)
-    gridRef.current?.scrollIntoView({ block: "start", behavior: "smooth" })
+    scrollToElement(gridRef.current)
   }
 
   return (

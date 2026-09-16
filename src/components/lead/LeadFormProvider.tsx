@@ -8,6 +8,7 @@ import {
   type OpenLeadFormOptions,
 } from "../../lib/leadFormContext"
 import { track } from "../../lib/site"
+import { useScrollLock } from "../../lib/smoothScroll"
 
 export function LeadFormProvider({ children }: { children: ReactNode }) {
   const [request, setRequest] = useState<OpenLeadFormOptions | null>(null)
@@ -22,6 +23,8 @@ export function LeadFormProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(() => ({ openLeadForm, closeLeadForm }), [openLeadForm, closeLeadForm])
 
+  useScrollLock(request !== null)
+
   useEffect(() => {
     if (!request) return
 
@@ -30,14 +33,9 @@ export function LeadFormProvider({ children }: { children: ReactNode }) {
     }
 
     document.addEventListener("keydown", onKeyDown)
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = "hidden"
     dialogRef.current?.focus()
 
-    return () => {
-      document.removeEventListener("keydown", onKeyDown)
-      document.body.style.overflow = previousOverflow
-    }
+    return () => document.removeEventListener("keydown", onKeyDown)
   }, [request, closeLeadForm])
 
   const copy = request ? LEAD_MODAL_TITLES[request.source] : null
@@ -48,7 +46,9 @@ export function LeadFormProvider({ children }: { children: ReactNode }) {
       {request &&
         copy &&
         createPortal(
+          /* data-lenis-prevent: колесо прокручивает саму форму, а не остановленную страницу */
           <div
+            data-lenis-prevent
             className="fixed inset-0 z-[90] flex items-start justify-center overflow-y-auto bg-brand-900/70 p-4 backdrop-blur-sm sm:items-center sm:p-6"
             onClick={closeLeadForm}
           >

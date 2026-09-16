@@ -2,6 +2,12 @@ import { useLayoutEffect, useRef, useState, type ReactNode } from "react"
 import { ArrowUpRight, Phone } from "lucide-react"
 import { Action } from "../components/ui/Action"
 import { actionArrowClass } from "../components/ui/actionVariants"
+import { Appear } from "../components/motion/Appear"
+import { MediaReveal } from "../components/motion/MediaReveal"
+import { Parallax } from "../components/motion/Parallax"
+import { TextReveal } from "../components/motion/TextReveal"
+import { gsap, useGSAP } from "../lib/motion"
+import { PROPERTIES } from "../lib/properties"
 import { cn } from "../lib/utils"
 
 /**
@@ -208,6 +214,43 @@ function Block({ label, title, children }: { label: string; title: string; child
   )
 }
 
+/** Полоса прогресса страницы: проверка, что ScrollTrigger идёт в ногу с плавным скроллом */
+function ScrollProgressBar() {
+  const barRef = useRef<HTMLDivElement>(null)
+
+  useGSAP(() => {
+    gsap.fromTo(
+      barRef.current,
+      { scaleX: 0 },
+      {
+        scaleX: 1,
+        ease: "none",
+        scrollTrigger: { trigger: document.documentElement, start: "top top", end: "bottom bottom", scrub: true },
+      }
+    )
+  })
+
+  return (
+    <div
+      ref={barRef}
+      aria-hidden="true"
+      className="fixed inset-x-0 top-0 z-50 h-0.5 origin-left bg-ochre-500"
+    />
+  )
+}
+
+function DemoRow({ name, note, children }: { name: string; note: string; children: ReactNode }) {
+  return (
+    <div className="border-t border-graphite-950/10 pt-6">
+      <div className="mb-8 flex flex-wrap items-baseline justify-between gap-2 text-sm">
+        <span className="font-medium">{name}</span>
+        <span className="text-graphite-500">{note}</span>
+      </div>
+      {children}
+    </div>
+  )
+}
+
 function EasingDemo() {
   const [played, setPlayed] = useState(false)
 
@@ -245,21 +288,27 @@ function EasingDemo() {
 export default function StyleguidePage() {
   return (
     <div className="min-h-screen bg-ivory-50 text-graphite-950">
+      <ScrollProgressBar />
       <header className="relative overflow-hidden bg-graphite-950 text-ivory-50">
         <div className="shell flex min-h-[80svh] flex-col justify-end pb-16 pt-24 sm:pb-24">
-          <div className="flex items-center gap-4">
+          <Appear play="mount" delay={0.1} className="flex items-center gap-4">
             <span aria-hidden="true" className="h-px w-12 bg-ochre-500" />
-            <p className="label text-ochre-400">Дизайн-система · этап 1</p>
-          </div>
-          <h1 className="mt-8 max-w-6xl text-display-xl font-medium text-ivory-50">
+            <p className="label text-ochre-400">Дизайн-система · этапы 1–2</p>
+          </Appear>
+          <TextReveal
+            as="h1"
+            play="mount"
+            delay={0.2}
+            className="mt-8 max-w-6xl text-display-xl font-medium text-ivory-50"
+          >
             Графит, охра и <span className="accent-serif text-ochre-400">тишина</span> премиального
             офиса
-          </h1>
-          <p className="mt-8 max-w-2xl text-lead text-graphite-300">
+          </TextReveal>
+          <Appear play="mount" delay={0.7} as="p" className="mt-8 max-w-2xl text-lead text-graphite-300">
             Палитра снята с интерьеров из видео: графитовые потолки, охристые стены переговорных,
             хвойные двери и светлый камень. Эта страница есть только в режиме разработки.
-          </p>
-          <div className="mt-10 flex flex-wrap gap-3">
+          </Appear>
+          <Appear play="mount" delay={0.85} stagger={0.08} className="mt-10 flex flex-wrap gap-3">
             <Action size="lg">
               Подобрать офис
               <ArrowUpRight className={actionArrowClass} />
@@ -267,7 +316,7 @@ export default function StyleguidePage() {
             <Action variant="glass" size="lg">
               Смотреть объекты
             </Action>
-          </div>
+          </Appear>
         </div>
       </header>
 
@@ -414,6 +463,68 @@ export default function StyleguidePage() {
             чтобы разница была видна.
           </p>
           <EasingDemo />
+        </Block>
+
+        <Block label="07 · Скролл" title="Анимации при прокрутке">
+          <p className="max-w-2xl text-graphite-600">
+            Плавный скролл Lenis и GSAP ScrollTrigger считаются в одном кадре — полоска прогресса
+            вверху окна идёт без отставания. Всё, кроме параллакса, появляется один раз. При
+            системной настройке «уменьшить движение» анимаций нет, контент виден сразу.
+          </p>
+
+          <div className="mt-16 space-y-24">
+            <DemoRow name="TextReveal · строки" note="заголовки секций">
+              <TextReveal as="p" className="max-w-5xl text-display-lg font-medium">
+                Три бизнес-центра <span className="accent-serif">класса А</span> в разных районах
+                Алматы
+              </TextReveal>
+            </DemoRow>
+
+            <DemoRow name="TextReveal · слова" note="вводные абзацы">
+              <TextReveal as="p" by="words" className="max-w-3xl text-lead text-graphite-600">
+                Подберём офис, сервисное пространство или решение под ключ под задачи вашей
+                компании. Сопроводим от заявки до заезда.
+              </TextReveal>
+            </DemoRow>
+
+            <DemoRow name="TextReveal · буквы" note="одно крупное слово">
+              <TextReveal as="p" by="chars" className="text-display-2xl font-medium">
+                WorkFlow
+              </TextReveal>
+            </DemoRow>
+
+            <DemoRow name="Appear · по очереди" note="сетки карточек">
+              <Appear stagger={0.12} className="grid gap-4 md:grid-cols-3">
+                {PROPERTIES.map((property) => (
+                  <article key={property.slug} className="rounded-3xl bg-ivory-100 p-8">
+                    <p className="label text-ochre-700">{property.shortLabel}</p>
+                    <h3 className="mt-8 text-title font-medium">{property.name}</h3>
+                    <p className="mt-2 text-sm text-graphite-500">{property.address}</p>
+                  </article>
+                ))}
+              </Appear>
+            </DemoRow>
+
+            <DemoRow name="MediaReveal" note="шторка + отъезд камеры">
+              <MediaReveal className="aspect-[16/9] rounded-3xl">
+                <img
+                  src="/Carousel/TMK_11483.jpg.webp"
+                  alt="Сервисный офис с лаунж-зоной"
+                  className="h-full w-full object-cover"
+                />
+              </MediaReveal>
+            </DemoRow>
+
+            <DemoRow name="Parallax" note="едет вместе со скроллом, вперёд и назад">
+              <Parallax className="aspect-[16/9] rounded-3xl" amount={12}>
+                <img
+                  src="/TimeSquare/office-3.webp"
+                  alt="Свободное помещение под офис"
+                  className="h-full w-full object-cover"
+                />
+              </Parallax>
+            </DemoRow>
+          </div>
         </Block>
       </main>
     </div>

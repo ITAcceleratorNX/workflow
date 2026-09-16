@@ -2,6 +2,7 @@ import { useCallback, useEffect } from "react"
 import { createPortal } from "react-dom"
 import { ChevronLeft, ChevronRight, X } from "lucide-react"
 import type { PropertyPhoto } from "../../lib/properties"
+import { useScrollLock } from "../../lib/smoothScroll"
 
 interface LightboxProps {
   photos: PropertyPhoto[]
@@ -23,6 +24,8 @@ export function Lightbox({ photos, index, onClose, onNavigate }: LightboxProps) 
     [index, photos.length, onNavigate]
   )
 
+  useScrollLock(true)
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose()
@@ -31,13 +34,7 @@ export function Lightbox({ photos, index, onClose, onNavigate }: LightboxProps) 
     }
 
     document.addEventListener("keydown", onKeyDown)
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = "hidden"
-
-    return () => {
-      document.removeEventListener("keydown", onKeyDown)
-      document.body.style.overflow = previousOverflow
-    }
+    return () => document.removeEventListener("keydown", onKeyDown)
   }, [onClose, goPrev, goNext])
 
   if (!photo) return null

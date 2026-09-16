@@ -14,11 +14,14 @@
     "generate-icons": "node scripts/generate-icons.js"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "gsap": "^3.15.0",
     "leaflet": "^1.9.4",
+    "lenis": "^1.3.26",
     "lucide-react": "^0.563.0",
     "postgres": "^3.4.9",
     "react": "^19.2.0",

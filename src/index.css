@@ -113,6 +113,32 @@
   }
 }
 
+/* Плавный скролл: пока Lenis включён, прокрутку браузера не сглаживаем повторно */
+html.lenis {
+  scroll-behavior: auto;
+}
+
+/*
+ * Маски TextReveal. overflow: clip по границе строки срезал бы хвосты «у», «д», «й»
+ * и выносы курсива — расширяем маску отступами и гасим их отрицательными полями,
+ * чтобы текст не сдвинулся. У строк поля не схлопываются благодаря flex-колонке.
+ */
+.split-lines {
+  display: flex;
+  flex-direction: column;
+}
+
+.split-line-mask {
+  padding-block: 0.25em;
+  margin-block: -0.25em;
+}
+
+.split-word-mask,
+.split-char-mask {
+  padding: 0.25em 0.1em;
+  margin: -0.25em -0.1em;
+}
+
 /* Появление секций при скролле */
 .reveal {
   opacity: 0;
