@@ -30,6 +30,11 @@ const registryUrl = () => process.env.LEADS_REGISTRY_URL || ""
 const registryToken = () => process.env.LEADS_REGISTRY_TOKEN || ""
 
 const PROPERTIES = ["Time Square", "Venus", "Koktem Towers"]
+const AREAS_BY_PROPERTY = {
+  "Time Square": ["400 м²", "850 м²", "1 700 м²", "3 400 м²"],
+  Venus: ["70 м²", "50 м²"],
+  "Koktem Towers": ["643 м²"],
+}
 const PHONE_PATTERN = /^\+7\d{10}$/
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/
 /* Зеркало MIN_FILL_MS в src/lib/leadForm.ts — менять значения вместе */
@@ -76,6 +81,7 @@ function pickAdParams(body) {
 
 const leadRows = (lead) => [
   ["Объект", lead.property],
+  ["Выбранная площадь", lead.area || "—"],
   ["Имя", lead.name],
   ["Компания", lead.company || "—"],
   ["Телефон", lead.phone],
@@ -84,6 +90,9 @@ const leadRows = (lead) => [
   ["Страница", lead.page || "—"],
   ["Источник формы", lead.sourceLabel || lead.source || "—"],
 ]
+
+const commentWithArea = (lead) =>
+  [lead.area ? `Выбранная площадь: ${lead.area}` : "", lead.comment].filter(Boolean).join("\n")
 
 const receivedAt = () =>
   new Date().toLocaleString("ru-RU", { timeZone: "Asia/Almaty" })
@@ -198,7 +207,7 @@ async function sendToRegistry(lead, adParams) {
           email: lead.email,
           company: lead.company,
           property: lead.property,
-          comment: lead.comment,
+          comment: commentWithArea(lead),
           ...adParams,
         }),
       }),
@@ -227,7 +236,11 @@ async function saveToCrm(lead, adParams) {
 
   try {
     await createSiteLead(
-      { ...lead, officeFormat: officeFormatFromSource(lead.source) },
+      {
+        ...lead,
+        comment: commentWithArea(lead),
+        officeFormat: officeFormatFromSource(lead.source),
+      },
       adParams
     )
   } catch (error) {
@@ -264,6 +277,7 @@ export default async function handler(req, res) {
     email: clean(body.email, 160),
     comment: clean(body.comment, 2000),
     property: clean(body.property, 60),
+    area: clean(body.area, 40),
     page: clean(body.page, 200),
     source: clean(body.source, 60),
     sourceLabel: clean(body.sourceLabel, 160),
@@ -278,6 +292,9 @@ export default async function handler(req, res) {
   }
   if (!PROPERTIES.includes(lead.property)) {
     return res.status(400).json({ error: "Выберите объект из списка" })
+  }
+  if (lead.area && !AREAS_BY_PROPERTY[lead.property]?.includes(lead.area)) {
+    return res.status(400).json({ error: "Выберите доступную площадь" })
   }
   if (body.consent !== true) {
     return res.status(400).json({ error: "Требуется согласие на обработку персональных данных" })

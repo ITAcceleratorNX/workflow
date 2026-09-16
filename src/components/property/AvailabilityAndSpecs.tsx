@@ -1,4 +1,5 @@
-import { Info, Square } from "lucide-react"
+import { useState } from "react"
+import { Check, Info } from "lucide-react"
 import { Button } from "../ui/button"
 import { Section } from "../ui/Section"
 import { Reveal } from "../ui/Reveal"
@@ -21,6 +22,12 @@ export function AvailabilityAndSpecs({
   level: "h2" | "h3"
 }) {
   const { openLeadForm } = useLeadForm()
+  const [selectedArea, setSelectedArea] = useState<string | null>(null)
+
+  const selectArea = (area: string) => {
+    setSelectedArea(area)
+    openLeadForm({ source: "viewing", property: property.name, area })
+  }
 
   return (
     <Section tone="brand" size="md">
@@ -35,9 +42,23 @@ export function AvailabilityAndSpecs({
             {property.availability.map((item, index) => (
               <Reveal as="li" key={`${item.area}-${index}`} delay={index * 70}>
                 <div className="flex items-center gap-4 rounded-2xl border border-brand-100 bg-white p-5 shadow-card transition hover:border-orange-200">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-orange-500">
-                    <Square className="h-5 w-5" />
-                  </span>
+                  <button
+                    type="button"
+                    aria-label={`Выбрать площадь ${item.area} и записаться на просмотр`}
+                    aria-pressed={selectedArea === item.area}
+                    onClick={() => selectArea(item.area)}
+                    className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-xl bg-orange-50 text-orange-500 transition hover:bg-orange-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
+                  >
+                    <span
+                      className={`flex h-5 w-5 items-center justify-center rounded border-2 ${
+                        selectedArea === item.area
+                          ? "border-orange-500 bg-orange-500 text-white"
+                          : "border-orange-300 bg-white"
+                      }`}
+                    >
+                      {selectedArea === item.area && <Check className="h-4 w-4" strokeWidth={3} />}
+                    </span>
+                  </button>
                   <div className="min-w-0 flex-1">
                     {/* Площадь и ставка в одной строке: арендатор сверяет их вместе */}
                     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">

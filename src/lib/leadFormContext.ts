@@ -5,6 +5,8 @@ export interface OpenLeadFormOptions {
   source: LeadSource
   /** Подставляется автоматически на странице конкретного объекта */
   property?: string
+  /** Площадь, выбранная в карточке доступных вариантов */
+  area?: string
 }
 
 export interface LeadFormContextValue {

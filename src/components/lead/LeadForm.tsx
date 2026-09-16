@@ -23,6 +23,8 @@ interface LeadFormProps {
   source: LeadSource
   /** На странице объекта значение подставляется автоматически (9.2 ТЗ) */
   defaultProperty?: string
+  /** Передаётся скрыто из выбранного варианта в блоке доступных площадей */
+  selectedArea?: string
   inverted?: boolean
   onSuccess?: () => void
 }
@@ -34,7 +36,13 @@ const fieldClass = (hasError: boolean, inverted: boolean) =>
     hasError ? "border-red-400" : inverted ? "border-transparent" : "border-brand-200"
   )
 
-export function LeadForm({ source, defaultProperty, inverted = false, onSuccess }: LeadFormProps) {
+export function LeadForm({
+  source,
+  defaultProperty,
+  selectedArea,
+  inverted = false,
+  onSuccess,
+}: LeadFormProps) {
   const uid = useId()
   /* Отметка старта заполнения — по ней отсекается мгновенная отправка ботом */
   const startedAt = useRef(0)
@@ -72,6 +80,7 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
     const result = await submitLead({
       ...values,
       source,
+      area: selectedArea,
       page: typeof window !== "undefined" ? window.location.pathname : "",
       website: honeypot,
       elapsedMs: Date.now() - startedAt.current,

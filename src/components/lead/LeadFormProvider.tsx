@@ -15,7 +15,11 @@ export function LeadFormProvider({ children }: { children: ReactNode }) {
 
   const openLeadForm = useCallback((options: OpenLeadFormOptions) => {
     setRequest(options)
-    track("lead_form_open", { source: options.source, property: options.property })
+    track("lead_form_open", {
+      source: options.source,
+      property: options.property,
+      area: options.area,
+    })
   }, [])
 
   const closeLeadForm = useCallback(() => setRequest(null), [])
@@ -78,7 +82,11 @@ export function LeadFormProvider({ children }: { children: ReactNode }) {
                 </button>
               </div>
 
-              <LeadForm source={request.source} defaultProperty={request.property} />
+              <LeadForm
+                source={request.source}
+                defaultProperty={request.property}
+                selectedArea={request.area}
+              />
             </div>
           </div>,
           document.body

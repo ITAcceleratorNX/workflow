@@ -110,6 +110,8 @@ export function validateLead(values: LeadFormValues): LeadFieldErrors {
 
 export interface SubmitLeadPayload extends LeadFormValues {
   source: LeadSource
+  /** Выбранный вариант площади из карточки объекта */
+  area?: string
   page: string
   /** Honeypot: реальные пользователи это поле не видят и не заполняют */
   website: string
