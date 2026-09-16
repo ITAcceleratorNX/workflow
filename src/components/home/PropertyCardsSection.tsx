@@ -67,11 +67,11 @@ export function PropertyCardsSection() {
                     <span
                       className={cn(
                         actionVariants({ variant: "glass", size: "lg" }),
-                        "pointer-events-none mt-10 group-hover:border-white/50 group-hover:bg-white/[0.14]"
+                        "pointer-events-none mt-10 h-auto min-h-14 max-w-full whitespace-normal px-5 py-4 text-center leading-snug group-hover:border-white/50 group-hover:bg-white/[0.14] sm:px-8"
                       )}
                     >
-                      Смотреть {property.name}
-                      <ArrowUpRight className="h-4 w-4 transition-transform duration-400 ease-out-expo group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                      <span className="min-w-0">Смотреть {property.name}</span>
+                      <ArrowUpRight className="h-4 w-4 shrink-0 transition-transform duration-400 ease-out-expo group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                     </span>
                   </Appear>
                 </Link>

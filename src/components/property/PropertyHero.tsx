@@ -58,7 +58,7 @@ export function PropertyHero({
     <section
       ref={sectionRef}
       data-header-hero
-      className="relative h-svh min-h-[600px] overflow-hidden bg-graphite-950 text-ivory-50"
+      className="relative min-h-svh overflow-hidden bg-graphite-950 text-ivory-50"
     >
       <div ref={mediaRef} className="absolute inset-0 will-change-transform">
         <SmartImage
@@ -78,7 +78,7 @@ export function PropertyHero({
       />
       <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-graphite-950/50 to-transparent" />
 
-      <div className="relative flex h-full flex-col justify-end">
+      <div className="relative flex min-h-[max(600px,100svh)] flex-col justify-end pt-28 lg:pt-36">
         <div className="shell grid gap-10 pb-12 sm:pb-16 lg:grid-cols-12 lg:items-end lg:gap-8">
           <div className="lg:col-span-8">
             <Appear play="mount" delay={0.2} className="flex items-center gap-4">

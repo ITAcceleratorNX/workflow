@@ -24,7 +24,7 @@ export function OtherPropertiesSection({ properties }: { properties: Property[] 
 
         <div className="mt-16 grid gap-6 lg:grid-cols-2">
           {properties.map((property, index) => (
-            <Appear key={property.slug} delay={index * 0.1}>
+            <Appear key={property.slug} delay={index * 0.1} className="min-w-0">
               <Link
                 to={property.path}
                 className="group relative flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-3xl bg-graphite-900 text-ivory-50 sm:aspect-[4/3]"
@@ -43,7 +43,7 @@ export function OtherPropertiesSection({ properties }: { properties: Property[] 
                   className="absolute inset-0 bg-gradient-to-b from-transparent via-graphite-950/20 via-40% to-graphite-950/90"
                 />
 
-                <div className="relative p-6 sm:p-10">
+                <div className="relative min-w-0 p-6 sm:p-10">
                   <p className="label text-graphite-300">{property.shortLabel}</p>
                   <h3 className="mt-4 text-display-md font-medium text-ivory-50 transition-colors duration-600 group-hover:text-ochre-300">
                     {property.name}
@@ -55,11 +55,11 @@ export function OtherPropertiesSection({ properties }: { properties: Property[] 
                   <span
                     className={cn(
                       actionVariants({ variant: "glass" }),
-                      "pointer-events-none mt-8 group-hover:border-white/50 group-hover:bg-white/[0.14]"
+                      "pointer-events-none mt-8 h-auto min-h-12 max-w-full whitespace-normal px-4 py-3 text-center leading-snug group-hover:border-white/50 group-hover:bg-white/[0.14] sm:px-6"
                     )}
                   >
-                    Смотреть {property.name}
-                    <ArrowUpRight className="h-4 w-4 transition-transform duration-400 ease-out-expo group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    <span className="min-w-0">Смотреть {property.name}</span>
+                    <ArrowUpRight className="h-4 w-4 shrink-0 transition-transform duration-400 ease-out-expo group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                   </span>
                 </div>
               </Link>

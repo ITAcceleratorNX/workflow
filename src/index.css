@@ -192,11 +192,55 @@ html.lenis {
   display: none;
 }
 
+.scroll-hero {
+  height: 440svh;
+}
+
+@media (min-width: 640px) {
+  .scroll-hero {
+    height: 520svh;
+  }
+}
+
+/* Короткие окна и режим без движения: первый экран растёт вместе с текстом.
+   Контент не прячется под шапкой и доступен при увеличенном масштабе. */
+@media (max-height: 600px), (prefers-reduced-motion: reduce) {
+  .scroll-hero {
+    height: auto;
+  }
+
+  .scroll-hero-stage {
+    position: relative;
+    height: auto;
+    min-height: 100svh;
+  }
+
+  .scroll-hero-opening {
+    position: relative;
+    min-height: 100svh;
+    padding-top: 7rem;
+  }
+
+  .scroll-hero-opening > .shell {
+    padding-bottom: 3rem;
+  }
+
+  .scroll-hero-scenes,
+  .scroll-hero-progress {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Полоска обновления над таблицей лидов CRM */

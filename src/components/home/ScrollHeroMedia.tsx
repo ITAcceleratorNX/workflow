@@ -53,68 +53,77 @@ export function ScrollHeroMedia({ progressRef }: ScrollHeroMediaProps) {
   useEffect(() => {
     const canvas = canvasRef.current
     const context = canvas?.getContext("2d")
-    if (!canvas || !context || !shouldLoadFrames()) return
+    if (!canvas || !context) return
 
-    const set = pickFrameSet()
-    let sequence = sequences.get(set.path)
-    if (!sequence) {
-      sequence = new FrameSequence((index) => `${set.path}${String(index).padStart(4, "0")}.webp`, set.count)
-      sequences.set(set.path, sequence)
-    }
-    const frames = sequence
+    const media = gsap.matchMedia()
+    // То же условие, что у ScrollHero: статичная сцена не скачивает и не декодирует видео.
+    media.add(`${MOTION_OK} and (min-height: 601px)`, () => {
+      if (!shouldLoadFrames()) return
 
-    /* Заставка ждёт первые кадры и показывает их реальный процент */
-    const introFrames = Math.ceil(set.count / INTRO_STRIDE)
-    const reportIntro = () => reportLoad(INTRO_LOAD_ID, frames.settledCount / introFrames, INTRO_LOAD_WEIGHT)
-    reportIntro()
+      const set = pickFrameSet()
+      let sequence = sequences.get(set.path)
+      if (!sequence) {
+        sequence = new FrameSequence((index) => `${set.path}${String(index).padStart(4, "0")}.webp`, set.count)
+        sequences.set(set.path, sequence)
+      }
+      const frames = sequence
 
-    const controller = new AbortController()
-    frames
-      .load(reportIntro, controller.signal)
-      .catch(() => {})
-      /* Даже если сеть подвела, заставка не должна ждать дальше */
-      .finally(() => reportLoad(INTRO_LOAD_ID, 1, INTRO_LOAD_WEIGHT))
+      /* Заставка ждёт первые кадры и показывает их реальный процент */
+      const introFrames = Math.ceil(set.count / INTRO_STRIDE)
+      const reportIntro = () => reportLoad(INTRO_LOAD_ID, frames.settledCount / introFrames, INTRO_LOAD_WEIGHT)
+      reportIntro()
 
-    let shown = progressRef.current ?? 0
-    let drawn: ImageBitmap | undefined
+      const controller = new AbortController()
+      frames
+        .load(reportIntro, controller.signal)
+        .catch(() => {})
+        /* Даже если сеть подвела, заставка не должна ждать дальше */
+        .finally(() => reportLoad(INTRO_LOAD_ID, 1, INTRO_LOAD_WEIGHT))
 
-    const render = () => {
-      const target = progressRef.current ?? 0
-      shown += (target - shown) * FRAME_LERP
-      if (Math.abs(target - shown) < 0.0001) shown = target
+      let shown = progressRef.current ?? 0
+      let drawn: ImageBitmap | undefined
 
-      const ratio = Math.min(window.devicePixelRatio, 2, MAX_CANVAS_WIDTH / Math.max(canvas.clientWidth, 1))
-      const width = Math.round(canvas.clientWidth * ratio)
-      const height = Math.round(canvas.clientHeight * ratio)
-      const resized = canvas.width !== width || canvas.height !== height
-      if (resized) {
-        canvas.width = width
-        canvas.height = height
+      const render = () => {
+        const target = progressRef.current ?? 0
+        shown += (target - shown) * FRAME_LERP
+        if (Math.abs(target - shown) < 0.0001) shown = target
+
+        const ratio = Math.min(window.devicePixelRatio, 2, MAX_CANVAS_WIDTH / Math.max(canvas.clientWidth, 1))
+        const width = Math.round(canvas.clientWidth * ratio)
+        const height = Math.round(canvas.clientHeight * ratio)
+        const resized = canvas.width !== width || canvas.height !== height
+        if (resized) {
+          canvas.width = width
+          canvas.height = height
+        }
+
+        const frame = frames.frameAt(Math.round(shown * (set.count - 1)))
+        /* Перерисовываем, только когда сменился кадр или размер: canvas хранит картинку сам */
+        if (frame && (frame !== drawn || resized)) {
+          drawCover(context, frame, width, height)
+          drawn = frame
+        }
       }
 
-      const frame = frames.frameAt(Math.round(shown * (set.count - 1)))
-      /* Перерисовываем, только когда сменился кадр или размер: canvas хранит картинку сам */
-      if (frame && (frame !== drawn || resized)) {
-        drawCover(context, frame, width, height)
-        drawn = frame
-      }
-    }
+      /* Пока сцена за пределами экрана, кадры не считаем и не рисуем */
+      let running = false
+      const observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting && !running) gsap.ticker.add(render)
+        if (!entry.isIntersecting && running) gsap.ticker.remove(render)
+        running = entry.isIntersecting
+      })
+      observer.observe(canvas)
 
-    /* Пока сцена за пределами экрана, кадры не считаем и не рисуем */
-    let running = false
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !running) gsap.ticker.add(render)
-      if (!entry.isIntersecting && running) gsap.ticker.remove(render)
-      running = entry.isIntersecting
+      return () => {
+        controller.abort()
+        observer.disconnect()
+        gsap.ticker.remove(render)
+        frames.releaseDecoded()
+        context.clearRect(0, 0, canvas.width, canvas.height)
+      }
     })
-    observer.observe(canvas)
 
-    return () => {
-      controller.abort()
-      observer.disconnect()
-      gsap.ticker.remove(render)
-      frames.releaseDecoded()
-    }
+    return () => media.revert()
   }, [progressRef])
 
   return (

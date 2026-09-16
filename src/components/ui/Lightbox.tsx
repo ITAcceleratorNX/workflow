@@ -1,8 +1,9 @@
-import { useCallback, useEffect } from "react"
+import { useCallback, useEffect, useRef } from "react"
 import { createPortal } from "react-dom"
 import { ChevronLeft, ChevronRight, X } from "lucide-react"
 import type { PropertyPhoto } from "../../lib/properties"
 import { useScrollLock } from "../../lib/smoothScroll"
+import { useDialogFocus } from "../../lib/dialogFocus"
 
 interface LightboxProps {
   photos: PropertyPhoto[]
@@ -14,6 +15,8 @@ interface LightboxProps {
 /** Просмотр увеличенного изображения галереи (раздел 8 ТЗ). */
 export function Lightbox({ photos, index, onClose, onNavigate }: LightboxProps) {
   const photo = photos[index]
+  const rootRef = useRef<HTMLDivElement>(null)
+  const closeRef = useRef<HTMLButtonElement>(null)
 
   const goPrev = useCallback(
     () => onNavigate((index - 1 + photos.length) % photos.length),
@@ -24,13 +27,17 @@ export function Lightbox({ photos, index, onClose, onNavigate }: LightboxProps) 
     [index, photos.length, onNavigate]
   )
 
-  useScrollLock(true)
+  useScrollLock(Boolean(photo))
+  useDialogFocus(rootRef, Boolean(photo), closeRef)
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose()
-      if (event.key === "ArrowLeft") goPrev()
-      if (event.key === "ArrowRight") goNext()
+      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        event.preventDefault()
+        if (event.key === "ArrowLeft") goPrev()
+        else goNext()
+      }
     }
 
     document.addEventListener("keydown", onKeyDown)
@@ -41,17 +48,24 @@ export function Lightbox({ photos, index, onClose, onNavigate }: LightboxProps) 
 
   return createPortal(
     <div
+      ref={rootRef}
       role="dialog"
       aria-modal="true"
       aria-label={photo.alt}
+      tabIndex={-1}
+      data-lenis-prevent
       className="fixed inset-0 z-[100] flex items-center justify-center bg-graphite-950/95 p-4 backdrop-blur-sm sm:p-8"
       onClick={onClose}
     >
       <button
+        ref={closeRef}
         type="button"
-        onClick={onClose}
+        onClick={(event) => {
+          event.stopPropagation()
+          onClose()
+        }}
         aria-label="Закрыть просмотр"
-        className="absolute right-4 top-4 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/[0.06] text-ivory-50 transition-colors hover:border-white/50 hover:bg-white/[0.14]"
+        className="absolute right-4 top-[max(1rem,env(safe-area-inset-top))] z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-graphite-950/70 text-ivory-50 transition-colors hover:border-white/50 hover:bg-graphite-900"
       >
         <X className="h-5 w-5" />
       </button>
@@ -65,7 +79,7 @@ export function Lightbox({ photos, index, onClose, onNavigate }: LightboxProps) 
               event.stopPropagation()
               goPrev()
             }}
-            className="absolute left-2 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/[0.06] text-ivory-50 transition-colors hover:border-white/50 hover:bg-white/[0.14] sm:left-6"
+            className="absolute left-2 z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-graphite-950/70 text-ivory-50 transition-colors hover:border-white/50 hover:bg-graphite-900 sm:left-6"
           >
             <ChevronLeft className="h-6 w-6" />
           </button>
@@ -76,7 +90,7 @@ export function Lightbox({ photos, index, onClose, onNavigate }: LightboxProps) 
               event.stopPropagation()
               goNext()
             }}
-            className="absolute right-2 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/[0.06] text-ivory-50 transition-colors hover:border-white/50 hover:bg-white/[0.14] sm:right-6"
+            className="absolute right-2 z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-graphite-950/70 text-ivory-50 transition-colors hover:border-white/50 hover:bg-graphite-900 sm:right-6"
           >
             <ChevronRight className="h-6 w-6" />
           </button>
@@ -92,7 +106,7 @@ export function Lightbox({ photos, index, onClose, onNavigate }: LightboxProps) 
           alt={photo.alt}
           className="max-h-[75vh] w-auto max-w-full rounded-2xl object-contain"
         />
-        <figcaption className="text-center text-sm text-graphite-300">
+        <figcaption aria-live="polite" aria-atomic="true" className="text-center text-sm text-graphite-300">
           {photo.alt}
           <span className="numeric ml-3 text-graphite-500">
             {index + 1} / {photos.length}

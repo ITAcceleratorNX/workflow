@@ -9,6 +9,7 @@ import { CONTACTS, WHATSAPP_DEFAULT_MESSAGE, track, whatsappLink } from "../../l
 import { PROPERTIES } from "../../lib/properties"
 import { useLeadForm } from "../../lib/leadFormContext"
 import { cn } from "../../lib/utils"
+import { useDialogFocus } from "../../lib/dialogFocus"
 
 interface SiteMenuProps {
   open: boolean
@@ -66,12 +67,9 @@ export function SiteMenu({ open, onClose, toggleRef }: SiteMenuProps) {
       if (!open) gsap.set(menu, { visibility: "hidden" })
     }
 
-    if (open) {
-      firstLinkRef.current?.focus({ preventScroll: true })
-    } else if (menuRef.current?.contains(document.activeElement)) {
-      toggleRef.current?.focus({ preventScroll: true })
-    }
   }, [open, toggleRef])
+
+  useDialogFocus(menuRef, open, firstLinkRef, toggleRef)
 
   return (
     <div
@@ -80,6 +78,7 @@ export function SiteMenu({ open, onClose, toggleRef }: SiteMenuProps) {
       role="dialog"
       aria-modal="true"
       aria-label="Меню сайта"
+      tabIndex={-1}
       inert={!open}
       /* Колесо и тач прокручивают само меню: на низких экранах оно длиннее окна */
       data-lenis-prevent
@@ -152,6 +151,7 @@ export function SiteMenu({ open, onClose, toggleRef }: SiteMenuProps) {
               className="w-full sm:w-auto"
               onClick={() => {
                 onClose()
+                toggleRef.current?.focus({ preventScroll: true })
                 openLeadForm({ source: "header-contact" })
               }}
             >

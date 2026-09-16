@@ -26,7 +26,9 @@ const SPLIT_TYPE: Record<SplitBy, string> = { lines: "lines", words: "words", ch
 
 /**
  * Текст выезжает снизу из-под маски - строка за строкой.
- * После анимации разметка возвращается к исходной: никаких лишних span и обрезанных хвостов букв.
+ * Сохраняем маски после появления: их удаление меняет кернинг, высоту строк
+ * и text-wrap: balance, отчего уже показанный текст заметно сдвигается.
+ * autoSplit пересобирает строки при resize, а исходную разметку возвращаем при cleanup.
  */
 export function TextReveal({
   children,
@@ -64,7 +66,7 @@ export function TextReveal({
               stagger,
               delay,
               scrollTrigger: play === "scroll" ? { trigger: element, start: REVEAL_START, once: true } : undefined,
-              onComplete: () => self.revert(),
+              clearProps: "transform",
             })
           },
           onRevert: () => element.classList.remove("split-lines"),

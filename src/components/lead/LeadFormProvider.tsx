@@ -10,6 +10,7 @@ import {
 import { EASE, MOTION_OK, gsap, useGSAP } from "../../lib/motion"
 import { track } from "../../lib/site"
 import { useScrollLock } from "../../lib/smoothScroll"
+import { useDialogFocus } from "../../lib/dialogFocus"
 
 export function LeadFormProvider({ children }: { children: ReactNode }) {
   /* request живёт до конца анимации закрытия; open - показана форма или уже уезжает */
@@ -91,11 +92,8 @@ function LeadDialog({ request, open, onClose, onExited }: LeadDialogProps) {
     else timeline.timeScale(1.6).reverse()
   }, [open, onExited])
 
-  useEffect(() => {
-    const previousFocus = document.activeElement as HTMLElement | null
-    panelRef.current?.focus({ preventScroll: true })
-    return () => previousFocus?.focus?.({ preventScroll: true })
-  }, [])
+  // Keep the background inert until the closing animation has finished.
+  useDialogFocus(rootRef, true, panelRef)
 
   useEffect(() => {
     if (!open) return

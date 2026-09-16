@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type FormEvent } from "react"
+import { useEffect, useId, useRef, useState, type ChangeEvent, type FormEvent, type KeyboardEvent } from "react"
 import { Link } from "react-router-dom"
 import { ArrowUpRight, Check, CircleAlert } from "lucide-react"
 import { Action, ActionAnchor } from "../ui/Action"
@@ -35,8 +35,24 @@ const fieldClass = (hasError: boolean, inverted: boolean) =>
     hasError ? "border-red-500" : inverted ? "border-transparent" : "border-graphite-950/15 hover:border-graphite-950/30"
   )
 
+/** Возвращает курсор к той же цифре после добавления скобок и дефисов маски. */
+function restorePhoneCaret(input: HTMLInputElement, digitsBeforeCaret: number) {
+  requestAnimationFrame(() => {
+    if (document.activeElement !== input) return
+    let caret = 0
+    let digits = 0
+    while (caret < input.value.length && digits < digitsBeforeCaret) {
+      if (/\d/.test(input.value[caret])) digits++
+      caret++
+    }
+    input.setSelectionRange(caret, caret)
+  })
+}
+
 export function LeadForm({ source, defaultProperty, inverted = false, onSuccess }: LeadFormProps) {
   const uid = useId()
+  const formRef = useRef<HTMLFormElement>(null)
+  const successRef = useRef<HTMLDivElement>(null)
   /* Отметка старта заполнения - по ней отсекается мгновенная отправка ботом */
   const startedAt = useRef(0)
   const [values, setValues] = useState<LeadFormValues>({
@@ -52,9 +68,39 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
     startedAt.current = Date.now()
   }, [])
 
+  useEffect(() => {
+    if (status === "success") successRef.current?.focus({ preventScroll: true })
+  }, [status])
+
   const setField = <K extends keyof LeadFormValues>(key: K, value: LeadFormValues[K]) => {
     setValues((prev) => ({ ...prev, [key]: value }))
     setErrors((prev) => (prev[key] ? { ...prev, [key]: undefined } : prev))
+  }
+
+  const handlePhoneChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const input = event.currentTarget
+    const raw = input.value
+    const rawDigits = raw.replace(/\D/g, "")
+    const hadCountryCode = rawDigits.length > 10 && /^[78]/.test(rawDigits)
+    const digitsBeforeCaret = raw.slice(0, input.selectionStart ?? raw.length).replace(/\D/g, "").length
+    setField("phone", normalizePhoneDigits(raw))
+    restorePhoneCaret(input, Math.max(0, digitsBeforeCaret - Number(hadCountryCode)))
+  }
+
+  const handlePhoneKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Backspace" && event.key !== "Delete") return
+    const input = event.currentTarget
+    if (input.selectionStart !== input.selectionEnd) return
+    const backward = event.key === "Backspace"
+    let position = (input.selectionStart ?? 0) - Number(backward)
+    while (position >= 0 && position < input.value.length && !/\d/.test(input.value[position])) {
+      position += backward ? -1 : 1
+    }
+    if (position < 0 || position >= input.value.length) return
+    event.preventDefault()
+    const digitIndex = input.value.slice(0, position).replace(/\D/g, "").length
+    setField("phone", values.phone.slice(0, digitIndex) + values.phone.slice(digitIndex + 1))
+    restorePhoneCaret(input, digitIndex)
   }
 
   const handleSubmit = async (event: FormEvent) => {
@@ -64,6 +110,10 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
     const nextErrors = validateLead(values)
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors)
+      const firstInvalidField = Object.keys(nextErrors)[0]
+      requestAnimationFrame(() => {
+        formRef.current?.querySelector<HTMLElement>(`[name="${firstInvalidField}"]`)?.focus()
+      })
       return
     }
 
@@ -95,7 +145,9 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
   if (status === "success") {
     return (
       <div
+        ref={successRef}
         role="status"
+        tabIndex={-1}
         className={cn(
           "flex flex-col items-center gap-4 rounded-2xl p-8 text-center",
           inverted ? "bg-white/10" : "bg-ivory-100"
@@ -112,10 +164,10 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
   }
 
   const labelClass = cn("mb-2 block text-sm font-medium", inverted ? "text-ivory-200" : "text-graphite-700")
-  const errorClass = "mt-1.5 flex items-center gap-1.5 text-sm text-red-600"
+  const errorClass = cn("mt-1.5 flex items-center gap-1.5 text-sm", inverted ? "text-red-300" : "text-red-600")
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+    <form ref={formRef} onSubmit={handleSubmit} noValidate aria-busy={status === "submitting"} className="flex flex-col gap-4">
       {/* Honeypot: скрыт от пользователей, заполняется только ботами */}
       <div className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
         <label htmlFor={`${uid}-website`}>Не заполняйте это поле</label>
@@ -139,6 +191,7 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
             id={`${uid}-name`}
             name="name"
             type="text"
+            required
             autoComplete="name"
             value={values.name}
             onChange={(event) => setField("name", event.target.value)}
@@ -185,13 +238,14 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
               id={`${uid}-phone`}
               name="phone"
               type="tel"
+              required
               inputMode="numeric"
               autoComplete="tel-national"
               value={formatPhoneDigits(values.phone)}
-              onChange={(event) => setField("phone", normalizePhoneDigits(event.target.value))}
+              onChange={handlePhoneChange}
+              onKeyDown={handlePhoneKeyDown}
               className="w-full border-0 bg-transparent py-3.5 text-[15px] text-graphite-950 outline-none placeholder:text-graphite-400"
               placeholder={PHONE_PLACEHOLDER}
-              maxLength={PHONE_PLACEHOLDER.length + 2}
               aria-invalid={Boolean(errors.phone)}
               aria-describedby={errors.phone ? `${uid}-phone-error` : undefined}
             />
@@ -235,6 +289,7 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
         <select
           id={`${uid}-property`}
           name="property"
+          required
           value={values.property}
           onChange={(event) => setField("property", event.target.value)}
           className={cn(fieldClass(Boolean(errors.property), inverted), "appearance-none bg-[length:16px] pr-10")}
@@ -282,6 +337,7 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
             id={`${uid}-consent`}
             name="consent"
             type="checkbox"
+            required
             checked={values.consent}
             onChange={(event) => setField("consent", event.target.checked)}
             className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded border-graphite-300 accent-graphite-950"

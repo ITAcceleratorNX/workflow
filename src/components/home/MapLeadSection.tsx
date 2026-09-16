@@ -3,7 +3,6 @@ import { ArrowUpRight } from "lucide-react"
 import { Action } from "../ui/Action"
 import { actionArrowClass } from "../ui/actionVariants"
 import { Appear } from "../motion/Appear"
-import { MediaReveal } from "../motion/MediaReveal"
 import { TextReveal } from "../motion/TextReveal"
 import { PROPERTIES } from "../../lib/properties"
 import { useLeadForm } from "../../lib/leadFormContext"
@@ -19,13 +18,14 @@ export function MapLeadSection() {
 
   return (
     <section id="map-lead" className="bg-ivory-100 py-24 sm:py-32">
-      <div className="shell grid gap-12 lg:grid-cols-12 lg:gap-8">
-        {/* Высота задана явно: Leaflet берёт размер карты из контейнера */}
-        <MediaReveal className="h-[420px] rounded-3xl bg-ivory-200 sm:h-[520px] lg:col-span-7 lg:h-[640px]">
-          <Suspense fallback={null}>
+      <div className="shell grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
+        {/* Постоянный stacking context удерживает слои Leaflet ниже меню и диалогов.
+            Интерактивную карту проявляем без масштабирования её координат и кнопок. */}
+        <Appear y={0} className="relative isolate z-0 h-[360px] min-w-0 overflow-hidden rounded-3xl bg-ivory-200 sm:h-[480px] lg:col-span-7 lg:h-[560px] xl:h-[600px]">
+          <Suspense fallback={<div role="status" className="flex h-full items-center justify-center text-sm text-graphite-600">Загрузка карты…</div>}>
             <PropertiesMiniMap />
           </Suspense>
-        </MediaReveal>
+        </Appear>
 
         <div className="flex flex-col justify-center lg:col-span-4 lg:col-start-9">
           <Appear className="flex items-center gap-4">

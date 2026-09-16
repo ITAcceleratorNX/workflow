@@ -69,7 +69,9 @@ export function ScrollHero() {
       const wrapper = wrapperRef.current
       if (!wrapper) return
 
-      gsap.matchMedia().add(MOTION_OK, () => {
+      // На низком экране сцена становится обычным блоком: тексту и CTA нужен
+      // естественный поток, иначе absolute + h-svh обрезают верх заголовка.
+      gsap.matchMedia().add(`${MOTION_OK} and (min-height: 601px)`, () => {
         let shownIndex = 0
 
         const timeline = gsap.timeline({
@@ -125,9 +127,9 @@ export function ScrollHero() {
       data-header-hero
       aria-label="TMK WorkFlow - офисы в Алматы"
       /* Высота = длина прохода по сцене. Без анимаций сцена обычной высоты экрана */
-      className="relative h-[440svh] bg-graphite-950 sm:h-[520svh] motion-reduce:!h-svh"
+      className="scroll-hero relative bg-graphite-950"
     >
-      <div className="sticky top-0 h-svh overflow-hidden">
+      <div className="scroll-hero-stage sticky top-0 h-svh overflow-hidden">
         <ScrollHeroMedia progressRef={progressRef} />
 
         {/* Затемнение: сверху под шапку, снизу под тексты и слева под главы */}
@@ -142,7 +144,7 @@ export function ScrollHero() {
         <div ref={scrimRef} aria-hidden="true" className="absolute inset-0 bg-graphite-950/55 opacity-0" />
 
         {/* Первый экран */}
-        <div ref={openingRef} className="absolute inset-0 flex items-end">
+        <div ref={openingRef} className="scroll-hero-opening absolute inset-0 flex items-end">
           <div className="shell w-full pb-28 sm:pb-32">
             <Appear play="mount" paused={!introReady} delay={0.3} className="flex items-center gap-4">
               <span aria-hidden="true" className="h-px w-12 bg-ochre-500" />
@@ -180,7 +182,7 @@ export function ScrollHero() {
         </div>
 
         {/* Главы: появляются только при прокрутке; без анимаций не показываются */}
-        <div className="motion-reduce:hidden">
+        <div className="scroll-hero-scenes motion-reduce:hidden">
           {chapters.map((chapter, index) => (
             <div
               key={chapter.label}
@@ -232,7 +234,7 @@ export function ScrollHero() {
         </div>
 
         {/* Шкала прохода: номер главы, подсказка и прогресс */}
-        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 motion-reduce:hidden">
+        <div aria-hidden="true" className="scroll-hero-progress absolute inset-x-0 bottom-0 motion-reduce:hidden">
           <div className="shell relative flex items-center gap-4 pb-8 text-sm sm:gap-6 sm:pb-10">
             {/* Подсказка над шкалой: исчезает с первой прокруткой и не оставляет пустоты в строке */}
             <span

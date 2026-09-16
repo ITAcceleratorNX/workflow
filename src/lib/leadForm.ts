@@ -140,30 +140,46 @@ function isAcceptedLead(payload: SubmitLeadPayload): boolean {
 }
 
 export async function submitLead(payload: SubmitLeadPayload): Promise<SubmitLeadResult> {
-  const response = await fetch("/api/lead", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      ...payload,
-      phone: toE164(payload.phone),
-      sourceLabel: LEAD_SOURCE_LABELS[payload.source],
-      /* Метки рекламы живут в cookie, а не в форме, - читаем в момент отправки */
-      ...readAdParams(),
-    }),
-  })
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 20_000)
 
-  if (!response.ok) {
-    let message = "Не удалось отправить заявку"
-    try {
-      const data = (await response.json()) as { error?: string }
-      if (data?.error) message = data.error
-    } catch {
-      /* тело ответа может быть пустым */
+  try {
+    const response = await fetch("/api/lead", {
+      method: "POST",
+      signal: controller.signal,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...payload,
+        phone: toE164(payload.phone),
+        sourceLabel: LEAD_SOURCE_LABELS[payload.source],
+        /* Метки рекламы живут в cookie, а не в форме, - читаем в момент отправки */
+        ...readAdParams(),
+      }),
+    })
+
+    if (!response.ok) {
+      let message = "Не удалось отправить заявку"
+      try {
+        const data = (await response.json()) as { error?: string }
+        if (data?.error) message = data.error
+      } catch {
+        /* тело ответа может быть пустым */
+      }
+      return { ok: false, accepted: false, error: message }
     }
-    return { ok: false, accepted: false, error: message }
-  }
 
-  return { ok: true, accepted: isAcceptedLead(payload) }
+    return { ok: true, accepted: isAcceptedLead(payload) }
+  } catch {
+    return {
+      ok: false,
+      accepted: false,
+      error: controller.signal.aborted
+        ? "Сервер не ответил вовремя"
+        : "Не удалось связаться с сервером. Проверьте подключение к интернету",
+    }
+  } finally {
+    clearTimeout(timeout)
+  }
 }
 
 export const SUCCESS_MESSAGE =

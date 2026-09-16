@@ -35,9 +35,9 @@ export function AdvantagesGrid({
           {property.advantages.map((advantage) => {
             const Icon = ADVANTAGE_ICONS[advantage.icon]
             return (
-              <li key={advantage.label} className="border-t border-graphite-950/15 pt-5">
+              <li key={advantage.label} className="min-w-0 border-t border-graphite-950/15 pt-5">
                 <Icon className="h-6 w-6 text-ochre-700" strokeWidth={1.5} aria-hidden />
-                <p className="mt-6 font-medium leading-snug">{advantage.label}</p>
+                <p className="mt-6 hyphens-auto font-medium leading-snug [overflow-wrap:anywhere]">{advantage.label}</p>
               </li>
             )
           })}

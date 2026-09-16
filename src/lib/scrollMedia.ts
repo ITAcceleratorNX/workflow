@@ -69,6 +69,7 @@ export class FrameSequence {
   private blobs: (Blob | undefined)[]
   private bitmaps = new Map<number, ImageBitmap>()
   private decoding = new Set<number>()
+  private decodeGeneration = 0
   private lastIndex = -1
   private disposed = false
 
@@ -109,10 +110,11 @@ export class FrameSequence {
           const response = await fetch(this.urlFor(index), { signal })
           if (!response.ok) throw new Error(String(response.status))
           const blob = await response.blob()
+          if (this.disposed || signal?.aborted) return
           this.blobs[index] = blob
           this.loadedBytes += blob.size
         } catch {
-          if (signal?.aborted) return
+          if (this.disposed || signal?.aborted) return
         }
         this.settledCount++
         onProgress?.()
@@ -124,6 +126,7 @@ export class FrameSequence {
 
   /** Кадр для отрисовки: нужный, если он уже декодирован, иначе ближайший готовый */
   frameAt(index: number): ImageBitmap | undefined {
+    if (this.disposed) return undefined
     const changed = index !== this.lastIndex
     this.lastIndex = index
 
@@ -145,6 +148,9 @@ export class FrameSequence {
 
   /** Освобождает декодированные кадры (самое тяжёлое в памяти), скачанные файлы остаются */
   releaseDecoded() {
+    // createImageBitmap нельзя отменить: результаты прошлой сессии закроем при готовности.
+    this.decodeGeneration++
+    this.decoding.clear()
     this.bitmaps.forEach((bitmap) => bitmap.close())
     this.bitmaps.clear()
     this.lastIndex = -1
@@ -157,19 +163,23 @@ export class FrameSequence {
   }
 
   private decode(index: number) {
-    if (index < 0 || index >= this.count || this.bitmaps.has(index) || this.decoding.has(index)) return
+    if (this.disposed || index < 0 || index >= this.count || this.bitmaps.has(index) || this.decoding.has(index)) return
     const blob = this.blobs[index]
     if (!blob) return
 
+    const generation = this.decodeGeneration
     this.decoding.add(index)
     createImageBitmap(blob)
       .then((bitmap) => {
+        // Старое завершение не должно ни заполнить cache, ни снять флаг нового decode.
+        if (this.disposed || generation !== this.decodeGeneration) return bitmap.close()
         this.decoding.delete(index)
-        if (this.disposed) return bitmap.close()
         this.bitmaps.set(index, bitmap)
         this.evictFarthest()
       })
-      .catch(() => this.decoding.delete(index))
+      .catch(() => {
+        if (generation === this.decodeGeneration) this.decoding.delete(index)
+      })
   }
 
   /** Освобождаем память от кадров, дальше всего отстоящих от текущего */

@@ -13,9 +13,20 @@ export function PropertiesMiniMap() {
 
     const map = L.map(node, {
       scrollWheelZoom: false,
-      zoomControl: true,
+      // На телефоне жест над картой должен продолжать прокрутку страницы.
+      dragging: !window.matchMedia("(pointer: coarse)").matches,
+      touchZoom: false,
+      doubleClickZoom: false,
+      zoomControl: false,
       attributionControl: true,
+      zoomSnap: 0.25,
     })
+
+    L.control.zoom({
+      position: "bottomright",
+      zoomInTitle: "Приблизить карту",
+      zoomOutTitle: "Отдалить карту",
+    }).addTo(map)
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
@@ -52,15 +63,23 @@ export function PropertiesMiniMap() {
       L.marker(point, { icon, interactive: false, keyboard: false }).addTo(map)
     }
 
-    map.fitBounds(bounds.pad(0.45))
+    const fitMap = () => {
+      map.invalidateSize({ pan: false, animate: false })
+      map.fitBounds(bounds, {
+        // Учитываем ширину подписей и высоту меток, а не только координаты точек.
+        paddingTopLeft: [88, 80],
+        paddingBottomRight: [88, 48],
+        maxZoom: 16,
+        animate: false,
+      })
+    }
 
-    const onResize = () => map.invalidateSize()
-    window.addEventListener("resize", onResize)
-    const resizeTimer = window.setTimeout(onResize, 80)
+    fitMap()
+    const observer = new ResizeObserver(fitMap)
+    observer.observe(node)
 
     return () => {
-      window.clearTimeout(resizeTimer)
-      window.removeEventListener("resize", onResize)
+      observer.disconnect()
       map.remove()
     }
   }, [])
@@ -68,8 +87,8 @@ export function PropertiesMiniMap() {
   return (
     <div
       ref={containerRef}
-      className="map-muted h-full w-full"
-      role="img"
+      className="map-muted relative isolate z-0 h-full w-full [&_.leaflet-control-zoom_a]:!h-11 [&_.leaflet-control-zoom_a]:!w-11 [&_.leaflet-control-zoom_a]:!leading-[44px]"
+      role="region"
       aria-label="Карта Алматы с бизнес-центрами Time Square, Venus и Koktem Towers"
     />
   )

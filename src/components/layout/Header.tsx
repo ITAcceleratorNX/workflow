@@ -170,7 +170,7 @@ export function Header() {
               aria-label={`Позвонить ${CONTACTS.phone}`}
               variant="glass"
               size="icon"
-              className="h-11 w-11 xl:hidden"
+              className="hidden h-11 w-11 min-[375px]:inline-flex xl:hidden"
             >
               <Phone className="h-[18px] w-[18px]" />
             </ActionAnchor>
