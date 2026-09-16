@@ -15,6 +15,8 @@ interface TextRevealProps {
   stagger?: number
   /** "scroll" — при появлении в окне, "mount" — сразу после отрисовки (hero, интро) */
   play?: "scroll" | "mount"
+  /** Пока true, анимация ждёт — например, пока на экране интро-заставка */
+  paused?: boolean
 }
 
 const DEFAULT_STAGGER: Record<SplitBy, number> = { lines: 0.09, words: 0.03, chars: 0.02 }
@@ -34,13 +36,14 @@ export function TextReveal({
   delay = 0,
   stagger = DEFAULT_STAGGER[by],
   play = "scroll",
+  paused = false,
 }: TextRevealProps) {
   const ref = useRef<HTMLElement | null>(null)
 
   useGSAP(
     () => {
       const element = ref.current
-      if (!element) return
+      if (!element || paused) return
 
       gsap.matchMedia().add(MOTION_OK, () => {
         const split = SplitText.create(element, {
@@ -70,7 +73,7 @@ export function TextReveal({
         return () => split.revert()
       })
     },
-    { dependencies: [by, delay, stagger, play], revertOnUpdate: true }
+    { dependencies: [by, delay, stagger, play, paused], revertOnUpdate: true }
   )
 
   return (

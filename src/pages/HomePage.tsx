@@ -1,5 +1,5 @@
 import { Seo } from "../components/layout/Layout"
-import { HeroSection } from "../components/home/HeroSection"
+import { ScrollHero } from "../components/home/ScrollHero"
 import { OfficeFormatsSection } from "../components/home/OfficeFormatsSection"
 import { PropertyCardsSection } from "../components/home/PropertyCardsSection"
 import { MapLeadSection } from "../components/home/MapLeadSection"
@@ -15,7 +15,7 @@ export function HomePage() {
   return (
     <>
       <Seo title={HOME_SEO.title} description={HOME_SEO.description} path="/" />
-      <HeroSection />
+      <ScrollHero />
       <OfficeFormatsSection />
       <PropertyCardsSection />
       <MapLeadSection />

@@ -1,28 +1,56 @@
 /** Контент главной страницы */
 
-export const HERO = {
-  eyebrow: "КОММЕРЧЕСКАЯ НЕДВИЖИМОСТЬ · АЛМАТЫ",
-  title: "Офисы для бизнеса",
-  titleAccent: "в Алматы",
-  description:
-    "Подберём офис, сервисное пространство или решение под ключ под задачи вашей компании. Сопроводим от заявки до заезда.",
-  cta: "Подобрать офис",
-  objectsLine: "Time Square · Venus · Koktem Towers",
-} as const
-
 /**
- * Короткие клипы для Hero-нарезки (public/hero/).
- * Чередуем экстерьеры с дрона и светлые интерьеры офисов.
+ * Scroll-hero главной: сцена закреплена на экране, тексты сменяются по мере прокрутки.
+ * Главы идут в порядке появления. Тексты — черновик на основе контента сайта,
+ * править их можно здесь, не трогая вёрстку и анимацию.
  */
-export const HERO_CLIPS = [
-  { mp4: "/hero/ext-02.mp4", webm: "/hero/ext-02.webm", poster: "/hero/ext-02.jpg" },
-  { mp4: "/hero/int-04.mp4", webm: "/hero/int-04.webm", poster: "/hero/int-04.jpg" },
-  { mp4: "/hero/ext-05.mp4", webm: "/hero/ext-05.webm", poster: "/hero/ext-05.jpg" },
-  { mp4: "/hero/int-05.mp4", webm: "/hero/int-05.webm", poster: "/hero/int-05.jpg" },
-  { mp4: "/hero/ext-01.mp4", webm: "/hero/ext-01.webm", poster: "/hero/ext-01.jpg" },
-  { mp4: "/hero/int-01.mp4", webm: "/hero/int-01.webm", poster: "/hero/int-01.jpg" },
-  { mp4: "/hero/int-06.mp4", webm: "/hero/int-06.webm", poster: "/hero/int-06.jpg" },
-] as const
+export const SCROLL_HERO = {
+  /* Последний кадр ролика: видео идёт задом наперёд, значит это его первый кадр.
+     Пока видео нет, кадр стоит вместо него; дальше — постер до загрузки */
+  poster: {
+    src: "/scroll-hero/poster-1920.webp",
+    srcSet: "/scroll-hero/poster-1280.webp 1280w, /scroll-hero/poster-1920.webp 1920w",
+  },
+  opening: {
+    label: "Коммерческая недвижимость · Алматы",
+    title: "Офисы для бизнеса",
+    titleAccent: "в Алматы",
+    description:
+      "Подберём офис, сервисное пространство или решение под ключ под задачи вашей компании.",
+    cta: "Подобрать офис",
+    scrollHint: "Листайте",
+  },
+  chapters: [
+    {
+      label: "Бизнес-центры",
+      title: "Три бизнес-центра",
+      accent: "класса А",
+      text: "Time Square, Venus и Koktem Towers — в Самал-3, Медеуском районе и на проспекте Достык.",
+      align: "left",
+    },
+    {
+      label: "Форматы",
+      title: "Офис, сервисный офис",
+      accent: "или под ключ",
+      text: "Классический офис в аренду, готовое пространство с мебелью и обслуживанием или решение с подготовкой к заезду.",
+      align: "right",
+    },
+    {
+      label: "Сопровождение",
+      title: "От заявки",
+      accent: "до заезда",
+      text: "Подберём площадь и этаж под структуру команды, покажем объект и поможем подготовить пространство к переезду.",
+      align: "left",
+    },
+  ],
+  finale: {
+    title: "Найдём офис",
+    accent: "под вашу команду",
+    cta: "Подобрать офис",
+    secondaryCta: "Смотреть объекты",
+  },
+} as const
 
 /** Форматы офисных решений — карточки с фото по референсу office-six-virid */
 export const OFFICE_FORMATS = {

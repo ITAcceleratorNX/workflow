@@ -13,6 +13,8 @@ interface AppearProps {
   /** Если задан — появляются дочерние элементы по очереди с этим шагом (сетки карточек, списки) */
   stagger?: number
   play?: "scroll" | "mount"
+  /** Пока true, анимация ждёт — например, пока на экране интро-заставка */
+  paused?: boolean
 }
 
 /**
@@ -27,13 +29,14 @@ export function Appear({
   y = 48,
   stagger,
   play = "scroll",
+  paused = false,
 }: AppearProps) {
   const ref = useRef<HTMLElement | null>(null)
 
   useGSAP(
     () => {
       const element = ref.current
-      if (!element) return
+      if (!element || paused) return
 
       gsap.matchMedia().add(MOTION_OK, () => {
         gsap.from(stagger === undefined ? element : element.children, {
@@ -47,7 +50,7 @@ export function Appear({
         })
       })
     },
-    { dependencies: [delay, y, stagger, play], revertOnUpdate: true }
+    { dependencies: [delay, y, stagger, play, paused], revertOnUpdate: true }
   )
 
   return (

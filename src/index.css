@@ -153,41 +153,6 @@ html.lenis {
   transform: none;
 }
 
-/* Hero: ровно на весь экран на всех устройствах (с учётом мобильной панели браузера) */
-.hero-screen {
-  height: 100vh;
-  min-height: 100vh;
-  height: 100svh;
-  min-height: 100svh;
-  height: 100dvh;
-  min-height: 100dvh;
-}
-@keyframes hero-fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.hero-fade {
-  opacity: 0;
-  animation: hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-/* Пока идёт интро-заставка, появление hero ждёт: иначе оно отыграло бы под шторкой */
-html.intro-pending .hero-fade {
-  animation-play-state: paused;
-}
-
-.hero-fade-1 { animation-delay: 0.12s; }
-.hero-fade-2 { animation-delay: 0.28s; }
-.hero-fade-3 { animation-delay: 0.44s; }
-.hero-fade-4 { animation-delay: 0.6s; }
-
 /* Метки БЦ на мини-карте главной */
 .bc-map-marker {
   background: transparent !important;
@@ -254,11 +219,6 @@ html.intro-pending .hero-fade {
     opacity: 1;
     transform: none;
     transition: none;
-  }
-
-  .hero-fade {
-    opacity: 1;
-    animation: none;
   }
 
   .zoom-media img {
