@@ -154,7 +154,7 @@ interface ChipsInputProps {
   options: readonly string[]
 }
 
-/** Мультивыбор требований к помещению (раздел 7 ТЗ) — заметнее и быстрее списка с Ctrl. */
+/** Мультивыбор требований к помещению (раздел 7 ТЗ) - заметнее и быстрее списка с Ctrl. */
 export function ChipsInput({ value, onChange, options }: ChipsInputProps) {
   const toggle = (option: string) =>
     onChange(value.includes(option) ? value.filter((item) => item !== option) : [...value, option])

@@ -5,7 +5,7 @@ import { MediaReveal } from "../motion/MediaReveal"
 import { OFFICE_FORMATS } from "../../lib/homeContent"
 import { cn } from "../../lib/utils"
 
-/* Смещение карточек на широком экране — журнальный ритм вместо ровной сетки */
+/* Смещение карточек на широком экране - журнальный ритм вместо ровной сетки */
 const CARD_OFFSET = ["", "lg:mt-24", "lg:mt-12"]
 
 /** Форматы офисных решений: три карточки с крупным фото и номером. */

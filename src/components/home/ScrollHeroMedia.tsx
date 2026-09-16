@@ -19,7 +19,7 @@ const MAX_CANVAS_WIDTH = 2400
 
 /*
  * Загруженные кадры переживают уход с главной: при возврате не качаем всё заново.
- * Декодированные изображения при этом освобождаются — они и занимают память.
+ * Декодированные изображения при этом освобождаются - они и занимают память.
  */
 const sequences = new Map<string, FrameSequence>()
 
@@ -37,13 +37,13 @@ function shouldLoadFrames() {
 }
 
 interface ScrollHeroMediaProps {
-  /** Прогресс прокрутки сцены 0…1 — пишет ScrollTrigger сцены */
+  /** Прогресс прокрутки сцены 0…1 - пишет ScrollTrigger сцены */
   progressRef: RefObject<number>
 }
 
 /**
  * Пролёт по офису, привязанный к прокрутке: кадры ролика рисуются на canvas.
- * Под canvas лежит постер — он виден, пока не готов первый кадр, и остаётся,
+ * Под canvas лежит постер - он виден, пока не готов первый кадр, и остаётся,
  * если кадры решили не загружать.
  */
 export function ScrollHeroMedia({ progressRef }: ScrollHeroMediaProps) {

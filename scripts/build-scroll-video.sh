@@ -2,21 +2,21 @@
 #
 # Подготовка видео для scroll-hero главной из исходника с дрона.
 #
-#   scripts/build-scroll-video.sh /путь/к/DJI_....mp4          — кадры для сайта
-#   scripts/build-scroll-video.sh /путь/к/DJI_....mp4 --lab    — плюс варианты для /lab/scroll-video
+#   scripts/build-scroll-video.sh /путь/к/DJI_....mp4          - кадры для сайта
+#   scripts/build-scroll-video.sh /путь/к/DJI_....mp4 --lab    - плюс варианты для /lab/scroll-video
 #
 # Шаги:
 #   1. Уменьшаем 4K до 1920×1080 и берём кадры с частотой OUT_FPS / SPEED
 #      на секунду исходника: при SPEED=1.5 и OUT_FPS=24 полёт идёт в полтора раза быстрее съёмки.
-#   2. Разворачиваем порядок кадров — видео идёт от последней секунды к первой.
+#   2. Разворачиваем порядок кадров - видео идёт от последней секунды к первой.
 #      Фильтр reverse у ffmpeg держит весь ролик в памяти, поэтому переставляем номера кадров.
 #   3. Кодируем каждый второй кадр в WebP: для широких экранов 1600×900,
-#      для вертикальных — центральный кроп 720×960. Результат — public/scroll-hero/frames
+#      для вертикальных - центральный кроп 720×960. Результат - public/scroll-hero/frames
 #      и src/lib/scrollHeroFrames.ts с параметрами наборов.
-#   4. С флагом --lab — ещё варианты для сравнения (кадры 1280 и H.264 для перемотки <video>).
+#   4. С флагом --lab - ещё варианты для сравнения (кадры 1280 и H.264 для перемотки <video>).
 #
 # Переменные окружения: SPEED (1.5), OUT_FPS (24), WORK_DIR (.cache/scroll-video).
-# Исходник (1,4 ГБ) в репозиторий не кладём — нужен только для пересборки.
+# Исходник (1,4 ГБ) в репозиторий не кладём - нужен только для пересборки.
 
 set -euo pipefail
 
@@ -31,7 +31,7 @@ FRAMES_DIR=public/scroll-hero/frames
 FRAMES_TS=src/lib/scrollHeroFrames.ts
 LAB_DIR=public/scroll-hero/lab
 
-# Вертикальная версия — центральный кроп 3:4: на телефоне от 16:9 всё равно
+# Вертикальная версия - центральный кроп 3:4: на телефоне от 16:9 всё равно
 # видна только середина, а качать ширину, которую обрежут, незачем
 MOBILE_CROP="crop=810:1080,scale=720:960:flags=lanczos"
 
@@ -43,7 +43,7 @@ if [ -z "$(ls -A "$WORK_DIR/master")" ]; then
     -vf "fps=${SAMPLE_FPS},scale=1920:1080:flags=lanczos" \
     -pix_fmt yuvj420p -q:v 2 "$WORK_DIR/master/%05d.jpg"
 else
-  echo "  уже есть в $WORK_DIR/master — пропускаем (удалите папку, чтобы извлечь заново)"
+  echo "  уже есть в $WORK_DIR/master - пропускаем (удалите папку, чтобы извлечь заново)"
 fi
 
 TOTAL=$(find "$WORK_DIR/master" -name '*.jpg' | wc -l | tr -d ' ')
@@ -87,9 +87,9 @@ const sets = { wide: describe("wide", 1600, 900), tall: describe("tall", 720, 96
 
 fs.writeFileSync(
   tsFile,
-  `/* Файл создаёт scripts/build-scroll-video.sh — руками не править */
+  `/* Файл создаёт scripts/build-scroll-video.sh - руками не править */
 
-/** Наборы кадров scroll-hero: wide — для горизонтальных экранов, tall — для вертикальных */
+/** Наборы кадров scroll-hero: wide - для горизонтальных экранов, tall - для вертикальных */
 export const SCROLL_HERO_FRAMES = ${JSON.stringify(sets, null, 2)} as const
 `
 )
@@ -102,7 +102,7 @@ NODE
 
 mkdir -p "$LAB_DIR"
 
-# Видео для перемотки: без B-кадров и с ключевым кадром каждые $3 кадров —
+# Видео для перемотки: без B-кадров и с ключевым кадром каждые $3 кадров -
 # браузеру не нужно декодировать длинную цепочку, чтобы показать нужный момент
 encode_video() {
   local name=$1 filter=$2 gop=$3 crf=$4

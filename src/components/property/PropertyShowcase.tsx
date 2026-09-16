@@ -9,7 +9,7 @@ import type { Property } from "../../lib/properties"
 
 interface PropertyShowcaseProps {
   property: Property
-  /** На странице объекта заголовок — H1, на главной блок Time Square идёт как H2 */
+  /** На странице объекта заголовок - H1, на главной блок Time Square идёт как H2 */
   headingLevel: "h1" | "h2"
   eyebrow: string
   priority?: boolean

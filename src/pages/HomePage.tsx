@@ -6,7 +6,7 @@ import { MapLeadSection } from "../components/home/MapLeadSection"
 import { ViewingSection } from "../components/property/ViewingSection"
 
 const HOME_SEO = {
-  title: "TMK WorkFlow — офисы и коммерческие помещения в аренду в Алматы",
+  title: "TMK WorkFlow - офисы и коммерческие помещения в аренду в Алматы",
   description:
     "Аренда офисов в Алматы: бизнес-центры Time Square, Venus и Koktem Towers класса А. Подберём объект и формат офиса под задачи компании.",
 } as const

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import { cn } from "../../lib/utils"
 
-/** Знак и название без ссылки — для заставки, где кликать нечего. */
+/** Знак и название без ссылки - для заставки, где кликать нечего. */
 export function LogoLockup({ className }: { className?: string }) {
   return (
     <span className={cn("flex shrink-0 items-center gap-3 text-ivory-50", className)}>
@@ -28,7 +28,7 @@ interface LogoProps {
 /** Знак и название для тёмных поверхностей: шапка, меню, подвал. */
 export function Logo({ className, onClick }: LogoProps) {
   return (
-    <Link to="/" onClick={onClick} aria-label="TMK WorkFlow — главная" className={cn("flex shrink-0", className)}>
+    <Link to="/" onClick={onClick} aria-label="TMK WorkFlow - главная" className={cn("flex shrink-0", className)}>
       <LogoLockup />
     </Link>
   )

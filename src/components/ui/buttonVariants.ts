@@ -5,7 +5,7 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        /* Оранжевый — основные действия (раздел 2 ТЗ) */
+        /* Оранжевый - основные действия (раздел 2 ТЗ) */
         primary:
           "bg-orange-500 text-white shadow-[0_8px_20px_-8px_rgba(242,107,33,0.7)] hover:bg-orange-600 hover:shadow-[0_12px_26px_-8px_rgba(242,107,33,0.75)] active:translate-y-px",
         secondary: "bg-brand-900 text-white hover:bg-brand-800 active:translate-y-px",

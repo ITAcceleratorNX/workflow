@@ -8,7 +8,7 @@ import path from 'path'
 /** Обработчик из api/: та же сигнатура, что у функции Vercel. */
 type ApiHandler = (req: IncomingMessage, res: ServerResponse) => void | Promise<void>
 
-/** Тело запроса приходит потоком — serverless-обработчики ждут разобранный объект. */
+/** Тело запроса приходит потоком - serverless-обработчики ждут разобранный объект. */
 function readBody(req: IncomingMessage): Promise<unknown> {
   return new Promise((resolve) => {
     const chunks: Buffer[] = []
@@ -28,12 +28,12 @@ function readBody(req: IncomingMessage): Promise<unknown> {
 /**
  * Запускает функции из api/ прямо в dev-сервере Vite.
  *
- * На Vercel эти файлы обслуживает отдельная среда, локально её нет — без этого
+ * На Vercel эти файлы обслуживает отдельная среда, локально её нет - без этого
  * моста ни форма заявки, ни CRM в `npm run dev` не работают. Плагин включается
  * только для dev-сервера и на сборку не влияет.
  */
 function localApi(): Plugin {
-  /* Переимпорт после правки: ключ кеша — время изменения файла */
+  /* Переимпорт после правки: ключ кеша - время изменения файла */
   const loaded = new Map<string, { mtimeMs: number; handler: ApiHandler }>()
 
   return {

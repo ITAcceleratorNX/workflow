@@ -5,18 +5,18 @@ import { cn } from "../../lib/utils"
 
 interface SectionTitleProps {
   label: string
-  /** Заголовок; акцентное слово — <span className="accent-serif">…</span> */
+  /** Заголовок; акцентное слово - <span className="accent-serif">…</span> */
   title: ReactNode
   description?: ReactNode
   as?: "h2" | "h3"
-  /** light — секция светлая (тёмный текст), dark — секция тёмная */
+  /** light - секция светлая (тёмный текст), dark - секция тёмная */
   tone?: "light" | "dark"
   className?: string
 }
 
 /**
  * Заголовок секции редизайна: метка с охристой линией и крупный заголовок слева,
- * описание — справа на широком экране и под заголовком на телефоне.
+ * описание - справа на широком экране и под заголовком на телефоне.
  */
 export function SectionTitle({
   label,

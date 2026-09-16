@@ -41,7 +41,7 @@ export function FiltersPanel({ open, filters, onChange, onReset }: FiltersPanelP
 
   return (
     <div
-      /* Панель сворачивается сеткой, а не display:none — переход остаётся плавным */
+      /* Панель сворачивается сеткой, а не display:none - переход остаётся плавным */
       className={cn(
         "grid transition-[grid-template-rows,opacity] duration-300 ease-out",
         open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"

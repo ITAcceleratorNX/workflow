@@ -9,11 +9,11 @@ import {
 import type { LeadQuality, LeadStatus, ProcessingState } from "../types"
 
 /**
- * Метка с цветом по справочнику. Значение вне справочника не ломает таблицу —
+ * Метка с цветом по справочнику. Значение вне справочника не ломает таблицу -
  * показывается нейтральным цветом, а не пропадает.
  */
 function Badge({ value, styles }: { value: string | null; styles: Record<string, string> }) {
-  if (!value) return <span className="text-ink-soft">—</span>
+  if (!value) return <span className="text-ink-soft">-</span>
   return <span className={cn(BADGE_BASE, styles[value] ?? FALLBACK_BADGE)}>{value}</span>
 }
 

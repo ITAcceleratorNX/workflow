@@ -6,7 +6,7 @@
 import { PROCESSING, STATUS } from "@shared/crm.js"
 import type { Lead, LeadDraft } from "./types"
 
-/** Новый лид открывается в начале воронки — менеджеру не нужно это выбирать. */
+/** Новый лид открывается в начале воронки - менеджеру не нужно это выбирать. */
 export function emptyDraft(): LeadDraft {
   return {
     name: "",

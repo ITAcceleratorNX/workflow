@@ -14,7 +14,7 @@ import { cn } from "../../lib/utils"
 
 /*
  * Шкала сцены в условных единицах: вся прокрутка обёртки = TIMELINE_END.
- * Первый экран уходит, затем главы сменяют друг друга, в конце — призыв.
+ * Первый экран уходит, затем главы сменяют друг друга, в конце - призыв.
  */
 const OPENING_OUT = 0.5
 const CHAPTER_START = 1.8
@@ -22,7 +22,7 @@ const CHAPTER_STEP = 2.6
 /* Сколько глава стоит на экране между появлением и уходом */
 const CHAPTER_HOLD = 1.7
 const FINALE_START = CHAPTER_START + CHAPTER_STEP * SCROLL_HERO.chapters.length
-/* Последний отрезок прокрутки финал просто стоит — время нажать кнопку.
+/* Последний отрезок прокрутки финал просто стоит - время нажать кнопку.
    Длину шкалы задаёт полоса прогресса: она идёт от 0 до TIMELINE_END */
 const TIMELINE_END = FINALE_START + 1.6
 
@@ -123,7 +123,7 @@ export function ScrollHero() {
     <section
       ref={wrapperRef}
       data-header-hero
-      aria-label="TMK WorkFlow — офисы в Алматы"
+      aria-label="TMK WorkFlow - офисы в Алматы"
       /* Высота = длина прохода по сцене. Без анимаций сцена обычной высоты экрана */
       className="relative h-[440svh] bg-graphite-950 sm:h-[520svh] motion-reduce:!h-svh"
     >

@@ -28,7 +28,7 @@ export function LeadsScreen({ onSignOut }: { onSignOut: () => void }) {
   const [loading, setLoading] = useState(true)
   const [exporting, setExporting] = useState(false)
 
-  /* null — карточка закрыта; undefined — открыт новый лид */
+  /* null - карточка закрыта; undefined - открыт новый лид */
   const [openLead, setOpenLead] = useState<Lead | null | undefined>(null)
   const [toast, setToast] = useState<ToastMessage | null>(null)
 
@@ -78,7 +78,7 @@ export function LeadsScreen({ onSignOut }: { onSignOut: () => void }) {
     void load()
   }, [load])
 
-  /* Фильтры и размер страницы меняют выборку — номер страницы становится неверным */
+  /* Фильтры и размер страницы меняют выборку - номер страницы становится неверным */
   useEffect(() => {
     setPage(1)
   }, [filters, pageSize])

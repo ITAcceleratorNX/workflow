@@ -13,18 +13,18 @@ import { useScrollLock } from "../../lib/smoothScroll"
 import { HEADER_HERO_ATTRIBUTE, hasDarkHero } from "../../lib/navigation"
 import { useIntroPhase } from "../../lib/intro"
 
-/* Высота шапки (h-16 / lg:h-20) — граница, после которой hero считается пройденным */
+/* Высота шапки (h-16 / lg:h-20) - граница, после которой hero считается пройденным */
 const HEADER_HEIGHT = 80
-/* Ниже этой отметки шапка прячется при прокрутке вниз; выше — всегда на месте */
+/* Ниже этой отметки шапка прячется при прокрутке вниз; выше - всегда на месте */
 const HIDE_AFTER = 480
 /* Мелкие подёргивания колеса и тачпада не переключают видимость */
 const DIRECTION_THRESHOLD = 6
 const DESKTOP_QUERY = "(min-width: 1024px)"
 
 interface ScrollState {
-  /** Hero ушёл из-под шапки — нужна плотная подложка */
+  /** Hero ушёл из-под шапки - нужна плотная подложка */
   pastHero: boolean
-  /** Прокрутка вниз — шапка уезжает, вверх — возвращается */
+  /** Прокрутка вниз - шапка уезжает, вверх - возвращается */
   hidden: boolean
 }
 
@@ -92,7 +92,7 @@ export function Header() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setMenuOpenOn(null)
     }
-    /* На широком экране меню не нужно — навигация уже в шапке */
+    /* На широком экране меню не нужно - навигация уже в шапке */
     const desktop = window.matchMedia(DESKTOP_QUERY)
     const onDesktop = () => {
       if (desktop.matches) setMenuOpenOn(null)
@@ -113,7 +113,7 @@ export function Header() {
       <header
         className={cn(
           "fixed inset-x-0 top-0 z-50 border-b text-ivory-50 transition-[transform,background-color,border-color] duration-600 ease-out-expo",
-          /* Фокус с клавиатуры возвращает спрятанную шапку (фокус после касания — нет) */
+          /* Фокус с клавиатуры возвращает спрятанную шапку (фокус после касания - нет) */
           "has-[:focus-visible]:translate-y-0",
           hidden && !menuOpen ? "-translate-y-full" : "translate-y-0",
           solid
@@ -225,7 +225,7 @@ export function Header() {
         </div>
       </header>
 
-      {/* Меню — соседом шапки, а не внутри: transform шапки сломал бы fixed-позиционирование */}
+      {/* Меню - соседом шапки, а не внутри: transform шапки сломал бы fixed-позиционирование */}
       <SiteMenu open={menuOpen} onClose={closeMenu} toggleRef={toggleRef} />
     </>
   )

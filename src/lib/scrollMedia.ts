@@ -1,9 +1,9 @@
 /**
- * Проигрывание видео по прокрутке — два способа, которые сравниваем на /lab/scroll-video:
+ * Проигрывание видео по прокрутке - два способа, которые сравниваем на /lab/scroll-video:
  *
- * FrameSequence — ролик нарезан на кадры WebP и рисуется на canvas. Плавно в любом браузере,
+ * FrameSequence - ролик нарезан на кадры WebP и рисуется на canvas. Плавно в любом браузере,
  *   но кадров много: в памяти держим сжатые файлы, а декодируем только ближайшие.
- * VideoScrubber — обычный <video>, у которого по прокрутке меняется currentTime.
+ * VideoScrubber - обычный <video>, у которого по прокрутке меняется currentTime.
  *   Один файл, но плавность перемотки зависит от браузера.
  */
 
@@ -32,7 +32,7 @@ export async function fetchWithProgress(
   return new Blob(chunks, { type: response.headers.get("Content-Type") ?? "" })
 }
 
-/** Рисует изображение на canvas как object-fit: cover — по центру, с обрезкой краёв */
+/** Рисует изображение на canvas как object-fit: cover - по центру, с обрезкой краёв */
 export function drawCover(
   context: CanvasRenderingContext2D,
   image: ImageBitmap | HTMLVideoElement,
@@ -58,7 +58,7 @@ const LOAD_STRIDES = [32, 16, 8, 4, 2, 1]
 
 export class FrameSequence {
   readonly count: number
-  /** Сколько кадров обработано загрузкой — включая недоступные, которые пропустили */
+  /** Сколько кадров обработано загрузкой - включая недоступные, которые пропустили */
   settledCount = 0
   loadedBytes = 0
   /** Сколько раз нужного кадра ещё не было и показали соседний */
@@ -96,7 +96,7 @@ export class FrameSequence {
 
   /**
    * Загружает недостающие кадры. После прерывания (signal) повторный вызов
-   * докачивает только то, чего ещё нет. Недоступный кадр пропускается —
+   * докачивает только то, чего ещё нет. Недоступный кадр пропускается -
    * вместо него покажется соседний, а загрузка не останавливается.
    */
   async load(onProgress?: () => void, signal?: AbortSignal, concurrency = 6) {
@@ -191,7 +191,7 @@ export class VideoScrubber {
   private requestedAt = 0
   private pending: number | null = null
   private readonly video: HTMLVideoElement
-  /* Разница меньше половины кадра — перематывать незачем */
+  /* Разница меньше половины кадра - перематывать незачем */
   private readonly threshold: number
 
   constructor(video: HTMLVideoElement, fps: number) {
@@ -206,7 +206,7 @@ export class VideoScrubber {
   }
 
   seek(time: number) {
-    /* Пока браузер ищет предыдущий кадр, новые команды не копим — запоминаем только последнюю */
+    /* Пока браузер ищет предыдущий кадр, новые команды не копим - запоминаем только последнюю */
     if (this.video.seeking) {
       this.pending = time
       return

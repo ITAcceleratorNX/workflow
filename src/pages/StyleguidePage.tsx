@@ -17,7 +17,7 @@ import { cn } from "../lib/utils"
  * витрина всегда показывает то, что реально лежит в tailwind.config.js.
  */
 
-/* Классы перечислены целиком — иначе Tailwind не найдёт их в исходнике и не сгенерирует */
+/* Классы перечислены целиком - иначе Tailwind не найдёт их в исходнике и не сгенерирует */
 const PALETTE = [
   {
     name: "Графит",
@@ -111,7 +111,7 @@ const TYPE_SCALE = [
   },
 ] as const
 
-/* Размер задаётся полным именем класса — по той же причине, что и цвета */
+/* Размер задаётся полным именем класса - по той же причине, что и цвета */
 const TYPE_CLASS: Record<(typeof TYPE_SCALE)[number]["token"], string> = {
   "display-2xl": "text-display-2xl font-medium",
   "display-xl": "text-display-xl font-medium",
@@ -347,7 +347,7 @@ export default function StyleguidePage() {
         <Block label="02 · Доступность" title="Контраст пар">
           <p className="max-w-2xl text-graphite-600">
             Считается по WCAG прямо в браузере. Для обычного текста нужен уровень AA (от 4.5), для
-            крупного — от 3.
+            крупного - от 3.
           </p>
           <div className="mt-8 grid gap-3 md:grid-cols-2">
             {CONTRAST_PAIRS.map((pair) => (
@@ -358,7 +358,7 @@ export default function StyleguidePage() {
 
         <Block label="03 · Типографика" title="Шкала заголовков">
           <p className="max-w-2xl text-graphite-600">
-            Onest — основной гротеск. Cormorant Garamond курсивом — одно акцентное слово в
+            Onest - основной гротеск. Cormorant Garamond курсивом - одно акцентное слово в
             заголовке. Размеры плавно растут от телефона к широкому экрану: потяните окно.
           </p>
           <div className="mt-10 divide-y divide-graphite-950/10">
@@ -459,7 +459,7 @@ export default function StyleguidePage() {
 
         <Block label="06 · Движение" title="Кривые анимации">
           <p className="mb-10 max-w-2xl text-graphite-600">
-            Три кривые на весь сайт — у анимаций один «почерк». Здесь они растянуты до 1.2 секунды,
+            Три кривые на весь сайт - у анимаций один «почерк». Здесь они растянуты до 1.2 секунды,
             чтобы разница была видна.
           </p>
           <EasingDemo />
@@ -467,7 +467,7 @@ export default function StyleguidePage() {
 
         <Block label="07 · Скролл" title="Анимации при прокрутке">
           <p className="max-w-2xl text-graphite-600">
-            Плавный скролл Lenis и GSAP ScrollTrigger считаются в одном кадре — полоска прогресса
+            Плавный скролл Lenis и GSAP ScrollTrigger считаются в одном кадре - полоска прогресса
             вверху окна идёт без отставания. Всё, кроме параллакса, появляется один раз. При
             системной настройке «уменьшить движение» анимаций нет, контент виден сразу.
           </p>

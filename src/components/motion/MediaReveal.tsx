@@ -13,7 +13,7 @@ interface MediaRevealProps {
 
 /**
  * Фото открывается шторкой снизу вверх, а само изображение в это время
- * плавно «отъезжает» из увеличенного состояния — как в кадре с движущейся камерой.
+ * плавно «отъезжает» из увеличенного состояния - как в кадре с движущейся камерой.
  */
 export function MediaReveal({ children, className, delay = 0, play = "scroll" }: MediaRevealProps) {
   const frameRef = useRef<HTMLDivElement>(null)

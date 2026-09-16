@@ -9,11 +9,11 @@ export const actionVariants = cva(
   {
     variants: {
       variant: {
-        /* Охра — одно главное действие на экран */
+        /* Охра - одно главное действие на экран */
         accent: "bg-ochre-500 text-graphite-950 hover:bg-ochre-400",
-        /* Графит — главное действие на светлом фоне, когда охра уже есть рядом */
+        /* Графит - главное действие на светлом фоне, когда охра уже есть рядом */
         dark: "bg-graphite-950 text-ivory-50 hover:bg-graphite-800",
-        /* Светлая заливка — на тёмных секциях */
+        /* Светлая заливка - на тёмных секциях */
         light: "bg-ivory-50 text-graphite-950 hover:bg-white",
         /* Контур на светлом фоне */
         outline:

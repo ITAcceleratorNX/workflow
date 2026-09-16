@@ -25,11 +25,11 @@ export function useLeadForm(): LeadFormContextValue {
 export const LEAD_MODAL_TITLES: Record<LeadSource, { title: string; description: string }> = {
   "hero-select-office": {
     title: "Подобрать офис",
-    description: "Оставьте контакты — подберём подходящие варианты и вернёмся с предложением.",
+    description: "Оставьте контакты - подберём подходящие варианты и вернёмся с предложением.",
   },
   "home-select-office": {
     title: "Подобрать офис",
-    description: "Оставьте заявку — подберём подходящий бизнес-центр и формат офиса под задачи вашей компании.",
+    description: "Оставьте заявку - подберём подходящий бизнес-центр и формат офиса под задачи вашей компании.",
   },
   "serviced-office": {
     title: "Подобрать сервисный офис",
@@ -41,14 +41,14 @@ export const LEAD_MODAL_TITLES: Record<LeadSource, { title: string; description:
   },
   "header-contact": {
     title: "Связаться с нами",
-    description: "Оставьте заявку — менеджер свяжется с вами в ближайшее время.",
+    description: "Оставьте заявку - менеджер свяжется с вами в ближайшее время.",
   },
   "property-contact": {
     title: "Связаться с нами",
-    description: "Оставьте заявку — менеджер свяжется с вами в ближайшее время.",
+    description: "Оставьте заявку - менеджер свяжется с вами в ближайшее время.",
   },
   "footer-contact": {
     title: "Связаться с нами",
-    description: "Оставьте заявку — менеджер свяжется с вами в ближайшее время.",
+    description: "Оставьте заявку - менеджер свяжется с вами в ближайшее время.",
   },
 }

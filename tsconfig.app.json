@@ -8,7 +8,7 @@
     "types": ["vite/client"],
     "skipLibCheck": true,
 
-    /* shared/crm.js — общий справочник для браузера и серверных функций.
+    /* shared/crm.js - общий справочник для браузера и серверных функций.
        Это обычный JavaScript, типы выводятся из JSDoc. */
     "allowJs": true,
 

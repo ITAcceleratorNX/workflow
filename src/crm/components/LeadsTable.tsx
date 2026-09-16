@@ -16,7 +16,7 @@ interface Column {
 /**
  * Колонки из раздела 5 ТЗ. Технические параметры живут только в карточке.
  * Ширины подобраны так, чтобы кнопка действия помещалась на экране ноутбука;
- * длинные значения обрезаются многоточием, полный текст — в подсказке.
+ * длинные значения обрезаются многоточием, полный текст - в подсказке.
  */
 const COLUMNS: Column[] = [
   { key: "name", title: "Имя / компания", sort: "name", className: "w-[195px]" },
@@ -151,7 +151,7 @@ function LeadRow({ lead, onOpen }: { lead: Lead; onOpen: (lead: Lead) => void })
             {formatPhone(lead.phone)}
           </a>
         ) : (
-          <span className="text-ink-soft">—</span>
+          <span className="text-ink-soft">-</span>
         )}
       </td>
 

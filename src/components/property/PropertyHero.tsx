@@ -35,7 +35,7 @@ export function PropertyHero({
           src={property.heroPhoto}
           alt={property.heroPhotoAlt}
           priority={priority}
-          placeholderLabel={`Фото фасада — ${property.name}`}
+          placeholderLabel={`Фото фасада - ${property.name}`}
           sizes="100vw"
           className="object-center"
         />

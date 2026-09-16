@@ -37,14 +37,14 @@ export const FILTER_LABELS: Record<keyof LeadFilters, string> = {
 const isActive = (key: keyof LeadFilters, value: string) =>
   Boolean(value) && (key === "q" || key === "date_from" || key === "date_to" ? true : value !== ANY)
 
-/** Только выбранные фильтры — в положении «Все» фильтр в запрос не уходит. */
+/** Только выбранные фильтры - в положении «Все» фильтр в запрос не уходит. */
 export function activeFilters(filters: LeadFilters): Array<[keyof LeadFilters, string]> {
   return (Object.entries(filters) as Array<[keyof LeadFilters, string]>).filter(([key, value]) =>
     isActive(key, value)
   )
 }
 
-/** Параметры запроса для списка и для выгрузки CSV — одни и те же. */
+/** Параметры запроса для списка и для выгрузки CSV - одни и те же. */
 export function toSearchParams(
   filters: LeadFilters,
   sort: SortState,

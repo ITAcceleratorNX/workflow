@@ -29,7 +29,7 @@ export function MapLeadSection() {
             Не знаете, какой <span className="accent-serif text-ochre-700">офис выбрать?</span>
           </TextReveal>
           <Appear as="p" delay={0.15} className="mt-6 text-lead text-graphite-600">
-            Оставьте заявку — подберём подходящий бизнес-центр и формат офиса под задачи вашей
+            Оставьте заявку - подберём подходящий бизнес-центр и формат офиса под задачи вашей
             компании.
           </Appear>
 

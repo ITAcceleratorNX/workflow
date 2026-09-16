@@ -340,7 +340,7 @@ export function LeadModal({ lead, onClose, onSave }: LeadModalProps) {
               <FieldBlock label="Площадь">
                 <div className="flex items-center gap-2">
                   <NumberInput value={draft.area_from} onChange={(value) => set("area_from", value)} placeholder="от" suffix="м²" />
-                  <span className="text-ink-soft">—</span>
+                  <span className="text-ink-soft">-</span>
                   <NumberInput value={draft.area_to} onChange={(value) => set("area_to", value)} placeholder="до" suffix="м²" />
                 </div>
               </FieldBlock>
@@ -640,7 +640,7 @@ function Block({
       id={`section-${id}`}
       className={cn(
         "scroll-mt-4 rounded-2xl border bg-white p-4 sm:p-5",
-        /* Блоки, раскрытые статусом, выделяются рамкой — видно, что появилось новое */
+        /* Блоки, раскрытые статусом, выделяются рамкой - видно, что появилось новое */
         accent ? "border-orange-200 ring-1 ring-orange-100" : "border-brand-100"
       )}
     >
@@ -667,7 +667,7 @@ function RequestSummary({ draft }: { draft: LeadDraft }) {
     { label: "Email", value: dash(draft.email), href: draft.email ? `mailto:${draft.email}` : undefined },
     {
       label: "Объект",
-      value: [draft.property, draft.office_format].filter(Boolean).join(" · ") || "—",
+      value: [draft.property, draft.office_format].filter(Boolean).join(" · ") || "-",
     },
   ]
 

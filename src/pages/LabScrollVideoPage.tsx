@@ -49,7 +49,7 @@ const DESCRIPTIONS: Record<string, string> = {
 
 const SCREENS = [3, 5, 8]
 const mb = (bytes: number) => `${(bytes / 1048576).toFixed(1)} МБ`
-const EMPTY_STATS: Stats = { loadedBytes: 0, totalBytes: 0, loadSeconds: null, position: "—", quality: "—" }
+const EMPTY_STATS: Stats = { loadedBytes: 0, totalBytes: 0, loadSeconds: null, position: "-", quality: "-" }
 
 /** Прогресс прокрутки сцены 0…1 и сглаженное значение, которое реально показываем */
 interface ProgressRefs {
@@ -122,7 +122,7 @@ function FramesPlayer({
     const sequence = sequenceRef.current
     if (!canvas || !sequence) return
 
-    /* Размер буфера под плотность экрана (не выше 2x — дальше разницы не видно, а памяти больше) */
+    /* Размер буфера под плотность экрана (не выше 2x - дальше разницы не видно, а памяти больше) */
     const ratio = Math.min(window.devicePixelRatio, 2)
     const width = Math.round(canvas.clientWidth * ratio)
     const height = Math.round(canvas.clientHeight * ratio)

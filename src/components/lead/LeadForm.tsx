@@ -37,7 +37,7 @@ const fieldClass = (hasError: boolean, inverted: boolean) =>
 
 export function LeadForm({ source, defaultProperty, inverted = false, onSuccess }: LeadFormProps) {
   const uid = useId()
-  /* Отметка старта заполнения — по ней отсекается мгновенная отправка ботом */
+  /* Отметка старта заполнения - по ней отсекается мгновенная отправка ботом */
   const startedAt = useRef(0)
   const [values, setValues] = useState<LeadFormValues>({
     ...EMPTY_LEAD,
@@ -318,7 +318,7 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
           <p className="flex items-start gap-2">
             <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" />
             <span>
-              {submitError}. Попробуйте отправить ещё раз или напишите нам в WhatsApp — ответим
+              {submitError}. Попробуйте отправить ещё раз или напишите нам в WhatsApp - ответим
               быстро.
             </span>
           </p>

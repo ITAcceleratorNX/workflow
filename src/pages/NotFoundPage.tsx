@@ -19,7 +19,7 @@ export function NotFoundPage() {
           <p className="eyebrow">Ошибка 404</p>
           <h1 className="mt-3 text-3xl sm:text-4xl">Страница не найдена</h1>
           <p className="mt-4 text-base leading-relaxed text-ink-muted">
-            Возможно, страница была перемещена. Выберите объект — покажем свободные площади,
+            Возможно, страница была перемещена. Выберите объект - покажем свободные площади,
             характеристики и фотографии.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">

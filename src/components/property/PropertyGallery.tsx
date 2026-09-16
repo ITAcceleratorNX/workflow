@@ -54,7 +54,7 @@ export function PropertyGallery({
     [property.photos, activeCategory]
   )
 
-  /* Показываем первые кадры, остальные — по кнопке: галереи объектов бывают большими */
+  /* Показываем первые кадры, остальные - по кнопке: галереи объектов бывают большими */
   const visiblePhotos = expanded ? photos : photos.slice(0, PREVIEW_COUNT)
 
   const selectCategory = (category: PhotoCategory | "all") => {

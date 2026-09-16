@@ -13,9 +13,9 @@ interface TextRevealProps {
   delay?: number
   /** Шаг между соседними строками / словами / буквами, в секундах */
   stagger?: number
-  /** "scroll" — при появлении в окне, "mount" — сразу после отрисовки (hero, интро) */
+  /** "scroll" - при появлении в окне, "mount" - сразу после отрисовки (hero, интро) */
   play?: "scroll" | "mount"
-  /** Пока true, анимация ждёт — например, пока на экране интро-заставка */
+  /** Пока true, анимация ждёт - например, пока на экране интро-заставка */
   paused?: boolean
 }
 
@@ -25,7 +25,7 @@ const DEFAULT_STAGGER: Record<SplitBy, number> = { lines: 0.09, words: 0.03, cha
 const SPLIT_TYPE: Record<SplitBy, string> = { lines: "lines", words: "words", chars: "words,chars" }
 
 /**
- * Текст выезжает снизу из-под маски — строка за строкой.
+ * Текст выезжает снизу из-под маски - строка за строкой.
  * После анимации разметка возвращается к исходной: никаких лишних span и обрезанных хвостов букв.
  */
 export function TextReveal({

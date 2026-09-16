@@ -16,7 +16,7 @@
 
     <!-- Интро-заставка (src/components/intro): только при открытии главной и если
          человек не просил уменьшить движение. Решаем до загрузки React и сразу
-         красим фон в графит — иначе перед заставкой мигнёт светлая страница. -->
+         красим фон в графит - иначе перед заставкой мигнёт светлая страница. -->
     <script>
       if (location.pathname === "/" && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
         document.documentElement.classList.add("intro-pending")
@@ -42,7 +42,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Onest — основной гротеск (вариативный, 300–700), Cormorant Garamond — акцентный курсив.
+    <!-- Onest - основной гротеск (вариативный, 300–700), Cormorant Garamond - акцентный курсив.
          У обоих есть кириллица; Google сам отдаёт только нужные браузеру наборы символов. -->
     <link
       rel="stylesheet"
@@ -50,7 +50,7 @@
     />
 
     <!-- Заголовок и описание для каждой страницы задаются в React (компонент Seo) -->
-    <title>TMK WorkFlow — офисы и коммерческие помещения в аренду в Алматы</title>
+    <title>TMK WorkFlow - офисы и коммерческие помещения в аренду в Алматы</title>
     <meta
       name="description"
       content="Аренда офисов и коммерческих помещений в Алматы: бизнес-центр Time Square класса А, а также объекты Venus и Koktem Towers. Подбор офиса под задачи компании."
@@ -58,7 +58,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="TMK WorkFlow" />
     <meta property="og:locale" content="ru_RU" />
-    <meta property="og:title" content="TMK WorkFlow — офисы и коммерческие помещения в аренду в Алматы" />
+    <meta property="og:title" content="TMK WorkFlow - офисы и коммерческие помещения в аренду в Алматы" />
     <meta
       property="og:description"
       content="Аренда офисов и коммерческих помещений в Алматы: Time Square, Venus, Koktem Towers."

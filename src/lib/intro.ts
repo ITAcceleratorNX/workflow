@@ -3,9 +3,9 @@ import { useSyncExternalStore } from "react"
 /**
  * Интро-заставка и общий счётчик загрузки.
  *
- * loading — заставка на экране, страница под ней грузится;
- * leaving — шторка уходит, hero и шапка начинают появляться;
- * done    — заставки нет (или она не показывалась вовсе).
+ * loading - заставка на экране, страница под ней грузится;
+ * leaving - шторка уходит, hero и шапка начинают появляться;
+ * done    - заставки нет (или она не показывалась вовсе).
  */
 export type IntroPhase = "loading" | "leaving" | "done"
 
@@ -45,12 +45,12 @@ export function useIntroPhase() {
    Счётчик читается в каждом кадре анимации, поэтому подписки React ему не нужны. */
 const loads = new Map<string, { progress: number; weight: number }>()
 
-/** Сообщает прогресс загрузки ресурса. Вес — насколько ресурс важен для общего процента. */
+/** Сообщает прогресс загрузки ресурса. Вес - насколько ресурс важен для общего процента. */
 export function reportLoad(id: string, progress: number, weight = 1) {
   loads.set(id, { progress: Math.min(1, Math.max(0, progress)), weight })
 }
 
-/** Ресурс без промежуточного прогресса: готов, когда промис завершился — успешно или нет */
+/** Ресурс без промежуточного прогресса: готов, когда промис завершился - успешно или нет */
 export function trackLoad(id: string, promise: Promise<unknown>, weight = 1) {
   if (loads.has(id)) return
   reportLoad(id, 0, weight)
@@ -59,7 +59,7 @@ export function trackLoad(id: string, promise: Promise<unknown>, weight = 1) {
   promise.then(finish, finish)
 }
 
-/** Общий прогресс 0…1; пока ни один ресурс не зарегистрирован — 1 */
+/** Общий прогресс 0…1; пока ни один ресурс не зарегистрирован - 1 */
 export function getLoadProgress() {
   let total = 0
   let ready = 0

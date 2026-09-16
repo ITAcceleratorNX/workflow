@@ -37,7 +37,7 @@ ActionAnchor.displayName = "ActionAnchor"
 
 export interface ActionLinkProps extends LinkProps, ActionVariantProps {}
 
-/** Та же кнопка переходом внутри сайта — без перезагрузки страницы. */
+/** Та же кнопка переходом внутри сайта - без перезагрузки страницы. */
 export const ActionLink = React.forwardRef<HTMLAnchorElement, ActionLinkProps>(
   ({ className, variant, size, ...props }, ref) => (
     <Link

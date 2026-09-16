@@ -6,7 +6,7 @@ import { useScrollLock } from "../../lib/smoothScroll"
 
 /* Минимум на экране, в секундах: чтобы заставка не мелькнула, даже если всё уже в кеше */
 const MIN_DURATION_FIRST = 2.4
-/* Повторное открытие в той же вкладке — короче: сайт уже знаком */
+/* Повторное открытие в той же вкладке - короче: сайт уже знаком */
 const MIN_DURATION_REPEAT = 0.9
 /* Дольше не держим: на медленной сети загрузка продолжится в фоне, а человек уже видит сайт */
 const MAX_WAIT = 12
@@ -26,13 +26,13 @@ function writeSeen() {
   try {
     sessionStorage.setItem(SEEN_KEY, "1")
   } catch {
-    /* приватный режим без хранилища — просто покажем полную версию ещё раз */
+    /* приватный режим без хранилища - просто покажем полную версию ещё раз */
   }
 }
 
 /**
  * Заставка при открытии главной. Пока она на экране, в фоне грузится всё,
- * что зарегистрировано через trackLoad / reportLoad (шрифты, позже — видео hero).
+ * что зарегистрировано через trackLoad / reportLoad (шрифты, позже - видео hero).
  */
 export function Intro() {
   const phase = useIntroPhase()
@@ -67,7 +67,7 @@ function IntroOverlay() {
         .from(split.chars, { yPercent: 110, duration: 1.2, stagger: 0.045 })
         .from("[data-intro-fade]", { autoAlpha: 0, y: 16, duration: 0.9, stagger: 0.08 }, 0.25)
 
-      /* leave вызывается позже из тика — вне области useGSAP, поэтому элементы ищем явно */
+      /* leave вызывается позже из тика - вне области useGSAP, поэтому элементы ищем явно */
       const fades = root.querySelectorAll("[data-intro-fade]")
 
       const leave = () => {

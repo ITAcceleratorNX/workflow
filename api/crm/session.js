@@ -1,9 +1,9 @@
 /**
  * Вход в CRM по общему паролю (раздел 16 ТЗ).
  *
- *   GET    — есть ли действующая сессия
- *   POST   — вход, тело { password }
- *   DELETE — выход
+ *   GET    - есть ли действующая сессия
+ *   POST   - вход, тело { password }
+ *   DELETE - выход
  */
 
 import {
@@ -16,7 +16,7 @@ import {
 } from "../_lib/auth.js"
 import { clientIp, createRateLimiter, json, methodNotAllowed, readBody } from "../_lib/http.js"
 
-/* Пароль один на всех, поэтому подбор — единственный реальный сценарий атаки */
+/* Пароль один на всех, поэтому подбор - единственный реальный сценарий атаки */
 const isLimited = createRateLimiter({ windowMs: 5 * 60_000, max: 10 })
 
 export default async function handler(req, res) {

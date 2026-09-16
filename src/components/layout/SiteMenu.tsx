@@ -54,11 +54,11 @@ export function SiteMenu({ open, onClose, toggleRef }: SiteMenuProps) {
     const timeline = timelineRef.current
     if (!menu || !timeline) return
 
-    /* Видимость — сразу, до анимации: по элементу с visibility: hidden фокус не ставится */
+    /* Видимость - сразу, до анимации: по элементу с visibility: hidden фокус не ставится */
     if (open) gsap.set(menu, { visibility: "visible" })
 
     if (window.matchMedia(MOTION_OK).matches) {
-      /* Закрытие быстрее открытия — интерфейс отзывается без ожидания */
+      /* Закрытие быстрее открытия - интерфейс отзывается без ожидания */
       if (open) timeline.timeScale(1).play()
       else timeline.timeScale(1.8).reverse()
     } else {
@@ -104,7 +104,7 @@ export function SiteMenu({ open, onClose, toggleRef }: SiteMenuProps) {
                   <>
                     <span className="flex items-baseline gap-4">
                       <span className="numeric w-6 text-sm text-graphite-400">0{index + 1}</span>
-                      {/* Обёртка — маска: название выезжает снизу из-под неё */}
+                      {/* Обёртка - маска: название выезжает снизу из-под неё */}
                       <span className="block overflow-hidden pb-1">
                         <span
                           data-menu-line

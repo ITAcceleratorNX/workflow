@@ -4,7 +4,7 @@ import type Lenis from "lenis"
 /*
  * Активный экземпляр Lenis. Он один на страницу и живёт вне React
  * (создаёт его SmoothScrollProvider), поэтому хранится как внешнее хранилище.
- * null — плавного скролла нет: CRM или провайдер ещё не смонтирован.
+ * null - плавного скролла нет: CRM или провайдер ещё не смонтирован.
  */
 let current: Lenis | null = null
 const listeners = new Set<() => void>()
@@ -31,7 +31,7 @@ let activeLocks = 0
 
 /**
  * Блокирует прокрутку страницы, пока открыто меню, модальное окно или лайтбокс.
- * Одного overflow: hidden мало — Lenis крутит страницу сам, его надо остановить.
+ * Одного overflow: hidden мало - Lenis крутит страницу сам, его надо остановить.
  */
 export function useScrollLock(locked: boolean) {
   const lenis = useLenis()
@@ -53,14 +53,14 @@ export function useScrollLock(locked: boolean) {
   }, [locked, lenis])
 }
 
-/** Плавная прокрутка к элементу — через Lenis, если он есть, иначе средствами браузера */
+/** Плавная прокрутка к элементу - через Lenis, если он есть, иначе средствами браузера */
 export function useScrollToElement() {
   const lenis = useLenis()
 
   return useCallback(
     (element: HTMLElement | null) => {
       if (!element) return
-      /* Lenis учитывает scroll-margin-top элемента — отступ под шапку сохраняется */
+      /* Lenis учитывает scroll-margin-top элемента - отступ под шапку сохраняется */
       if (lenis) lenis.scrollTo(element)
       else element.scrollIntoView({ block: "start", behavior: "smooth" })
     },

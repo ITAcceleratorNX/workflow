@@ -3,7 +3,7 @@
 import type { Lead, LeadDraft, LeadsPage } from "./types"
 
 class CrmError extends Error {
-  /** 401 означает «сессия кончилась» — экран возвращает к форме входа. */
+  /** 401 означает «сессия кончилась» - экран возвращает к форме входа. */
   readonly status: number
 
   constructor(message: string, status: number) {

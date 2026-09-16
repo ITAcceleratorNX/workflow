@@ -11,7 +11,7 @@ import { NotFoundPage } from "./pages/NotFoundPage"
 /* CRM грузится отдельным файлом: посетителям сайта её код скачивать незачем */
 const CrmPage = lazy(() => import("./crm/CrmPage"))
 
-/* Витрина дизайн-системы — только для разработки: в продакшен-сборке условие
+/* Витрина дизайн-системы - только для разработки: в продакшен-сборке условие
    становится false, и файл страницы в неё не попадает */
 const StyleguidePage = import.meta.env.DEV ? lazy(() => import("./pages/StyleguidePage")) : null
 const LabScrollVideoPage = import.meta.env.DEV ? lazy(() => import("./pages/LabScrollVideoPage")) : null

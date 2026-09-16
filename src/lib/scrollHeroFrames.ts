@@ -1,6 +1,6 @@
-/* Файл создаёт scripts/build-scroll-video.sh — руками не править */
+/* Файл создаёт scripts/build-scroll-video.sh - руками не править */
 
-/** Наборы кадров scroll-hero: wide — для горизонтальных экранов, tall — для вертикальных */
+/** Наборы кадров scroll-hero: wide - для горизонтальных экранов, tall - для вертикальных */
 export const SCROLL_HERO_FRAMES = {
   "wide": {
     "path": "/scroll-hero/frames/wide/",

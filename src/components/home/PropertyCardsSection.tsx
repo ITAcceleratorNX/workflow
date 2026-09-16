@@ -10,7 +10,7 @@ import { cn } from "../../lib/utils"
 
 /**
  * Бизнес-центры: крупные ряды «фото + описание», фото чередуются слева и справа.
- * Весь ряд — ссылка на страницу объекта.
+ * Весь ряд - ссылка на страницу объекта.
  */
 export function PropertyCardsSection() {
   return (
@@ -24,7 +24,7 @@ export function PropertyCardsSection() {
               Выберите <span className="accent-serif text-ochre-300">объект</span>
             </>
           }
-          description="Три бизнес-центра класса А в Алматы — откройте страницу, чтобы посмотреть площади, ставки и фото."
+          description="Три бизнес-центра класса А в Алматы - откройте страницу, чтобы посмотреть площади, ставки и фото."
         />
 
         <ul className="mt-16 border-t border-white/10 sm:mt-24">
@@ -43,7 +43,7 @@ export function PropertyCardsSection() {
                       <SmartImage
                         src={property.cover}
                         alt={property.coverAlt}
-                        placeholderLabel={`Фасад — ${property.name}`}
+                        placeholderLabel={`Фасад - ${property.name}`}
                         sizes="(max-width: 1024px) 100vw, 40vw"
                         className="transition-transform duration-1200 ease-out-expo group-hover:scale-105"
                       />

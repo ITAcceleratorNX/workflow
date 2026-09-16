@@ -2,7 +2,7 @@
  * Подключение к базе CRM и создание схемы.
  *
  * Переменные окружения (Vercel → Project Settings → Environment Variables):
- *   DATABASE_URL — строка подключения к PostgreSQL. Подходит любой провайдер:
+ *   DATABASE_URL - строка подключения к PostgreSQL. Подходит любой провайдер:
  *                  Neon, Vercel Postgres, Supabase, Railway.
  *
  * Таблица создаётся сама при первом обращении, отдельная миграция не нужна:
@@ -49,7 +49,7 @@ const DRIVER_PARAMS = new Set([
 
 /**
  * Оставляет в адресе только понятные драйверу параметры.
- * Часть с логином и паролем не трогаем вовсе — режем строку по «?».
+ * Часть с логином и паролем не трогаем вовсе - режем строку по «?».
  */
 function withoutForeignParams(rawUrl) {
   const separator = rawUrl.indexOf("?")
@@ -63,7 +63,7 @@ function withoutForeignParams(rawUrl) {
   return kept.length > 0 ? `${base}?${new URLSearchParams(kept)}` : base
 }
 
-/** Локальная база обычно без TLS, облачная — всегда с ним. */
+/** Локальная база обычно без TLS, облачная - всегда с ним. */
 function needsTls(url) {
   try {
     const host = new URL(url).hostname
@@ -90,12 +90,12 @@ export function db() {
     connect_timeout: 15,
     prepare: false,
     ssl: needsTls(url) ? "require" : false,
-    /* «relation already exists, skipping» от идемпотентной схемы — не событие для логов */
+    /* «relation already exists, skipping» от идемпотентной схемы - не событие для логов */
     onnotice: () => {},
     types: {
       /* Колонки типа date отдаём строкой «ГГГГ-ММ-ДД». Драйвер по умолчанию
          возвращает Date, и при сериализации в JSON дата уезжает на день
-         из-за часового пояса — для даты заезда и просмотра это недопустимо. */
+         из-за часового пояса - для даты заезда и просмотра это недопустимо. */
       date: { to: 1082, from: [1082], serialize: (value) => value, parse: (value) => value },
     },
   })

@@ -2,19 +2,19 @@
  * Приём заявок с сайта TMK WorkFlow и отправка их на почту (раздел 9.4 ТЗ).
  *
  * Переменные окружения (Vercel → Project Settings → Environment Variables):
- *   RESEND_API_KEY   — обязательный, ключ API resend.com
- *   LEAD_TO_EMAIL    — куда слать заявки (по умолчанию yerlepessov.t@tmk-limited.com)
- *   LEAD_FROM_EMAIL  — отправитель на подтверждённом в Resend домене
+ *   RESEND_API_KEY   - обязательный, ключ API resend.com
+ *   LEAD_TO_EMAIL    - куда слать заявки (по умолчанию yerlepessov.t@tmk-limited.com)
+ *   LEAD_FROM_EMAIL  - отправитель на подтверждённом в Resend домене
  *
  * Дублирование заявок в реестр обращений (ТЗ Bankai.Agency от 04.09.2026):
- *   LEADS_REGISTRY_URL   — адрес приёмника (Google Apps Script)
- *   LEADS_REGISTRY_TOKEN — общий секрет приёмника
+ *   LEADS_REGISTRY_URL   - адрес приёмника (Google Apps Script)
+ *   LEADS_REGISTRY_TOKEN - общий секрет приёмника
  * Оба намеренно вынесены в окружение и не хранятся в коде: репозиторий публичный,
- * а токен — единственная защита открытого адреса от посторонних записей.
+ * а токен - единственная защита открытого адреса от посторонних записей.
  * Если переменные не заданы, заявка просто уходит на почту, как раньше.
  *
- * Третий параллельный канал — CRM (раздел 15 ТЗ «CRM для сайта TMK WorkFlow»):
- *   DATABASE_URL — база CRM. Без неё заявка идёт только на почту и в реестр.
+ * Третий параллельный канал - CRM (раздел 15 ТЗ «CRM для сайта TMK WorkFlow»):
+ *   DATABASE_URL - база CRM. Без неё заявка идёт только на почту и в реестр.
  * Ни один из трёх каналов не заменяет другие и не может отменить отправку формы.
  */
 
@@ -32,7 +32,7 @@ const registryToken = () => process.env.LEADS_REGISTRY_TOKEN || ""
 const PROPERTIES = ["Time Square", "Venus", "Koktem Towers"]
 const PHONE_PATTERN = /^\+7\d{10}$/
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/
-/* Зеркало MIN_FILL_MS в src/lib/leadForm.ts — менять значения вместе */
+/* Зеркало MIN_FILL_MS в src/lib/leadForm.ts - менять значения вместе */
 const MIN_FILL_MS = 3000
 
 /* Простое ограничение частоты по IP. В serverless живёт в пределах тёплого инстанса. */
@@ -62,7 +62,7 @@ const escapeHtml = (value) =>
 
 const clean = (value, maxLength = 500) => String(value ?? "").trim().slice(0, maxLength)
 
-/** Пустые поля в реестр не отправляем — по ТЗ все они, кроме токена, необязательные. */
+/** Пустые поля в реестр не отправляем - по ТЗ все они, кроме токена, необязательные. */
 const withoutEmpty = (fields) => Object.fromEntries(Object.entries(fields).filter(([, value]) => value))
 
 function pickAdParams(body) {
@@ -77,12 +77,12 @@ function pickAdParams(body) {
 const leadRows = (lead) => [
   ["Объект", lead.property],
   ["Имя", lead.name],
-  ["Компания", lead.company || "—"],
+  ["Компания", lead.company || "-"],
   ["Телефон", lead.phone],
-  ["Email", lead.email || "—"],
-  ["Комментарий", lead.comment || "—"],
-  ["Страница", lead.page || "—"],
-  ["Источник формы", lead.sourceLabel || lead.source || "—"],
+  ["Email", lead.email || "-"],
+  ["Комментарий", lead.comment || "-"],
+  ["Страница", lead.page || "-"],
+  ["Источник формы", lead.sourceLabel || lead.source || "-"],
 ]
 
 const receivedAt = () =>
@@ -151,7 +151,7 @@ async function sendEmail(lead, apiKey) {
         from: fromEmail(),
         to: [toEmail()],
         reply_to: lead.email || undefined,
-        subject: `Заявка с сайта — ${lead.property} — ${lead.name}`,
+        subject: `Заявка с сайта - ${lead.property} - ${lead.name}`,
         text: buildEmailText(lead),
         html: buildEmailHtml(lead),
         /* Уникальный идентификатор не даёт Gmail схлопывать похожие заявки в одну */
@@ -181,7 +181,7 @@ async function sendToRegistry(lead, adParams) {
   const token = registryToken()
 
   if (!url || !token) {
-    console.warn("LEADS_REGISTRY_URL или LEADS_REGISTRY_TOKEN не заданы — заявка в реестр не ушла")
+    console.warn("LEADS_REGISTRY_URL или LEADS_REGISTRY_TOKEN не заданы - заявка в реестр не ушла")
     return
   }
 
@@ -204,7 +204,7 @@ async function sendToRegistry(lead, adParams) {
       }),
     })
 
-    /* Apps Script отвечает редиректом на googleusercontent — fetch проходит по нему сам */
+    /* Apps Script отвечает редиректом на googleusercontent - fetch проходит по нему сам */
     const data = await response.json().catch(() => null)
 
     if (!response.ok || data?.ok === false) {
@@ -221,7 +221,7 @@ async function sendToRegistry(lead, adParams) {
  */
 async function saveToCrm(lead, adParams) {
   if (!isDatabaseConfigured()) {
-    console.warn("DATABASE_URL не задан — лид в CRM не создан")
+    console.warn("DATABASE_URL не задан - лид в CRM не создан")
     return
   }
 
@@ -244,7 +244,7 @@ export default async function handler(req, res) {
   const body = typeof req.body === "string" ? safeParse(req.body) : req.body
   if (!body) return res.status(400).json({ error: "Некорректный запрос" })
 
-  /* Honeypot и слишком быстрая отправка — молча подтверждаем, чтобы не подсказывать боту */
+  /* Honeypot и слишком быстрая отправка - молча подтверждаем, чтобы не подсказывать боту */
   if (clean(body.website, 100)) return res.status(200).json({ ok: true })
   if (Number(body.elapsedMs) < MIN_FILL_MS) return res.status(200).json({ ok: true })
 
@@ -284,9 +284,9 @@ export default async function handler(req, res) {
   }
 
   /* Ключ проверяем, но заявку из-за него не теряем: реестр и CRM должны
-     получить её в любом случае — это три независимых канала (раздел 15 ТЗ). */
+     получить её в любом случае - это три независимых канала (раздел 15 ТЗ). */
   const apiKey = process.env.RESEND_API_KEY
-  if (!apiKey) console.error("RESEND_API_KEY не задан — письмо не отправлено")
+  if (!apiKey) console.error("RESEND_API_KEY не задан - письмо не отправлено")
 
   /* Три канала идут параллельно, чтобы реестр и CRM не добавляли задержки к форме.
      Дожидаемся всех: serverless-инстанс замораживается сразу после ответа,

@@ -1,7 +1,7 @@
 /**
  * Доступ к лидам CRM: проверка значений, фильтры, чтение и запись.
  *
- * Все проверки опираются на LEAD_FIELDS из shared/crm.js — тот же справочник,
+ * Все проверки опираются на LEAD_FIELDS из shared/crm.js - тот же справочник,
  * из которого интерфейс строит выпадающие списки. Разъехаться они не могут.
  */
 
@@ -72,7 +72,7 @@ function coerceValue(field, raw) {
 
 /**
  * Отбирает из тела запроса только известные поля лида и приводит их к типам базы.
- * Незнакомые ключи отбрасываются молча — это защита от записи в служебные колонки.
+ * Незнакомые ключи отбрасываются молча - это защита от записи в служебные колонки.
  */
 export function coerceLeadFields(input) {
   const values = {}
@@ -172,7 +172,7 @@ function buildConditions(sql, query) {
 /* Чтение                                                              */
 /* ------------------------------------------------------------------ */
 
-/** numeric приходит из драйвера строкой — интерфейсу нужны числа. */
+/** numeric приходит из драйвера строкой - интерфейсу нужны числа. */
 function toApiLead(row) {
   const lead = { ...row }
 
@@ -188,7 +188,7 @@ function toApiLead(row) {
 
 /**
  * Список лидов с фильтрами и постраничным выводом.
- * `all: true` отдаёт всю выборку целиком — это режим выгрузки CSV.
+ * `all: true` отдаёт всю выборку целиком - это режим выгрузки CSV.
  */
 export async function listLeads(query, { all = false } = {}) {
   await ensureSchema()
@@ -198,7 +198,7 @@ export async function listLeads(query, { all = false } = {}) {
 
   const sortColumn = SORTABLE.has(trimmed(query.sort)) ? trimmed(query.sort) : "created_at"
   const order = trimmed(query.order).toLowerCase() === "asc" ? sql`ASC` : sql`DESC`
-  /* NULLS LAST — пустые значения не должны занимать первые строки при сортировке */
+  /* NULLS LAST - пустые значения не должны занимать первые строки при сортировке */
   const orderBy = sql`ORDER BY ${sql(sortColumn)} ${order} NULLS LAST, id DESC`
 
   if (all) {
@@ -277,7 +277,7 @@ export async function getLead(id) {
 
 /**
  * Создаёт лид из заявки с сайта (раздел 15). Вызывается из api/lead.js
- * и никогда не должен ломать отправку формы — ошибки ловит вызывающий код.
+ * и никогда не должен ломать отправку формы - ошибки ловит вызывающий код.
  */
 export async function createSiteLead(lead, adParams = {}) {
   await ensureSchema()

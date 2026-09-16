@@ -7,7 +7,7 @@ import { buttonVariants } from "../ui/buttonVariants"
 import { cn } from "../../lib/utils"
 import type { Property } from "../../lib/properties"
 
-/** Переходы на другие объекты (раздел 5.12 ТЗ): обложки — фотографии фасада снаружи. */
+/** Переходы на другие объекты (раздел 5.12 ТЗ): обложки - фотографии фасада снаружи. */
 export function OtherPropertiesSection({ properties }: { properties: Property[] }) {
   return (
     <Section tone="white" size="lg">
@@ -28,7 +28,7 @@ export function OtherPropertiesSection({ properties }: { properties: Property[] 
                 <SmartImage
                   src={property.cover}
                   alt={property.coverAlt}
-                  placeholderLabel={`Фасад — ${property.name}`}
+                  placeholderLabel={`Фасад - ${property.name}`}
                   sizes="(max-width: 1024px) 100vw, 50vw"
                 />
               </div>

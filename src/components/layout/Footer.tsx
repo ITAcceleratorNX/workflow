@@ -118,7 +118,7 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Крупное название — подпись сайта; декоративное, читалкам экрана не нужно */}
+      {/* Крупное название - подпись сайта; декоративное, читалкам экрана не нужно */}
       <div aria-hidden="true" className="pointer-events-none select-none overflow-hidden">
         <TextReveal
           as="p"

@@ -1,7 +1,7 @@
 import { readAdParams } from "./attribution"
 import { PROPERTY_OPTIONS } from "./properties"
 
-/** Точки открытия формы (раздел 9.1 ТЗ) — источник передаётся вместе с заявкой. */
+/** Точки открытия формы (раздел 9.1 ТЗ) - источник передаётся вместе с заявкой. */
 export type LeadSource =
   | "hero-select-office"
   | "home-select-office"
@@ -12,13 +12,13 @@ export type LeadSource =
   | "footer-contact"
 
 export const LEAD_SOURCE_LABELS: Record<LeadSource, string> = {
-  "hero-select-office": "Хиро-блок — кнопка «Подобрать офис»",
-  "home-select-office": "Главная — блок карты — кнопка «Подобрать офис»",
-  "serviced-office": "Блок «Сервисный офис» — кнопка «Подобрать сервисный офис»",
+  "hero-select-office": "Хиро-блок - кнопка «Подобрать офис»",
+  "home-select-office": "Главная - блок карты - кнопка «Подобрать офис»",
+  "serviced-office": "Блок «Сервисный офис» - кнопка «Подобрать сервисный офис»",
   viewing: "Форма записи на просмотр",
-  "header-contact": "Верхняя панель — кнопка «Связаться с нами»",
-  "property-contact": "Страница объекта — кнопка «Связаться с нами»",
-  "footer-contact": "Подвал — кнопка «Связаться с нами»",
+  "header-contact": "Верхняя панель - кнопка «Связаться с нами»",
+  "property-contact": "Страница объекта - кнопка «Связаться с нами»",
+  "footer-contact": "Подвал - кнопка «Связаться с нами»",
 }
 
 export interface LeadFormValues {
@@ -113,14 +113,14 @@ export interface SubmitLeadPayload extends LeadFormValues {
   page: string
   /** Honeypot: реальные пользователи это поле не видят и не заполняют */
   website: string
-  /** Время заполнения формы, мс — отсекает мгновенную отправку ботом */
+  /** Время заполнения формы, мс - отсекает мгновенную отправку ботом */
   elapsedMs: number
 }
 
 /**
  * Минимальное время заполнения формы, мс. Зеркало MIN_FILL_MS в api/lead.js:
  * сервер молча подтверждает более быстрые отправки, поэтому те же правила нужны
- * и на клиенте — чтобы не засчитать бота как заявку в аналитике.
+ * и на клиенте - чтобы не засчитать бота как заявку в аналитике.
  */
 export const MIN_FILL_MS = 3000
 
@@ -147,7 +147,7 @@ export async function submitLead(payload: SubmitLeadPayload): Promise<SubmitLead
       ...payload,
       phone: toE164(payload.phone),
       sourceLabel: LEAD_SOURCE_LABELS[payload.source],
-      /* Метки рекламы живут в cookie, а не в форме, — читаем в момент отправки */
+      /* Метки рекламы живут в cookie, а не в форме, - читаем в момент отправки */
       ...readAdParams(),
     }),
   })
