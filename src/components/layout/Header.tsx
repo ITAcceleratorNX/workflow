@@ -117,7 +117,7 @@ export function Header() {
           "has-[:focus-visible]:translate-y-0",
           hidden && !menuOpen ? "-translate-y-full" : "translate-y-0",
           solid
-            ? "border-white/10 bg-graphite-950/80 backdrop-blur-xl"
+            ? "border-white/10 bg-graphite-950/95 backdrop-blur-xl"
             : "border-transparent bg-transparent"
         )}
       >

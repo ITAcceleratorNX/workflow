@@ -39,7 +39,7 @@ mkdir -p "$WORK_DIR/master" "$WORK_DIR/reversed"
 
 echo "→ Кадры из исходника: ${SAMPLE_FPS} на секунду съёмки, 1920×1080"
 if [ -z "$(ls -A "$WORK_DIR/master")" ]; then
-  ffmpeg -v error -stats -y -hwaccel videotoolbox -i "$SRC" \
+  ffmpeg -v error -stats -y -hwaccel auto -i "$SRC" \
     -vf "fps=${SAMPLE_FPS},scale=1920:1080:flags=lanczos" \
     -pix_fmt yuvj420p -q:v 2 "$WORK_DIR/master/%05d.jpg"
 else

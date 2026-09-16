@@ -293,7 +293,7 @@ export default function StyleguidePage() {
         <div className="shell flex min-h-[80svh] flex-col justify-end pb-16 pt-24 sm:pb-24">
           <Appear play="mount" delay={0.1} className="flex items-center gap-4">
             <span aria-hidden="true" className="h-px w-12 bg-ochre-500" />
-            <p className="label text-ochre-400">Дизайн-система · этапы 1–2</p>
+            <p className="label text-ochre-400">Дизайн-система</p>
           </Appear>
           <TextReveal
             as="h1"

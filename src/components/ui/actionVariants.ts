@@ -1,8 +1,8 @@
 import { cva } from "class-variance-authority"
 
 /**
- * Кнопки редизайна. Прежние buttonVariants остаются за CRM,
- * чтобы смена стиля сайта не задела рабочий интерфейс менеджеров.
+ * Кнопки сайта. Прежние buttonVariants остаются за CRM,
+ * чтобы стиль сайта не задевал рабочий интерфейс менеджеров.
  */
 export const actionVariants = cva(
   "group/action relative inline-flex select-none items-center justify-center gap-3 whitespace-nowrap rounded-full font-medium tracking-[-0.01em] touch-manipulation transition-[background-color,border-color,color,transform] duration-400 ease-out-expo active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50",

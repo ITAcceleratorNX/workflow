@@ -9,9 +9,11 @@ const MIN_DURATION_FIRST = 2.4
 /* Повторное открытие в той же вкладке - короче: сайт уже знаком */
 const MIN_DURATION_REPEAT = 0.9
 /* Дольше не держим: на медленной сети загрузка продолжится в фоне, а человек уже видит сайт */
-const MAX_WAIT = 12
+const MAX_WAIT = 8
 /* Доля пути до цели, которую счётчик проходит за кадр: цифры бегут плавно, без скачков */
 const COUNTER_LERP = 0.08
+/* Когда всё загружено, последние проценты добегают быстрее - не держим готовый сайт лишнюю секунду */
+const COUNTER_LERP_FINISH = 0.2
 const SEEN_KEY = "tmk-intro-seen"
 
 function readSeen() {
@@ -90,7 +92,7 @@ function IntroOverlay() {
         /* Счётчик не обгоняет ни реальную загрузку, ни минимальное время показа */
         const target = Math.min(loaded, elapsed / minDuration)
 
-        shown += (target - shown) * COUNTER_LERP
+        shown += (target - shown) * (target >= 1 ? COUNTER_LERP_FINISH : COUNTER_LERP)
         if (target >= 1 && shown > 0.995) shown = 1
 
         counter.textContent = String(Math.floor(shown * 100))

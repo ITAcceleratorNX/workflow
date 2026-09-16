@@ -1,12 +1,17 @@
+import { lazy, Suspense } from "react"
 import { ArrowUpRight } from "lucide-react"
 import { Action } from "../ui/Action"
 import { actionArrowClass } from "../ui/actionVariants"
 import { Appear } from "../motion/Appear"
 import { MediaReveal } from "../motion/MediaReveal"
 import { TextReveal } from "../motion/TextReveal"
-import { PropertiesMiniMap } from "./PropertiesMiniMap"
 import { PROPERTIES } from "../../lib/properties"
 import { useLeadForm } from "../../lib/leadFormContext"
+
+/* Leaflet нужен только этой секции - грузим его отдельным файлом, а не в общем коде всех страниц */
+const PropertiesMiniMap = lazy(() =>
+  import("./PropertiesMiniMap").then((module) => ({ default: module.PropertiesMiniMap }))
+)
 
 /** Карта всех трёх БЦ и призыв подобрать офис. */
 export function MapLeadSection() {
@@ -17,7 +22,9 @@ export function MapLeadSection() {
       <div className="shell grid gap-12 lg:grid-cols-12 lg:gap-8">
         {/* Высота задана явно: Leaflet берёт размер карты из контейнера */}
         <MediaReveal className="h-[420px] rounded-3xl bg-ivory-200 sm:h-[520px] lg:col-span-7 lg:h-[640px]">
-          <PropertiesMiniMap />
+          <Suspense fallback={null}>
+            <PropertiesMiniMap />
+          </Suspense>
         </MediaReveal>
 
         <div className="flex flex-col justify-center lg:col-span-4 lg:col-start-9">

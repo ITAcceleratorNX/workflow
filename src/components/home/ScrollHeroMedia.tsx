@@ -7,8 +7,9 @@ import { SCROLL_HERO_FRAMES } from "../../lib/scrollHeroFrames"
 
 type FrameSet = (typeof SCROLL_HERO_FRAMES)[keyof typeof SCROLL_HERO_FRAMES]
 
-/* Интро ждёт каждый 16-й кадр: по ним уже виден весь пролёт, остальное догружается в фоне */
-const INTRO_STRIDE = 16
+/* Интро ждёт каждый 32-й кадр (~340 КБ): по ним уже виден весь пролёт, остальное догружается в фоне.
+   На медленном 4G это держит заставку в пределах нескольких секунд */
+const INTRO_STRIDE = 32
 const INTRO_LOAD_ID = "scroll-hero-frames"
 /* Кадры важнее шрифтов: от них зависит, увидит ли человек пролёт сразу после заставки */
 const INTRO_LOAD_WEIGHT = 4
