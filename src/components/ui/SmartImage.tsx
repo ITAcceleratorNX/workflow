@@ -39,12 +39,12 @@ export function SmartImage({
         role="img"
         aria-label={alt}
         className={cn(
-          "flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-brand-100 to-brand-200 p-4 text-center",
+          "flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-ivory-100 to-ivory-200 p-4 text-center",
           className
         )}
       >
-        <ImageOff className="h-6 w-6 text-brand-500" aria-hidden="true" />
-        <span className="text-xs font-medium text-brand-700">
+        <ImageOff className="h-6 w-6 text-graphite-400" aria-hidden="true" />
+        <span className="text-xs font-medium text-graphite-600">
           {placeholderLabel ?? "Фото будет добавлено"}
         </span>
       </div>

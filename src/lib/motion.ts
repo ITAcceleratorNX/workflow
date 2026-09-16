@@ -31,7 +31,11 @@ ScrollTrigger.config({ ignoreMobileResize: true })
 /** Условие для gsap.matchMedia: анимируем, только если человек не просил уменьшить движение */
 export const MOTION_OK = "(prefers-reduced-motion: no-preference)"
 
-/** Момент появления блока: верх элемента дошёл до 85% высоты окна */
-export const REVEAL_START = "top 85%"
+/**
+ * Момент появления блока: верх элемента дошёл до 85% высоты окна.
+ * clamp() не даёт точке уйти дальше конца страницы — иначе элементы в самом низу
+ * (подпись в подвале) никогда бы до неё не доехали и остались скрытыми.
+ */
+export const REVEAL_START = "clamp(top 85%)"
 
 export { gsap, ScrollTrigger, SplitText, useGSAP }

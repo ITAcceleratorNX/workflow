@@ -1,7 +1,8 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from "react"
 import { Link } from "react-router-dom"
-import { Check, CircleAlert, Send } from "lucide-react"
-import { Button, LinkButton } from "../ui/button"
+import { ArrowUpRight, Check, CircleAlert } from "lucide-react"
+import { Action, ActionAnchor } from "../ui/Action"
+import { actionArrowClass } from "../ui/actionVariants"
 import { WhatsAppIcon } from "../ui/WhatsAppIcon"
 import { cn } from "../../lib/utils"
 import { CONTACTS, track, trackFormSubmitSuccess, whatsappLink } from "../../lib/site"
@@ -29,9 +30,9 @@ interface LeadFormProps {
 
 const fieldClass = (hasError: boolean, inverted: boolean) =>
   cn(
-    "w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-brand-900 outline-none transition placeholder:text-ink-soft",
-    "focus:border-orange-400 focus:ring-2 focus:ring-orange-500/25",
-    hasError ? "border-red-400" : inverted ? "border-transparent" : "border-brand-200"
+    "w-full rounded-xl border bg-white px-4 py-3.5 text-[15px] text-graphite-950 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-graphite-400",
+    "focus:border-ochre-500 focus:ring-4 focus:ring-ochre-500/15",
+    hasError ? "border-red-500" : inverted ? "border-transparent" : "border-graphite-950/15 hover:border-graphite-950/30"
   )
 
 export function LeadForm({ source, defaultProperty, inverted = false, onSuccess }: LeadFormProps) {
@@ -97,21 +98,21 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
         role="status"
         className={cn(
           "flex flex-col items-center gap-4 rounded-2xl p-8 text-center",
-          inverted ? "bg-white/10" : "bg-brand-50"
+          inverted ? "bg-white/10" : "bg-ivory-100"
         )}
       >
-        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-orange-500 text-white">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-ochre-500 text-graphite-950">
           <Check className="h-7 w-7" />
         </span>
-        <p className={cn("max-w-md text-lg font-semibold", inverted ? "text-white" : "text-brand-900")}>
+        <p className={cn("max-w-md text-title font-medium", inverted ? "text-ivory-50" : "text-graphite-950")}>
           {SUCCESS_MESSAGE}
         </p>
       </div>
     )
   }
 
-  const labelClass = cn("mb-1.5 block text-sm font-medium", inverted ? "text-brand-100" : "text-brand-800")
-  const errorClass = "mt-1.5 flex items-center gap-1.5 text-sm text-red-500"
+  const labelClass = cn("mb-2 block text-sm font-medium", inverted ? "text-ivory-200" : "text-graphite-700")
+  const errorClass = "mt-1.5 flex items-center gap-1.5 text-sm text-red-600"
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
@@ -132,7 +133,7 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className={labelClass} htmlFor={`${uid}-name`}>
-            Имя <span className="text-orange-500">*</span>
+            Имя <span className="text-ochre-700">*</span>
           </label>
           <input
             id={`${uid}-name`}
@@ -171,15 +172,15 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
 
         <div>
           <label className={labelClass} htmlFor={`${uid}-phone`}>
-            Телефон <span className="text-orange-500">*</span>
+            Телефон <span className="text-ochre-700">*</span>
           </label>
           <div
             className={cn(
               fieldClass(Boolean(errors.phone), inverted),
-              "flex items-center gap-1 px-3 py-0 focus-within:border-orange-400 focus-within:ring-2 focus-within:ring-orange-500/25"
+              "flex items-center gap-1 px-3 py-0 focus-within:border-ochre-500 focus-within:ring-4 focus-within:ring-ochre-500/15"
             )}
           >
-            <span className="select-none pl-1 text-[15px] font-medium text-brand-700">+7</span>
+            <span className="select-none pl-1 text-[15px] font-medium text-graphite-600">+7</span>
             <input
               id={`${uid}-phone`}
               name="phone"
@@ -188,7 +189,7 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
               autoComplete="tel-national"
               value={formatPhoneDigits(values.phone)}
               onChange={(event) => setField("phone", normalizePhoneDigits(event.target.value))}
-              className="w-full border-0 bg-transparent py-3 text-[15px] text-brand-900 outline-none placeholder:text-ink-soft"
+              className="w-full border-0 bg-transparent py-3.5 text-[15px] text-graphite-950 outline-none placeholder:text-graphite-400"
               placeholder={PHONE_PLACEHOLDER}
               maxLength={PHONE_PLACEHOLDER.length + 2}
               aria-invalid={Boolean(errors.phone)}
@@ -229,7 +230,7 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
 
       <div>
         <label className={labelClass} htmlFor={`${uid}-property`}>
-          Интересующий объект <span className="text-orange-500">*</span>
+          Интересующий объект <span className="text-ochre-700">*</span>
         </label>
         <select
           id={`${uid}-property`}
@@ -239,7 +240,7 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
           className={cn(fieldClass(Boolean(errors.property), inverted), "appearance-none bg-[length:16px] pr-10")}
           style={{
             backgroundImage:
-              "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23587487' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>\")",
+              "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B615D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>\")",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "right 14px center",
           }}
@@ -283,16 +284,19 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
             type="checkbox"
             checked={values.consent}
             onChange={(event) => setField("consent", event.target.checked)}
-            className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded border-brand-300 accent-orange-500"
+            className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded border-graphite-300 accent-graphite-950"
             aria-invalid={Boolean(errors.consent)}
             aria-describedby={errors.consent ? `${uid}-consent-error` : undefined}
           />
-          <span className={cn("text-sm leading-snug", inverted ? "text-brand-100" : "text-ink-muted")}>
+          <span className={cn("text-sm leading-snug", inverted ? "text-ivory-200" : "text-graphite-600")}>
             Я согласен на обработку персональных данных в соответствии с{" "}
             <Link
               to="/privacy"
               target="_blank"
-              className={cn("underline underline-offset-2", inverted ? "text-white" : "text-brand-700 hover:text-orange-600")}
+              className={cn(
+                "underline underline-offset-2 transition-colors",
+                inverted ? "text-ivory-50" : "text-graphite-950 hover:text-ochre-700"
+              )}
             >
               политикой конфиденциальности
             </Link>
@@ -318,36 +322,36 @@ export function LeadForm({ source, defaultProperty, inverted = false, onSuccess 
               быстро.
             </span>
           </p>
-          <LinkButton
+          <ActionAnchor
             href={whatsappLink(`Здравствуйте! Не отправилась заявка с сайта. Меня зовут ${values.name}.`)}
             target="_blank"
             rel="noopener noreferrer"
             variant="outline"
             size="sm"
-            className="self-start"
+            className="self-start bg-white"
             onClick={() => track("whatsapp_click", { source: "form-error" })}
           >
-            <WhatsAppIcon className="h-4 w-4" />
+            <WhatsAppIcon className="h-4 w-4 text-[#25D366]" />
             Написать в WhatsApp
-          </LinkButton>
+          </ActionAnchor>
         </div>
       )}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <Button type="submit" size="lg" disabled={status === "submitting"} className="w-full sm:w-auto">
+        <Action type="submit" size="lg" disabled={status === "submitting"} className="w-full sm:w-auto">
           {status === "submitting" ? (
             <>
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-graphite-950/30 border-t-graphite-950" />
               Отправляем…
             </>
           ) : (
             <>
-              <Send className="h-4 w-4" />
               Отправить заявку
+              <ArrowUpRight className={actionArrowClass} />
             </>
           )}
-        </Button>
-        <p className={cn("text-xs leading-snug", inverted ? "text-brand-200" : "text-ink-soft")}>
+        </Action>
+        <p className={cn("text-sm leading-snug", inverted ? "text-ivory-200" : "text-graphite-500")}>
           Или позвоните:{" "}
           <a href={CONTACTS.phoneHref} className="font-medium underline underline-offset-2">
             {CONTACTS.phone}

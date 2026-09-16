@@ -1,7 +1,7 @@
 import { useRef, type ReactNode } from "react"
 import { MOTION_OK, REVEAL_START, gsap, useGSAP } from "../../lib/motion"
 
-type Tag = "div" | "section" | "ul" | "li" | "article" | "p" | "span"
+type Tag = "div" | "section" | "ul" | "ol" | "li" | "article" | "p" | "span"
 
 interface AppearProps {
   children: ReactNode

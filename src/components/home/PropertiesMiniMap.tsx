@@ -3,7 +3,7 @@ import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import { PROPERTIES } from "../../lib/properties"
 
-/** Мини-карта со всеми тремя БЦ: метки с названиями, без API-ключа. */
+/** Мини-карта со всеми тремя БЦ: монохромная подложка, метки с названиями, без API-ключа. */
 export function PropertiesMiniMap() {
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -68,7 +68,7 @@ export function PropertiesMiniMap() {
   return (
     <div
       ref={containerRef}
-      className="h-full min-h-[320px] w-full overflow-hidden rounded-3xl border border-brand-100 bg-brand-50 shadow-card sm:min-h-[420px]"
+      className="map-muted h-full w-full"
       role="img"
       aria-label="Карта Алматы с бизнес-центрами Time Square, Venus и Koktem Towers"
     />

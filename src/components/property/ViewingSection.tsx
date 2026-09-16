@@ -1,8 +1,9 @@
-import { Mail, Phone } from "lucide-react"
-import { Section } from "../ui/Section"
-import { Reveal } from "../ui/Reveal"
-import { Button, LinkButton } from "../ui/button"
+import { ArrowUpRight } from "lucide-react"
+import { Action, ActionAnchor } from "../ui/Action"
+import { actionArrowClass } from "../ui/actionVariants"
 import { WhatsAppIcon } from "../ui/WhatsAppIcon"
+import { Appear } from "../motion/Appear"
+import { TextReveal } from "../motion/TextReveal"
 import { LeadForm } from "../lead/LeadForm"
 import { CONTACTS, track, whatsappLink } from "../../lib/site"
 import { useLeadForm } from "../../lib/leadFormContext"
@@ -15,56 +16,69 @@ import type { Property } from "../../lib/properties"
  */
 export function ViewingSection({
   property,
-  level: Heading = "h2",
+  level = "h2",
 }: {
   property?: Property
   level?: "h2" | "h3"
 }) {
   const { openLeadForm } = useLeadForm()
   const sectionId = property ? `viewing-${property.slug}` : "viewing"
-  const title = property ? `Посмотрите ${property.name} вживую` : "Посмотрите вживую"
   const whatsappText = property
     ? `Здравствуйте! Хочу записаться на просмотр помещений в ${property.name}.`
     : "Здравствуйте! Хочу записаться на просмотр офисов TMK WorkFlow."
+  const placement = { placement: "viewing", property: property?.name ?? "home" }
 
   return (
-    <Section id={sectionId} tone="deep" size="lg">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:gap-16">
-        <Reveal>
-          <p className="eyebrow text-brand-300">Запись на просмотр</p>
-          <Heading className="mt-3 text-3xl text-white sm:text-4xl">{title}</Heading>
-          <p className="mt-4 text-base leading-relaxed text-brand-100">
+    <section id={sectionId} className="bg-pine-900 py-24 text-ivory-50 sm:py-32">
+      <div className="shell grid gap-14 lg:grid-cols-12 lg:gap-8">
+        <div className="lg:col-span-5">
+          <Appear className="flex items-center gap-4">
+            <span aria-hidden="true" className="h-px w-12 bg-ochre-500" />
+            <p className="label text-ochre-400">Запись на просмотр</p>
+          </Appear>
+          <TextReveal as={level} className="mt-6 text-display-lg font-medium text-ivory-50">
+            {property ? `Посмотрите ${property.name} ` : "Посмотрите "}
+            <span className="accent-serif text-ochre-300">вживую</span>
+          </TextReveal>
+          <Appear as="p" delay={0.15} className="mt-6 max-w-lg text-lead text-graphite-200">
             Оставьте заявку — согласуем удобное время, покажем свободные помещения и ответим на
             вопросы по условиям аренды.
-          </p>
+          </Appear>
 
-          <div className="mt-8 space-y-4">
-            <a
-              href={CONTACTS.phoneHref}
-              onClick={() =>
-                track("phone_click", {
-                  placement: "viewing",
-                  property: property?.name ?? "home",
-                })
-              }
-              className="flex items-center gap-3 text-lg font-semibold text-white transition hover:text-orange-400"
-            >
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10">
-                <Phone className="h-5 w-5 text-orange-400" />
-              </span>
-              {CONTACTS.phone}
-            </a>
-            <a
-              href={`mailto:${CONTACTS.email}`}
-              className="flex items-center gap-3 break-all text-[15px] text-brand-100 transition hover:text-orange-400"
-            >
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10">
-                <Mail className="h-5 w-5 text-orange-400" />
-              </span>
-              {CONTACTS.email}
-            </a>
-            <div className="flex flex-wrap gap-3">
-              <Button
+          <Appear delay={0.25} className="mt-12 space-y-6 border-t border-white/10 pt-8">
+            <div>
+              <p className="label text-graphite-400">Телефон</p>
+              <a
+                href={CONTACTS.phoneHref}
+                onClick={() => track("phone_click", placement)}
+                className="numeric mt-3 block text-title font-medium transition-colors hover:text-ochre-300"
+              >
+                {CONTACTS.phone}
+              </a>
+            </div>
+            <div>
+              <p className="label text-graphite-400">Почта</p>
+              <a
+                href={`mailto:${CONTACTS.email}`}
+                className="mt-3 block break-all text-graphite-200 transition-colors hover:text-ochre-300"
+              >
+                {CONTACTS.email}
+              </a>
+            </div>
+
+            <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:flex-wrap">
+              <ActionAnchor
+                href={whatsappLink(whatsappText)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => track("whatsapp_click", placement)}
+                variant="glass"
+              >
+                <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
+                Написать в WhatsApp
+              </ActionAnchor>
+              <Action
+                variant="glass"
                 onClick={() =>
                   openLeadForm({
                     source: property ? "property-contact" : "home-select-office",
@@ -73,37 +87,18 @@ export function ViewingSection({
                 }
               >
                 Связаться с нами
-              </Button>
-              <LinkButton
-                href={whatsappLink(whatsappText)}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() =>
-                  track("whatsapp_click", {
-                    placement: "viewing",
-                    property: property?.name ?? "home",
-                  })
-                }
-                variant="outline"
-                className="border-white/25 bg-transparent text-white hover:border-white/50 hover:bg-white/10"
-              >
-                <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
-                Написать в WhatsApp
-              </LinkButton>
+                <ArrowUpRight className={actionArrowClass} />
+              </Action>
             </div>
-          </div>
-        </Reveal>
+          </Appear>
+        </div>
 
-        <Reveal delay={120}>
-          <div className="rounded-2xl bg-white p-6 shadow-float sm:p-8">
-            <LeadForm
-              key={property?.slug ?? "home"}
-              source="viewing"
-              defaultProperty={property?.name}
-            />
+        <Appear delay={0.15} className="lg:col-span-6 lg:col-start-7">
+          <div className="rounded-3xl bg-ivory-50 p-6 text-graphite-950 sm:p-10">
+            <LeadForm key={property?.slug ?? "home"} source="viewing" defaultProperty={property?.name} />
           </div>
-        </Reveal>
+        </Appear>
       </div>
-    </Section>
+    </section>
   )
 }

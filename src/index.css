@@ -153,6 +153,16 @@ html.lenis {
   transform: none;
 }
 
+/* Мини-карта главной: подложка в оттенках серого, чтобы метки и палитра сайта не спорили с картой */
+.map-muted .leaflet-tile-pane {
+  filter: grayscale(1) contrast(1.05) brightness(1.03);
+}
+
+.map-muted.leaflet-container {
+  background: theme("colors.ivory.200");
+  font-family: inherit;
+}
+
 /* Метки БЦ на мини-карте главной */
 .bc-map-marker {
   background: transparent !important;
@@ -168,15 +178,15 @@ html.lenis {
 
 .bc-map-marker__label {
   max-width: 140px;
-  padding: 4px 8px;
-  border-radius: 8px;
-  background: #0e3552;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: theme("colors.graphite.950");
+  color: theme("colors.ivory.50");
+  font-size: 12px;
+  font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
-  box-shadow: 0 8px 18px -10px rgba(14, 53, 82, 0.55);
+  box-shadow: 0 10px 24px -12px rgba(11, 13, 12, 0.6);
 }
 
 .bc-map-marker__pin {
@@ -185,10 +195,10 @@ html.lenis {
   width: 34px;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
-  background: #f26b21;
-  color: #fff;
-  box-shadow: 0 10px 22px -8px rgba(14, 53, 82, 0.55);
+  border-radius: 999px;
+  background: theme("colors.ochre.500");
+  color: theme("colors.graphite.950");
+  box-shadow: 0 10px 22px -8px rgba(11, 13, 12, 0.55);
 }
 
 /* Плавное увеличение фотографий в галереях и карточках */
