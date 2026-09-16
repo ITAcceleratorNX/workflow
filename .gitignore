@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 .env
+# Подготовка видео scroll-hero: рабочие кадры и тестовые варианты для /lab/scroll-video
+.cache
+public/scroll-hero/lab

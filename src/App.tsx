@@ -14,6 +14,7 @@ const CrmPage = lazy(() => import("./crm/CrmPage"))
 /* Витрина дизайн-системы — только для разработки: в продакшен-сборке условие
    становится false, и файл страницы в неё не попадает */
 const StyleguidePage = import.meta.env.DEV ? lazy(() => import("./pages/StyleguidePage")) : null
+const LabScrollVideoPage = import.meta.env.DEV ? lazy(() => import("./pages/LabScrollVideoPage")) : null
 
 /** Публичный сайт: плавный скролл, общая шапка, подвал и модальная форма заявки. */
 function SiteRoutes() {
@@ -56,6 +57,18 @@ export default function App() {
               <SmoothScrollProvider>
                 <Suspense fallback={<div className="min-h-screen bg-graphite-950" />}>
                   <StyleguidePage />
+                </Suspense>
+              </SmoothScrollProvider>
+            }
+          />
+        )}
+        {LabScrollVideoPage && (
+          <Route
+            path="/lab/scroll-video"
+            element={
+              <SmoothScrollProvider>
+                <Suspense fallback={<div className="min-h-screen bg-graphite-950" />}>
+                  <LabScrollVideoPage />
                 </Suspense>
               </SmoothScrollProvider>
             }
