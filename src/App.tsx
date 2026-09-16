@@ -10,6 +10,10 @@ import { NotFoundPage } from "./pages/NotFoundPage"
 /* CRM грузится отдельным файлом: посетителям сайта её код скачивать незачем */
 const CrmPage = lazy(() => import("./crm/CrmPage"))
 
+/* Витрина дизайн-системы — только для разработки: в продакшен-сборке условие
+   становится false, и файл страницы в неё не попадает */
+const StyleguidePage = import.meta.env.DEV ? lazy(() => import("./pages/StyleguidePage")) : null
+
 /** Публичный сайт: общая шапка, подвал и модальная форма заявки. */
 function SiteRoutes() {
   return (
@@ -42,6 +46,16 @@ export default function App() {
             </Suspense>
           }
         />
+        {StyleguidePage && (
+          <Route
+            path="/styleguide"
+            element={
+              <Suspense fallback={<div className="min-h-screen bg-graphite-950" />}>
+                <StyleguidePage />
+              </Suspense>
+            }
+          />
+        )}
         <Route path="*" element={<SiteRoutes />} />
       </Routes>
     </BrowserRouter>

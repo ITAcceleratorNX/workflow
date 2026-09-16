@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+/* Шрифты (Onest, Cormorant Garamond) подключены в index.html через <link>:
+   так браузер начинает их качать сразу, а не после разбора этого файла */
 
 @tailwind base;
 @tailwind components;
@@ -6,22 +7,35 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 205 71% 19%;
+    /* Семантические цвета (HSL без обёртки — для Tailwind-токенов background, border…) */
+    --background: 43 30% 95%;        /* ivory-50 */
+    --foreground: 150 8% 5%;         /* graphite-950 */
     --card: 0 0% 100%;
-    --card-foreground: 205 71% 19%;
-    --primary: 205 78% 31%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 205 71% 96%;
-    --secondary-foreground: 205 71% 19%;
-    --muted: 205 60% 96%;
-    --muted-foreground: 203 21% 44%;
-    --accent: 20 89% 54%;
-    --accent-foreground: 0 0% 100%;
-    --border: 205 45% 90%;
-    --input: 205 45% 88%;
-    --ring: 20 89% 54%;
+    --card-foreground: 150 8% 5%;
+    --primary: 150 8% 5%;
+    --primary-foreground: 43 30% 95%;
+    --secondary: 40 27% 91%;         /* ivory-100 */
+    --secondary-foreground: 150 8% 5%;
+    --muted: 40 27% 91%;
+    --muted-foreground: 140 3% 37%;  /* graphite-500 */
+    --accent: 40 64% 50%;            /* ochre-500 */
+    --accent-foreground: 150 8% 5%;
+    --border: 40 24% 85%;            /* ivory-200 */
+    --input: 40 24% 85%;
+    --ring: 40 64% 50%;
     --radius: 0.75rem;
+
+    /* Движение: общие кривые и длительности для CSS и JS-анимаций */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+    --duration-fast: 200ms;
+    --duration-base: 400ms;
+    --duration-slow: 800ms;
+    --duration-reveal: 1200ms;
+
+    /* Боковые поля сетки: от 20px на телефоне до 64px на широком экране */
+    --gutter: clamp(1.25rem, 0.6rem + 2.8vw, 4rem);
   }
 
   * {
@@ -30,6 +44,8 @@
 
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
@@ -38,12 +54,50 @@
 
   /* Заголовки — единая типографика на всех страницах */
   h1, h2, h3, h4 {
-    @apply text-brand-900 font-bold tracking-tight;
+    @apply text-graphite-950 font-semibold tracking-tight;
     text-wrap: balance;
+  }
+
+  ::selection {
+    @apply bg-ochre-500 text-graphite-950;
+  }
+
+  /* Кольцо фокуса только для клавиатуры; outline виден и на светлом, и на тёмном фоне */
+  :focus-visible {
+    outline: 2px solid theme("colors.ochre.500");
+    outline-offset: 3px;
   }
 }
 
 @layer components {
+  /* Сетка редизайна: широкий контейнер с «резиновыми» полями */
+  .shell {
+    width: 100%;
+    max-width: 1600px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* Надпись над заголовком: мелкие прописные с широкой разрядкой */
+  .label {
+    @apply font-sans text-label font-medium uppercase;
+  }
+
+  /* Акцентное слово в заголовке: антиква курсивом.
+     У Cormorant мелкий очко шрифта — чуть увеличиваем, чтобы строка выглядела ровной */
+  .accent-serif {
+    @apply font-serif font-medium italic;
+    font-size: 1.1em;
+    letter-spacing: -0.01em;
+  }
+
+  /* Цифры одинаковой ширины: счётчики, площади и ставки не «прыгают» */
+  .numeric {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Прежние классы сайта — пока на них секции, которые ещё не переведены на редизайн */
+
   /* Единая сетка контента для всех секций */
   .container-site {
     @apply mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-10;
