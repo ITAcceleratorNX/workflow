@@ -11,6 +11,7 @@ export function HeroSection() {
   return (
     <section
       id="home-hero-section"
+      data-header-hero
       className="hero-screen relative z-[1] mb-[-1px] flex w-full flex-col overflow-hidden bg-brand-950"
     >
       <HeroVideoMontage />

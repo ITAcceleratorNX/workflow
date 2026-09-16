@@ -1,105 +1,150 @@
-import { useEffect, useState } from "react"
-import { Link, NavLink, useLocation } from "react-router-dom"
-import { Menu, Phone, X } from "lucide-react"
-import { Button, LinkButton } from "../ui/button"
+import { useEffect, useRef, useState } from "react"
+import { NavLink, useLocation } from "react-router-dom"
+import { Phone } from "lucide-react"
+import { Action, ActionAnchor } from "../ui/Action"
 import { WhatsAppIcon } from "../ui/WhatsAppIcon"
+import { Logo } from "./Logo"
+import { SiteMenu } from "./SiteMenu"
 import { cn } from "../../lib/utils"
 import { CONTACTS, WHATSAPP_DEFAULT_MESSAGE, track, whatsappLink } from "../../lib/site"
 import { PROPERTIES } from "../../lib/properties"
 import { useLeadForm } from "../../lib/leadFormContext"
 import { useScrollLock } from "../../lib/smoothScroll"
+import { HEADER_HERO_ATTRIBUTE, hasDarkHero } from "../../lib/navigation"
+
+/* Высота шапки (h-16 / lg:h-20) — граница, после которой hero считается пройденным */
+const HEADER_HEIGHT = 80
+/* Ниже этой отметки шапка прячется при прокрутке вниз; выше — всегда на месте */
+const HIDE_AFTER = 480
+/* Мелкие подёргивания колеса и тачпада не переключают видимость */
+const DIRECTION_THRESHOLD = 6
+const DESKTOP_QUERY = "(min-width: 1024px)"
+
+interface ScrollState {
+  /** Hero ушёл из-под шапки — нужна плотная подложка */
+  pastHero: boolean
+  /** Прокрутка вниз — шапка уезжает, вверх — возвращается */
+  hidden: boolean
+}
+
+function readPastHero() {
+  const hero = document.querySelector(`[${HEADER_HERO_ATTRIBUTE}]`)
+  return hero ? hero.getBoundingClientRect().bottom <= HEADER_HEIGHT : window.scrollY > 24
+}
+
+function useHeaderScroll(): ScrollState {
+  const [state, setState] = useState<ScrollState>(() => ({ pastHero: readPastHero(), hidden: false }))
+
+  useEffect(() => {
+    let lastY = window.scrollY
+    let frame = 0
+
+    const update = () => {
+      frame = 0
+      const y = window.scrollY
+      const delta = y - lastY
+      if (Math.abs(delta) < DIRECTION_THRESHOLD && y > 0) return
+      lastY = y
+
+      const pastHero = readPastHero()
+      const hidden = y > HIDE_AFTER && delta > 0
+
+      setState((prev) =>
+        prev.pastHero === pastHero && prev.hidden === hidden ? prev : { pastHero, hidden }
+      )
+    }
+
+    /* Lenis прокручивает окно, поэтому родного события scroll достаточно; считаем раз в кадр */
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update)
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      cancelAnimationFrame(frame)
+    }
+  }, [])
+
+  return state
+}
 
 export function Header() {
   const { pathname } = useLocation()
-  const isHome = pathname === "/"
-  const [menuOpen, setMenuOpen] = useState(false)
-  /** На главной: true, пока Hero ещё в зоне видимости */
-  const [overHero, setOverHero] = useState(isHome)
   const { openLeadForm } = useLeadForm()
+  const { pastHero, hidden } = useHeaderScroll()
+  const toggleRef = useRef<HTMLButtonElement>(null)
+
+  /* Меню открыто «на странице»: после перехода по адресу оно закрывается само */
+  const [menuOpenOn, setMenuOpenOn] = useState<string | null>(null)
+  const menuOpen = menuOpenOn === pathname
+  const closeMenu = () => setMenuOpenOn(null)
 
   useScrollLock(menuOpen)
 
   useEffect(() => {
-    setMenuOpen(false)
-  }, [pathname])
+    if (!menuOpen) return
 
-  useEffect(() => {
-    if (!isHome) {
-      setOverHero(false)
-      return
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpenOn(null)
+    }
+    /* На широком экране меню не нужно — навигация уже в шапке */
+    const desktop = window.matchMedia(DESKTOP_QUERY)
+    const onDesktop = () => {
+      if (desktop.matches) setMenuOpenOn(null)
     }
 
-    setOverHero(true)
-
-    const hero = document.getElementById("home-hero-section")
-    if (!hero) {
-      setOverHero(false)
-      return
+    document.addEventListener("keydown", onKeyDown)
+    desktop.addEventListener("change", onDesktop)
+    return () => {
+      document.removeEventListener("keydown", onKeyDown)
+      desktop.removeEventListener("change", onDesktop)
     }
+  }, [menuOpen])
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        /* Пока Hero занимает заметную часть экрана — шапку прячем */
-        setOverHero(entry.isIntersecting && entry.intersectionRatio > 0.45)
-      },
-      { threshold: [0, 0.45, 0.6, 1] }
-    )
-
-    observer.observe(hero)
-    return () => observer.disconnect()
-  }, [isHome])
-
-  /* На Hero шапка скрыта; при открытом мобильном меню — всегда видна */
-  const hideOnHero = isHome && overHero && !menuOpen
-
-  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-    cn(
-      "relative py-2 text-[15px] font-medium transition-colors",
-      isActive ? "text-orange-600" : "text-brand-800 hover:text-brand-600",
-      isActive &&
-        "after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-orange-500"
-    )
+  const solid = !menuOpen && (pastHero || !hasDarkHero(pathname))
 
   return (
-    <header
-      className={cn(
-        "z-50 transition-[transform,opacity,background-color,border-color,box-shadow] duration-300 ease-out",
-        isHome ? "fixed inset-x-0 top-0" : "sticky top-0 border-b border-brand-100 bg-white/95 backdrop-blur",
-        isHome &&
-          (hideOnHero
-            ? "pointer-events-none -translate-y-full border-transparent bg-transparent opacity-0"
-            : "translate-y-0 border-b border-brand-100 bg-white/95 opacity-100 shadow-sm backdrop-blur")
-      )}
-    >
-      <div className="container-site">
-        <div className="flex h-16 items-center justify-between gap-4 lg:h-20">
-          <Link
-            to="/"
-            onClick={() => setMenuOpen(false)}
-            className="flex shrink-0 items-center gap-2.5"
-            aria-label="TMK WorkFlow — главная"
-          >
-            <img
-              src="/logo-40.webp"
-              srcSet="/logo-40.webp 1x, /logo-80.webp 2x, /logo-120.webp 3x"
-              alt=""
-              className="h-10 w-10 rounded-lg object-contain"
-              width={40}
-              height={40}
-            />
-            <span className="flex flex-col leading-tight">
-              <span className="text-lg font-extrabold tracking-tight text-brand-900">
-                TMK <span className="text-orange-500">WorkFlow</span>
-              </span>
-              <span className="hidden text-[11px] font-medium uppercase tracking-wider text-ink-soft sm:block">
-                Коммерческая недвижимость
-              </span>
-            </span>
-          </Link>
+    <>
+      <header
+        className={cn(
+          "fixed inset-x-0 top-0 z-50 border-b text-ivory-50 transition-[transform,background-color,border-color] duration-600 ease-out-expo",
+          /* Фокус с клавиатуры возвращает спрятанную шапку (фокус после касания — нет) */
+          "has-[:focus-visible]:translate-y-0",
+          hidden && !menuOpen ? "-translate-y-full" : "translate-y-0",
+          solid
+            ? "border-white/10 bg-graphite-950/80 backdrop-blur-xl"
+            : "border-transparent bg-transparent"
+        )}
+      >
+        {/* Мягкое затемнение сверху: навигация читается над любым кадром видео или светлым небом */}
+        <div
+          aria-hidden="true"
+          className={cn(
+            "pointer-events-none absolute inset-x-0 top-0 -z-10 h-[160%] bg-gradient-to-b from-graphite-950/55 to-transparent transition-opacity duration-600",
+            solid || menuOpen ? "opacity-0" : "opacity-100"
+          )}
+        />
 
-          <nav className="hidden items-center gap-8 lg:flex" aria-label="Объекты">
+        <div className="shell flex h-16 items-center justify-between gap-4 lg:h-20">
+          <Logo onClick={closeMenu} />
+
+          <nav className="hidden items-center gap-10 lg:flex" aria-label="Объекты">
             {PROPERTIES.map((property) => (
-              <NavLink key={property.slug} to={property.path} end className={navLinkClass}>
+              <NavLink
+                key={property.slug}
+                to={property.path}
+                end
+                className={({ isActive }) =>
+                  cn(
+                    "relative py-2 text-[15px] transition-colors duration-400",
+                    "after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:bg-ochre-500 after:transition-transform after:duration-600 after:ease-out-expo",
+                    isActive
+                      ? "text-ivory-50 after:scale-x-100"
+                      : "text-ivory-50/70 after:scale-x-0 hover:text-ivory-50 hover:after:scale-x-100"
+                  )
+                }
+              >
                 {property.name}
               </NavLink>
             ))}
@@ -109,101 +154,75 @@ export function Header() {
             <a
               href={CONTACTS.phoneHref}
               onClick={() => track("phone_click", { placement: "header" })}
-              className="hidden items-center gap-2 rounded-xl px-3 py-2 text-[15px] font-semibold text-brand-900 transition hover:text-orange-600 xl:flex"
+              className="numeric mr-3 hidden items-center gap-2 text-[15px] transition-colors hover:text-ochre-300 xl:flex"
             >
-              <Phone className="h-4 w-4 text-orange-500" />
+              <Phone className="h-4 w-4 text-ochre-400" />
               {CONTACTS.phone}
             </a>
 
-            <a
+            <ActionAnchor
               href={CONTACTS.phoneHref}
               onClick={() => track("phone_click", { placement: "header-mobile" })}
               aria-label={`Позвонить ${CONTACTS.phone}`}
-              className="flex h-11 w-11 items-center justify-center rounded-xl border border-brand-200 text-brand-800 transition hover:border-brand-400 hover:bg-brand-50 xl:hidden"
+              variant="glass"
+              size="icon"
+              className="h-11 w-11 xl:hidden"
             >
-              <Phone className="h-5 w-5" />
-            </a>
+              <Phone className="h-[18px] w-[18px]" />
+            </ActionAnchor>
 
-            <LinkButton
+            <ActionAnchor
               href={whatsappLink(WHATSAPP_DEFAULT_MESSAGE)}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => track("whatsapp_click", { placement: "header" })}
-              variant="outline"
-              size="icon"
               aria-label="Написать в WhatsApp"
-              className="sm:w-auto sm:px-4"
+              variant="glass"
+              size="icon"
+              className="h-11 w-11"
             >
               <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
-              <span className="hidden sm:inline">WhatsApp</span>
-            </LinkButton>
+            </ActionAnchor>
 
-            <Button
+            <Action
+              size="sm"
+              className="ml-1 hidden h-11 lg:inline-flex"
               onClick={() => openLeadForm({ source: "header-contact" })}
-              className="hidden lg:inline-flex"
             >
               Связаться с нами
-            </Button>
+            </Action>
 
             <button
+              ref={toggleRef}
               type="button"
-              onClick={() => setMenuOpen((open) => !open)}
+              onClick={() => setMenuOpenOn(menuOpen ? null : pathname)}
               aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
               aria-expanded={menuOpen}
-              className="flex h-11 w-11 items-center justify-center rounded-xl border border-brand-200 text-brand-800 transition hover:bg-brand-50 lg:hidden"
+              aria-controls="site-menu"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-white/[0.06] backdrop-blur-md transition-colors duration-400 hover:border-white/50 hover:bg-white/[0.14] lg:hidden"
             >
-              {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {/* Две линии складываются в крестик */}
+              <span aria-hidden="true" className="relative block h-3 w-[18px]">
+                <span
+                  className={cn(
+                    "absolute inset-x-0 top-0 h-[1.5px] rounded-full bg-current transition-transform duration-600 ease-out-expo",
+                    menuOpen && "translate-y-[5.25px] rotate-45"
+                  )}
+                />
+                <span
+                  className={cn(
+                    "absolute inset-x-0 bottom-0 h-[1.5px] rounded-full bg-current transition-transform duration-600 ease-out-expo",
+                    menuOpen && "-translate-y-[5.25px] -rotate-45"
+                  )}
+                />
+              </span>
             </button>
           </div>
         </div>
-      </div>
+      </header>
 
-      {menuOpen && (
-        <div className="border-t border-brand-100 bg-white lg:hidden">
-          <div className="container-site flex flex-col gap-1 py-4">
-            <p className="px-1 pb-2 text-xs font-semibold uppercase tracking-wider text-ink-soft">
-              Объекты
-            </p>
-            {PROPERTIES.map((property) => (
-              <NavLink
-                key={property.slug}
-                to={property.path}
-                end
-                onClick={() => setMenuOpen(false)}
-                className={({ isActive }) =>
-                  cn(
-                    "flex items-center justify-between rounded-xl px-3 py-3 text-base font-medium transition",
-                    isActive ? "bg-orange-50 text-orange-600" : "text-brand-900 hover:bg-brand-50"
-                  )
-                }
-              >
-                {property.name}
-                <span className="text-xs font-normal text-ink-soft">{property.shortLabel}</span>
-              </NavLink>
-            ))}
-
-            <Button
-              onClick={() => {
-                setMenuOpen(false)
-                openLeadForm({ source: "header-contact" })
-              }}
-              size="lg"
-              className="mt-3 w-full"
-            >
-              Связаться с нами
-            </Button>
-
-            <a
-              href={CONTACTS.phoneHref}
-              onClick={() => track("phone_click", { placement: "mobile-menu" })}
-              className="mt-2 flex items-center justify-center gap-2 py-2 text-base font-semibold text-brand-900"
-            >
-              <Phone className="h-4 w-4 text-orange-500" />
-              {CONTACTS.phone}
-            </a>
-          </div>
-        </div>
-      )}
-    </header>
+      {/* Меню — соседом шапки, а не внутри: transform шапки сломал бы fixed-позиционирование */}
+      <SiteMenu open={menuOpen} onClose={closeMenu} toggleRef={toggleRef} />
+    </>
   )
 }

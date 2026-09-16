@@ -25,7 +25,11 @@ export function PropertyHero({
 
   return (
     <section className="relative">
-      <div className="relative h-[62vh] min-h-[380px] w-full overflow-hidden sm:h-[70vh] sm:min-h-[520px]">
+      {/* data-header-hero: пока фото под шапкой, шапка над ним прозрачная */}
+      <div
+        data-header-hero
+        className="relative h-[62vh] min-h-[380px] w-full overflow-hidden sm:h-[70vh] sm:min-h-[520px]"
+      >
         <SmartImage
           key={property.heroPhoto}
           src={property.heroPhoto}

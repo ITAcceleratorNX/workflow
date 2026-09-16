@@ -3,12 +3,17 @@ import { useLocation } from "react-router-dom"
 import { Header } from "./Header"
 import { Footer } from "./Footer"
 import { SITE_URL } from "../../lib/site"
+import { hasDarkHero } from "../../lib/navigation"
+import { cn } from "../../lib/utils"
 
 export function Layout({ children }: { children: ReactNode }) {
+  const { pathname } = useLocation()
+
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-screen flex-col bg-ivory-50">
       <Header />
-      <main className="flex-1">{children}</main>
+      {/* Шапка фиксированная: без тёмного hero контент начинается под ней, а не за ней */}
+      <main className={cn("flex-1", !hasDarkHero(pathname) && "pt-16 lg:pt-20")}>{children}</main>
       <Footer />
     </div>
   )
