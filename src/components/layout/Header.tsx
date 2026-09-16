@@ -11,6 +11,7 @@ import { PROPERTIES } from "../../lib/properties"
 import { useLeadForm } from "../../lib/leadFormContext"
 import { useScrollLock } from "../../lib/smoothScroll"
 import { HEADER_HERO_ATTRIBUTE, hasDarkHero } from "../../lib/navigation"
+import { useIntroPhase } from "../../lib/intro"
 
 /* Высота шапки (h-16 / lg:h-20) — граница, после которой hero считается пройденным */
 const HEADER_HEIGHT = 80
@@ -72,7 +73,10 @@ function useHeaderScroll(): ScrollState {
 export function Header() {
   const { pathname } = useLocation()
   const { openLeadForm } = useLeadForm()
-  const { pastHero, hidden } = useHeaderScroll()
+  const { pastHero, hidden: hiddenOnScroll } = useHeaderScroll()
+  const introPhase = useIntroPhase()
+  /* Во время заставки шапка ждёт наверху за краем экрана и въезжает вместе со шторкой */
+  const hidden = hiddenOnScroll || introPhase === "loading"
   const toggleRef = useRef<HTMLButtonElement>(null)
 
   /* Меню открыто «на странице»: после перехода по адресу оно закрывается само */

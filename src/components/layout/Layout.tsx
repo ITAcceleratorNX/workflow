@@ -2,20 +2,27 @@ import { useEffect, type ReactNode } from "react"
 import { useLocation } from "react-router-dom"
 import { Header } from "./Header"
 import { Footer } from "./Footer"
+import { Intro } from "../intro/Intro"
 import { SITE_URL } from "../../lib/site"
 import { hasDarkHero } from "../../lib/navigation"
+import { useIntroPhase } from "../../lib/intro"
 import { cn } from "../../lib/utils"
 
 export function Layout({ children }: { children: ReactNode }) {
   const { pathname } = useLocation()
+  const introPhase = useIntroPhase()
 
   return (
-    <div className="flex min-h-screen flex-col bg-ivory-50">
-      <Header />
-      {/* Шапка фиксированная: без тёмного hero контент начинается под ней, а не за ней */}
-      <main className={cn("flex-1", !hasDarkHero(pathname) && "pt-16 lg:pt-20")}>{children}</main>
-      <Footer />
-    </div>
+    <>
+      {/* Под заставкой страница недоступна с клавиатуры и для читалок экрана */}
+      <div inert={introPhase === "loading"} className="flex min-h-screen flex-col bg-ivory-50">
+        <Header />
+        {/* Шапка фиксированная: без тёмного hero контент начинается под ней, а не за ней */}
+        <main className={cn("flex-1", !hasDarkHero(pathname) && "pt-16 lg:pt-20")}>{children}</main>
+        <Footer />
+      </div>
+      <Intro />
+    </>
   )
 }
 

@@ -14,6 +14,21 @@
 
     <meta name="theme-color" content="#0B0D0C" />
 
+    <!-- Интро-заставка (src/components/intro): только при открытии главной и если
+         человек не просил уменьшить движение. Решаем до загрузки React и сразу
+         красим фон в графит — иначе перед заставкой мигнёт светлая страница. -->
+    <script>
+      if (location.pathname === "/" && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document.documentElement.classList.add("intro-pending")
+      }
+    </script>
+    <style>
+      html.intro-pending,
+      html.intro-pending body {
+        background: #0b0d0c;
+      }
+    </style>
+
     <!-- Иконки готовыми размерами: браузер и поисковики берут нужную,
          а не ужимают и не растягивают один крупный исходник.
          favicon.ico нужен отдельно: краулеры запрашивают этот адрес напрямую. -->

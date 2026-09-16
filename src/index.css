@@ -178,6 +178,11 @@ html.lenis {
   animation: hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+/* Пока идёт интро-заставка, появление hero ждёт: иначе оно отыграло бы под шторкой */
+html.intro-pending .hero-fade {
+  animation-play-state: paused;
+}
+
 .hero-fade-1 { animation-delay: 0.12s; }
 .hero-fade-2 { animation-delay: 0.28s; }
 .hero-fade-3 { animation-delay: 0.44s; }
