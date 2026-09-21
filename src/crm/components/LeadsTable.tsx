@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUp, ChevronsUpDown, Inbox } from "lucide-react"
+import { ArrowDown, ArrowUp, ChevronsUpDown, Inbox, Trash2 } from "lucide-react"
 import { PROCESSING } from "@shared/crm.js"
 import { cn } from "../../lib/utils"
 import { Button } from "../../components/ui/button"
@@ -27,7 +27,7 @@ const COLUMNS: Column[] = [
   { key: "manager", title: "Менеджер", sort: "manager", className: "w-[135px]" },
   { key: "property", title: "Объект / формат", className: "w-[170px]" },
   { key: "created_at", title: "Дата", sort: "created_at", className: "w-[125px]" },
-  { key: "action", title: "Действие", className: "w-[115px]" },
+  { key: "action", title: "Действие", className: "w-[185px]" },
 ]
 
 interface LeadsTableProps {
@@ -36,6 +36,7 @@ interface LeadsTableProps {
   sort: SortState
   onSort: (column: SortColumn) => void
   onOpen: (lead: Lead) => void
+  onDelete: (lead: Lead) => void
   onResetFilters: () => void
   hasFilters: boolean
 }
@@ -46,6 +47,7 @@ export function LeadsTable({
   sort,
   onSort,
   onOpen,
+  onDelete,
   onResetFilters,
   hasFilters,
 }: LeadsTableProps) {
@@ -53,7 +55,7 @@ export function LeadsTable({
     <div className="card-base mt-3 overflow-hidden">
       {/* Таблица шире экрана прокручивается сама, страница по горизонтали не едет */}
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1330px] table-fixed border-collapse text-left text-[14px]">
+        <table className="w-full min-w-[1400px] table-fixed border-collapse text-left text-[14px]">
           <thead>
             <tr className="border-b border-brand-100 bg-brand-50/70">
               {COLUMNS.map((column) => (
@@ -96,7 +98,7 @@ export function LeadsTable({
               )}
 
             {rows.map((lead) => (
-              <LeadRow key={lead.id} lead={lead} onOpen={onOpen} />
+              <LeadRow key={lead.id} lead={lead} onOpen={onOpen} onDelete={onDelete} />
             ))}
           </tbody>
         </table>
@@ -112,7 +114,13 @@ export function LeadsTable({
   )
 }
 
-function LeadRow({ lead, onOpen }: { lead: Lead; onOpen: (lead: Lead) => void }) {
+interface LeadRowProps {
+  lead: Lead
+  onOpen: (lead: Lead) => void
+  onDelete: (lead: Lead) => void
+}
+
+function LeadRow({ lead, onOpen, onDelete }: LeadRowProps) {
   const unprocessed = lead.processing === PROCESSING.NEW
 
   return (
@@ -185,17 +193,32 @@ function LeadRow({ lead, onOpen }: { lead: Lead; onOpen: (lead: Lead) => void })
       </td>
 
       <td className="px-4 py-3">
-        <Button
-          size="sm"
-          variant={unprocessed ? "primary" : "outline"}
-          onClick={(event) => {
-            event.stopPropagation()
-            onOpen(lead)
-          }}
-          className="w-full"
-        >
-          {unprocessed ? "Обработать" : "Открыть"}
-        </Button>
+        <div className="flex items-center gap-1.5">
+          <Button
+            size="sm"
+            variant={unprocessed ? "primary" : "outline"}
+            onClick={(event) => {
+              event.stopPropagation()
+              onOpen(lead)
+            }}
+            className="flex-1 px-3"
+          >
+            {unprocessed ? "Обработать" : "Открыть"}
+          </Button>
+          {/* Иконка без подписи: колонка узкая, а действие редкое и подтверждается диалогом */}
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation()
+              onDelete(lead)
+            }}
+            title="Удалить лид"
+            aria-label={`Удалить лид № ${lead.id}`}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-transparent text-ink-soft transition-colors hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
       </td>
     </tr>
   )

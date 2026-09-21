@@ -1,15 +1,16 @@
 /**
  * Лиды CRM.
  *
- *   GET   - список с фильтрами, поиском и постраничным выводом (разделы 3-5)
- *   POST  - ручное добавление лида (раздел 13)
- *   PATCH - сохранение карточки лида, id в теле запроса (раздел 6)
+ *   GET    - список с фильтрами, поиском и постраничным выводом (разделы 3-5)
+ *   POST   - ручное добавление лида (раздел 13)
+ *   PATCH  - сохранение карточки лида, id в теле запроса (раздел 6)
+ *   DELETE - удаление лида, id в параметрах запроса
  */
 
 import { requireSession } from "../_lib/auth.js"
 import { isDatabaseConfigured } from "../_lib/db.js"
 import { json, methodNotAllowed, readBody } from "../_lib/http.js"
-import { coerceLeadFields, createLead, getLead, listLeads, updateLead } from "../_lib/leads.js"
+import { coerceLeadFields, createLead, deleteLead, getLead, listLeads, updateLead } from "../_lib/leads.js"
 import { LEAD_FIELD_BY_NAME, requiredFieldsFor } from "../../shared/crm.js"
 
 /**
@@ -36,6 +37,16 @@ export default async function handler(req, res) {
     if (req.method === "GET") {
       const result = await listLeads(req.query ?? {})
       return json(res, 200, result)
+    }
+
+    if (req.method === "DELETE") {
+      /* id ждём в адресе, но тело тоже принимаем: не всякий клиент шлёт его с DELETE */
+      const id = Number(req.query?.id ?? readBody(req)?.id)
+      if (!Number.isInteger(id) || id <= 0) return json(res, 400, { error: "Не указан лид" })
+
+      if (!(await deleteLead(id))) return json(res, 404, { error: "Лид не найден" })
+
+      return json(res, 200, { ok: true })
     }
 
     if (req.method === "POST" || req.method === "PATCH") {
@@ -70,7 +81,7 @@ export default async function handler(req, res) {
       return json(res, 200, { lead: await updateLead(id, values) })
     }
 
-    return methodNotAllowed(res, ["GET", "POST", "PATCH"])
+    return methodNotAllowed(res, ["GET", "POST", "PATCH", "DELETE"])
   } catch (error) {
     console.error("Ошибка CRM /leads", error)
     return json(res, 500, { error: "Не удалось выполнить операцию" })

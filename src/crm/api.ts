@@ -57,6 +57,9 @@ export const saveLead = (id: number, draft: Partial<LeadDraft>) =>
     body: JSON.stringify({ ...draft, id }),
   }).then((data) => data.lead)
 
+export const deleteLead = (id: number) =>
+  request<{ ok: true }>(`/api/crm/leads?id=${id}`, { method: "DELETE" })
+
 /**
  * Выгрузка CSV. Файл забираем через fetch, а не переходом по ссылке:
  * так ошибка приходит текстом, а не пустой вкладкой.
