@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { Loader2, X } from "lucide-react"
+import { Loader2, Trash2, X } from "lucide-react"
 import {
   BUILDINGS,
   BUILDING_CLASSES,
@@ -50,9 +50,11 @@ interface LeadModalProps {
   lead: Lead | null
   onClose: () => void
   onSave: (draft: LeadDraft) => Promise<void>
+  /** Запрос на удаление. Подтверждение и сам запрос — на стороне экрана лидов. */
+  onDelete: (lead: Lead) => void
 }
 
-export function LeadModal({ lead, onClose, onSave }: LeadModalProps) {
+export function LeadModal({ lead, onClose, onSave, onDelete }: LeadModalProps) {
   const initial = useMemo(() => (lead ? draftFrom(lead) : emptyDraft()), [lead])
   const [draft, setDraft] = useState<LeadDraft>(initial)
   const [showErrors, setShowErrors] = useState(false)
@@ -546,6 +548,19 @@ export function LeadModal({ lead, onClose, onSave }: LeadModalProps) {
             {error || (dirty ? "Есть несохранённые изменения" : "Все изменения сохранены")}
           </p>
           <div className="flex gap-2">
+            {/* Удаление стоит отдельно от «Сохранить»: соседние кнопки легко перепутать */}
+            {lead && (
+              <Button
+                variant="outline"
+                onClick={() => onDelete(lead)}
+                disabled={saving}
+                aria-label={`Удалить лид № ${lead.id}`}
+                className="shrink-0 border-rose-200 px-4 text-rose-600 hover:border-rose-300 hover:bg-rose-50 hover:text-rose-700"
+              >
+                <Trash2 className="h-4 w-4" />
+                <span className="hidden sm:inline">Удалить</span>
+              </Button>
+            )}
             <Button variant="outline" onClick={requestClose} disabled={saving} className="flex-1 sm:flex-none">
               Закрыть
             </Button>

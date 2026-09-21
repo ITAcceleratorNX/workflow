@@ -276,6 +276,17 @@ export async function getLead(id) {
 }
 
 /**
+ * Удаление лида. Возвращает признак того, что строка была и её убрали:
+ * повторный запрос по тому же id отдаёт false, и вызывающий код отвечает 404.
+ */
+export async function deleteLead(id) {
+  await ensureSchema()
+  const sql = db()
+  const [removed] = await sql`DELETE FROM crm_leads WHERE id = ${id} RETURNING id`
+  return Boolean(removed)
+}
+
+/**
  * Создаёт лид из заявки с сайта (раздел 15). Вызывается из api/lead.js
  * и никогда не должен ломать отправку формы — ошибки ловит вызывающий код.
  */

@@ -3,6 +3,7 @@ import { Download, LogOut, Plus, RefreshCw, Search, SlidersHorizontal, X } from 
 import { Button } from "../../components/ui/button"
 import { cn } from "../../lib/utils"
 import { INPUT_BASE, borderFor } from "./fieldStyles"
+import { ConfirmDialog } from "./ConfirmDialog"
 import { ActiveFilterChips, FiltersPanel } from "./FiltersPanel"
 import { LeadsTable } from "./LeadsTable"
 import { LeadModal } from "./LeadModal"
@@ -30,6 +31,9 @@ export function LeadsScreen({ onSignOut }: { onSignOut: () => void }) {
 
   /* null — карточка закрыта; undefined — открыт новый лид */
   const [openLead, setOpenLead] = useState<Lead | null | undefined>(null)
+  /* Лид, для которого открыт запрос подтверждения удаления */
+  const [pendingDelete, setPendingDelete] = useState<Lead | null>(null)
+  const [deleting, setDeleting] = useState(false)
   const [toast, setToast] = useState<ToastMessage | null>(null)
 
   const searchRef = useRef<HTMLInputElement>(null)
@@ -139,6 +143,34 @@ export function LeadsScreen({ onSignOut }: { onSignOut: () => void }) {
     }
     setOpenLead(null)
     await load()
+  }
+
+  async function handleDelete() {
+    const lead = pendingDelete
+    if (!lead) return
+
+    setDeleting(true)
+    try {
+      await api.deleteLead(lead.id)
+      notify("Лид удалён", "success")
+    } catch (error) {
+      if (error instanceof api.CrmError && error.status === 401) {
+        onSignOut()
+        return
+      }
+      /* Список всё равно перечитываем: лид мог быть удалён с другого рабочего места */
+      notify(error instanceof Error ? error.message : "Не удалось удалить лид", "error")
+    } finally {
+      setDeleting(false)
+    }
+
+    setPendingDelete(null)
+    /* Карточку удалённого лида держать открытой незачем */
+    if (openLead && openLead.id === lead.id) setOpenLead(null)
+
+    /* Удалили последнюю строку страницы — возвращаемся на предыдущую, иначе экран будет пуст */
+    if (rows.length === 1 && page > 1) setPage((current) => current - 1)
+    else await load()
   }
 
   return (
@@ -267,6 +299,7 @@ export function LeadsScreen({ onSignOut }: { onSignOut: () => void }) {
           sort={sort}
           onSort={toggleSort}
           onOpen={setOpenLead}
+          onDelete={setPendingDelete}
           onResetFilters={resetFilters}
           hasFilters={activeFilters(filters).length > 0}
         />
@@ -281,7 +314,23 @@ export function LeadsScreen({ onSignOut }: { onSignOut: () => void }) {
       </main>
 
       {openLead !== null && (
-        <LeadModal lead={openLead ?? null} onClose={() => setOpenLead(null)} onSave={handleSave} />
+        <LeadModal
+          lead={openLead ?? null}
+          onClose={() => setOpenLead(null)}
+          onSave={handleSave}
+          onDelete={setPendingDelete}
+        />
+      )}
+
+      {pendingDelete && (
+        <ConfirmDialog
+          title="Удалить лид?"
+          description={`Заявка ${leadTitle(pendingDelete)} будет удалена без возможности восстановления. Если лид просто не подошёл, лучше поставить статус «Отказ».`}
+          confirmLabel="Удалить лид"
+          busy={deleting}
+          onConfirm={() => void handleDelete()}
+          onCancel={() => setPendingDelete(null)}
+        />
       )}
 
       <div className="pointer-events-none fixed inset-x-4 bottom-4 z-[60] mx-auto flex max-w-md flex-col gap-2 sm:inset-x-auto sm:right-6">
@@ -289,4 +338,10 @@ export function LeadsScreen({ onSignOut }: { onSignOut: () => void }) {
       </div>
     </div>
   )
+}
+
+/** Как назвать лид в запросе подтверждения: номер плюс имя или компания. */
+function leadTitle(lead: Lead): string {
+  const who = lead.name.trim() || lead.company?.trim()
+  return who ? `№ ${lead.id} — ${who}` : `№ ${lead.id}`
 }
