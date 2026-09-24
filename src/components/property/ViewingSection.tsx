@@ -1,11 +1,12 @@
 import { Mail, Phone } from "lucide-react"
 import { Section } from "../ui/Section"
 import { Reveal } from "../ui/Reveal"
-import { Button, LinkButton } from "../ui/button"
+import { Button } from "../ui/button"
 import { WhatsAppIcon } from "../ui/WhatsAppIcon"
 import { LeadForm } from "../lead/LeadForm"
-import { CONTACTS, track, whatsappLink } from "../../lib/site"
+import { CONTACTS, track } from "../../lib/site"
 import { useLeadForm } from "../../lib/leadFormContext"
+import { useWhatsAppGate } from "../../lib/whatsappGateContext"
 import type { Property } from "../../lib/properties"
 
 /**
@@ -21,11 +22,9 @@ export function ViewingSection({
   level?: "h2" | "h3"
 }) {
   const { openLeadForm } = useLeadForm()
+  const { openWhatsAppGate } = useWhatsAppGate()
   const sectionId = property ? `viewing-${property.slug}` : "viewing"
   const title = property ? `Посмотрите ${property.name} вживую` : "Посмотрите вживую"
-  const whatsappText = property
-    ? `Здравствуйте! Хочу записаться на просмотр помещений в ${property.name}.`
-    : "Здравствуйте! Хочу записаться на просмотр офисов TMK WorkFlow."
 
   return (
     <Section id={sectionId} tone="deep" size="lg">
@@ -74,14 +73,11 @@ export function ViewingSection({
               >
                 Связаться с нами
               </Button>
-              <LinkButton
-                href={whatsappLink(whatsappText)}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Button
                 onClick={() =>
-                  track("whatsapp_click", {
+                  openWhatsAppGate({
                     placement: "viewing",
-                    property: property?.name ?? "home",
+                    property: property?.name,
                   })
                 }
                 variant="outline"
@@ -89,7 +85,7 @@ export function ViewingSection({
               >
                 <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
                 Написать в WhatsApp
-              </LinkButton>
+              </Button>
             </div>
           </div>
         </Reveal>

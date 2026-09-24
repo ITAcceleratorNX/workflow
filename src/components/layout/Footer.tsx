@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom"
 import { Mail, MapPin, Phone } from "lucide-react"
-import { Button, LinkButton } from "../ui/button"
+import { Button } from "../ui/button"
 import { WhatsAppIcon } from "../ui/WhatsAppIcon"
-import { CONTACTS, WHATSAPP_DEFAULT_MESSAGE, track, whatsappLink } from "../../lib/site"
+import { CONTACTS, track } from "../../lib/site"
 import { PROPERTIES } from "../../lib/properties"
 import { useLeadForm } from "../../lib/leadFormContext"
+import { useWhatsAppGate } from "../../lib/whatsappGateContext"
 
 export function Footer() {
   const { openLeadForm } = useLeadForm()
+  const { openWhatsAppGate } = useWhatsAppGate()
 
   return (
     <footer className="bg-brand-900 text-white">
@@ -87,17 +89,14 @@ export function Footer() {
                 </a>
               </li>
             </ul>
-            <LinkButton
-              href={whatsappLink(WHATSAPP_DEFAULT_MESSAGE)}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => track("whatsapp_click", { placement: "footer" })}
+            <Button
+              onClick={() => openWhatsAppGate({ placement: "footer" })}
               variant="outline"
               className="mt-5 border-white/25 bg-transparent text-white hover:border-white/50 hover:bg-white/10"
             >
               <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
               Написать в WhatsApp
-            </LinkButton>
+            </Button>
           </div>
         </div>
 

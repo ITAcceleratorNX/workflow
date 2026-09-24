@@ -6,6 +6,7 @@ import "dotenv/config"
 import express from "express"
 
 import leadHandler from "./api/lead.js"
+import whatsappLeadHandler from "./api/whatsapp-lead.js"
 import crmSession from "./api/crm/session.js"
 import crmLeads from "./api/crm/leads.js"
 import crmExport from "./api/crm/export.js"
@@ -23,6 +24,7 @@ const wrap = (handler) => (req, res) => {
 }
 
 app.all("/api/lead", wrap(leadHandler))
+app.all("/api/whatsapp-lead", wrap(whatsappLeadHandler))
 app.all("/api/crm/session", wrap(crmSession))
 app.all("/api/crm/leads", wrap(crmLeads))
 app.all("/api/crm/export", wrap(crmExport))

@@ -16,8 +16,8 @@ export function HomePage() {
     <>
       <Seo title={HOME_SEO.title} description={HOME_SEO.description} path="/" />
       <HeroSection />
-      <OfficeFormatsSection />
       <PropertyCardsSection />
+      <OfficeFormatsSection />
       <MapLeadSection />
       <ViewingSection />
     </>

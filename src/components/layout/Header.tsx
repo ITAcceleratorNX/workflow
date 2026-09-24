@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
 import { Link, NavLink, useLocation } from "react-router-dom"
 import { Menu, Phone, X } from "lucide-react"
-import { Button, LinkButton } from "../ui/button"
+import { Button } from "../ui/button"
 import { WhatsAppIcon } from "../ui/WhatsAppIcon"
 import { cn } from "../../lib/utils"
-import { CONTACTS, WHATSAPP_DEFAULT_MESSAGE, track, whatsappLink } from "../../lib/site"
+import { CONTACTS, track } from "../../lib/site"
 import { PROPERTIES } from "../../lib/properties"
 import { useLeadForm } from "../../lib/leadFormContext"
+import { useWhatsAppGate } from "../../lib/whatsappGateContext"
 
 export function Header() {
   const { pathname } = useLocation()
@@ -15,6 +16,7 @@ export function Header() {
   /** На главной: true, пока Hero ещё в зоне видимости */
   const [overHero, setOverHero] = useState(isHome)
   const { openLeadForm } = useLeadForm()
+  const { openWhatsAppGate } = useWhatsAppGate()
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : ""
@@ -128,11 +130,8 @@ export function Header() {
               <Phone className="h-5 w-5" />
             </a>
 
-            <LinkButton
-              href={whatsappLink(WHATSAPP_DEFAULT_MESSAGE)}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => track("whatsapp_click", { placement: "header" })}
+            <Button
+              onClick={() => openWhatsAppGate({ placement: "header" })}
               variant="outline"
               size="icon"
               aria-label="Написать в WhatsApp"
@@ -140,7 +139,7 @@ export function Header() {
             >
               <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
               <span className="hidden sm:inline">WhatsApp</span>
-            </LinkButton>
+            </Button>
 
             <Button
               onClick={() => openLeadForm({ source: "header-contact" })}

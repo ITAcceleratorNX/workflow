@@ -10,9 +10,6 @@ export const CONTACTS = {
 export const whatsappLink = (message?: string) =>
   message ? `${CONTACTS.whatsapp}?text=${encodeURIComponent(message)}` : CONTACTS.whatsapp
 
-export const WHATSAPP_DEFAULT_MESSAGE =
-  "Здравствуйте! Пишу с сайта TMK WorkFlow. Хочу узнать про аренду офиса."
-
 /**
  * Аналитика подключается при предоставлении идентификаторов (раздел 11 ТЗ).
  * Хелпер безопасно отправляет событие во все счётчики, которые есть на странице.
