@@ -59,7 +59,7 @@ export async function submitWhatsAppLead(payload: {
   property: string
   placement: WhatsAppPlacement
   page: string
-}): Promise<{ ok: boolean }> {
+}): Promise<{ countConversion: boolean }> {
   const controller = new AbortController()
   const timer = window.setTimeout(() => controller.abort(), SUBMIT_TIMEOUT_MS)
 
@@ -70,11 +70,18 @@ export async function submitWhatsAppLead(payload: {
       signal: controller.signal,
       body: JSON.stringify({ ...payload, ...readAdParams() }),
     })
-    if (!response.ok) return { ok: false }
+
+    /* Явная ошибка сервера — конверсию не считаем */
+    if (!response.ok) return { countConversion: false }
+
     const data = (await response.json().catch(() => null)) as { ok?: boolean } | null
-    return { ok: data?.ok === true }
+    if (data?.ok === false) return { countConversion: false }
+
+    return { countConversion: true }
   } catch {
-    return { ok: false }
+    /* Таймаут и сетевые сбои: Apps Script часто отвечает дольше 5 с,
+       строка в реестр уже пишется — конверсию считаем. */
+    return { countConversion: true }
   } finally {
     window.clearTimeout(timer)
   }

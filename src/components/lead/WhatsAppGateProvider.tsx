@@ -117,7 +117,7 @@ export function WhatsAppGateProvider({ children }: { children: ReactNode }) {
     markWhatsAppPhoneSent()
     setStatus("done")
 
-    if (result.ok) {
+    if (result.countConversion) {
       track("whatsapp_form_submit", {
         property: property || undefined,
         placement: request.placement,
