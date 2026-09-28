@@ -60,34 +60,34 @@ export async function submitWhatsAppLead(payload: {
   placement: WhatsAppPlacement
   page: string
 }): Promise<{ countConversion: boolean }> {
-  const controller = new AbortController()
-  const timer = window.setTimeout(() => controller.abort(), SUBMIT_TIMEOUT_MS)
-
-  try {
-    const response = await fetch("/api/whatsapp-lead", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      signal: controller.signal,
-      body: JSON.stringify({ ...payload, ...readAdParams() }),
+  const request = fetch("/api/whatsapp-lead", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...payload, ...readAdParams() }),
+  })
+    .then(async (response) => {
+      if (!response.ok) return false
+      const data = (await response.json().catch(() => null)) as { ok?: boolean } | null
+      if (data?.ok === false) return false
+      return true
     })
+    .catch(() => true)
 
-    /* Явная ошибка сервера — конверсию не считаем */
-    if (!response.ok) return { countConversion: false }
+  /* Не abort-им запрос: Apps Script может отвечать 10–30 с, строка всё равно пишется.
+     Через 5 с считаем конверсию, даже если ответ ещё не пришёл. */
+  const timedOut = new Promise<true>((resolve) => {
+    window.setTimeout(() => resolve(true), SUBMIT_TIMEOUT_MS)
+  })
 
-    const data = (await response.json().catch(() => null)) as { ok?: boolean } | null
-    if (data?.ok === false) return { countConversion: false }
+  const winner = await Promise.race([
+    request.then((ok) => ({ source: "request" as const, ok })),
+    timedOut.then(() => ({ source: "timeout" as const, ok: true })),
+  ])
 
-    return { countConversion: true }
-  } catch {
-    /* Таймаут и сетевые сбои: Apps Script часто отвечает дольше 5 с,
-       строка в реестр уже пишется — конверсию считаем. */
-    return { countConversion: true }
-  } finally {
-    window.clearTimeout(timer)
-  }
+  return { countConversion: winner.ok }
 }
 
-/** false — показать кнопку-ссылку (Safari часто блокирует open после await). */
+/** Открывать синхронно в обработчике клика — после await браузер блокирует popup. */
 export function openWhatsApp(href: string): boolean {
   if (typeof window === "undefined") return false
   const popup = window.open(href, "_blank")

@@ -92,9 +92,9 @@ export function WhatsAppGateProvider({ children }: { children: ReactNode }) {
     }
   }, [request, closeWhatsAppGate])
 
-  const handleSubmit = async (event: FormEvent) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
-    if (!request || status === "submitting") return
+    if (!request || status === "submitting" || status === "done") return
 
     if (phone.length < PHONE_DIGITS) {
       setError("Введите номер полностью: +7 (___) ___-__-__")
@@ -102,29 +102,29 @@ export function WhatsAppGateProvider({ children }: { children: ReactNode }) {
     }
 
     const property = request.property ?? ""
+    const placement = request.placement
     const href = whatsappHrefFor(property, readAdParams().gclid)
     setWaHref(href)
-    setStatus("submitting")
     setError("")
 
-    const result = await submitWhatsAppLead({
-      phone: toE164(phone),
-      property,
-      placement: request.placement,
-      page: pathname,
-    })
-
+    /* Сразу в обработчике клика — до любого await, иначе браузер блокирует окно */
+    openWhatsApp(href)
     markWhatsAppPhoneSent()
     setStatus("done")
 
-    if (result.countConversion) {
-      track("whatsapp_form_submit", {
-        property: property || undefined,
-        placement: request.placement,
-      })
-    }
-
-    openWhatsApp(href)
+    void submitWhatsAppLead({
+      phone: toE164(phone),
+      property,
+      placement,
+      page: pathname,
+    }).then((result) => {
+      if (result.countConversion) {
+        track("whatsapp_form_submit", {
+          property: property || undefined,
+          placement,
+        })
+      }
+    })
   }
 
   return (
