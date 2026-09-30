@@ -1,12 +1,13 @@
 import { ArrowRight } from "lucide-react"
 import { Button } from "../ui/button"
 import { HeroVideoMontage } from "./HeroVideoMontage"
-import { HERO } from "../../lib/homeContent"
 import { useLeadForm } from "../../lib/leadFormContext"
+import { useLocale } from "../../lib/i18n/LocaleProvider"
 
 /** Hero: full-screen видео и стеклянная панель по центру. */
 export function HeroSection() {
   const { openLeadForm } = useLeadForm()
+  const { t } = useLocale()
 
   return (
     <section
@@ -29,16 +30,16 @@ export function HeroSection() {
 
           <div className="relative px-6 py-8 text-center sm:px-10 sm:py-12 lg:px-16 lg:py-14">
             <p className="hero-fade hero-fade-1 text-xs font-semibold uppercase tracking-[0.18em] text-orange-400 sm:text-sm">
-              {HERO.eyebrow}
+              {t.hero.eyebrow}
             </p>
 
             <h1 className="hero-fade hero-fade-2 mt-5 text-[clamp(2.4rem,1.4rem+4.5vw,4.25rem)] font-bold leading-[1.05] tracking-tight text-white [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]">
-              {HERO.title}
-              <span className="mt-1 block text-white/90">{HERO.titleAccent}</span>
+              {t.hero.title}
+              <span className="mt-1 block text-white/90">{t.hero.titleAccent}</span>
             </h1>
 
             <p className="hero-fade hero-fade-3 mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/90 sm:mt-7 sm:text-lg md:text-xl">
-              {HERO.description}
+              {t.hero.description}
             </p>
 
             <div className="hero-fade hero-fade-4 mt-8 flex flex-col items-center gap-4 sm:mt-10 sm:flex-row sm:justify-center sm:gap-5">
@@ -47,10 +48,10 @@ export function HeroSection() {
                 className="min-h-12 w-full px-8 text-base sm:w-auto sm:min-h-14 sm:text-lg"
                 onClick={() => openLeadForm({ source: "hero-select-office" })}
               >
-                {HERO.cta}
+                {t.hero.cta}
                 <ArrowRight className="h-5 w-5" />
               </Button>
-              <p className="text-sm text-white/75 sm:text-base">{HERO.objectsLine}</p>
+              <p className="text-sm text-white/75 sm:text-base">{t.hero.objectsLine}</p>
             </div>
           </div>
         </div>

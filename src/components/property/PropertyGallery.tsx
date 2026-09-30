@@ -6,11 +6,9 @@ import { SmartImage } from "../ui/SmartImage"
 import { Lightbox } from "../ui/Lightbox"
 import { Button } from "../ui/button"
 import { cn } from "../../lib/utils"
-import {
-  PHOTO_CATEGORY_LABELS,
-  type PhotoCategory,
-  type Property,
-} from "../../lib/properties"
+import { useLocale } from "../../lib/i18n/LocaleProvider"
+import { getPhotoCategoryLabel } from "../../lib/i18n/content"
+import type { PhotoCategory, Property } from "../../lib/properties"
 
 /** Сколько кадров показываем до нажатия «Показать все» */
 const PREVIEW_COUNT = 6
@@ -35,6 +33,7 @@ export function PropertyGallery({
   property: Property
   level: "h2" | "h3"
 }) {
+  const { locale, t } = useLocale()
   const [activeCategory, setActiveCategory] = useState<PhotoCategory | "all">("all")
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [expanded, setExpanded] = useState(false)
@@ -66,25 +65,27 @@ export function PropertyGallery({
     gridRef.current?.scrollIntoView({ block: "start", behavior: "smooth" })
   }
 
+  const categoryLabel = (category: PhotoCategory) => getPhotoCategoryLabel(category, locale)
+
   return (
     <Section tone="brand" size="md">
       <SectionHeading
-        eyebrow="Фотографии"
-        title={`Как выглядит ${property.name}`}
-        description="Нажмите на фотографию, чтобы открыть её в увеличенном виде."
+        eyebrow={t.property.galleryEyebrow}
+        title={`${t.property.galleryTitle} ${property.name}`}
+        description={t.property.galleryHint}
         level={level}
       />
 
       <Reveal className="mt-8 flex gap-2 overflow-x-auto pb-2 no-scrollbar" delay={60}>
         <FilterChip
-          label="Все"
+          label={t.property.allPhotos}
           active={activeCategory === "all"}
           onClick={() => selectCategory("all")}
         />
         {categories.map((category) => (
           <FilterChip
             key={category}
-            label={PHOTO_CATEGORY_LABELS[category]}
+            label={categoryLabel(category)}
             active={activeCategory === category}
             onClick={() => selectCategory(category)}
           />
@@ -102,13 +103,11 @@ export function PropertyGallery({
               <SmartImage
                 src={photo.src}
                 alt={photo.alt}
-                placeholderLabel={PHOTO_CATEGORY_LABELS[photo.category]}
+                placeholderLabel={categoryLabel(photo.category)}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
               <span className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-brand-900/85 to-transparent p-4 text-left">
-                <span className="text-sm font-medium text-white">
-                  {PHOTO_CATEGORY_LABELS[photo.category]}
-                </span>
+                <span className="text-sm font-medium text-white">{categoryLabel(photo.category)}</span>
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/15 text-white opacity-0 transition group-hover:opacity-100">
                   <Maximize className="h-4 w-4" />
                 </span>
@@ -127,7 +126,7 @@ export function PropertyGallery({
             </Button>
           ) : (
             <Button variant="outline" size="lg" onClick={() => setExpanded(true)}>
-              Показать все фото
+              {t.property.showAllPhotos}
               <span className="text-ink-soft">({photos.length})</span>
               <ChevronDown className="h-4 w-4" />
             </Button>

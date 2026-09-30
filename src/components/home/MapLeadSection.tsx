@@ -4,10 +4,12 @@ import { Reveal } from "../ui/Reveal"
 import { Button } from "../ui/button"
 import { PropertiesMiniMap } from "./PropertiesMiniMap"
 import { useLeadForm } from "../../lib/leadFormContext"
+import { useLocale } from "../../lib/i18n/LocaleProvider"
 
 /** Блок «карта + заявка» на главной: слева все 3 БЦ, справа CTA формы. */
 export function MapLeadSection() {
   const { openLeadForm } = useLeadForm()
+  const { t } = useLocale()
 
   return (
     <Section tone="brand" size="lg" id="map-lead">
@@ -17,18 +19,17 @@ export function MapLeadSection() {
         </Reveal>
 
         <Reveal delay={100} className="flex flex-col justify-center">
-          <p className="eyebrow">Подбор офиса</p>
-          <h2 className="mt-3 text-3xl sm:text-4xl">Не знаете, какой офис выбрать?</h2>
+          <p className="eyebrow">{t.home.mapEyebrow}</p>
+          <h2 className="mt-3 text-3xl sm:text-4xl">{t.home.mapTitle}</h2>
           <p className="mt-4 max-w-md text-base leading-relaxed text-ink-muted sm:text-lg">
-            Оставьте заявку — подберём подходящий бизнес-центр и формат офиса под задачи вашей
-            компании.
+            {t.home.mapDescription}
           </p>
           <Button
             size="lg"
             className="mt-8 w-full sm:w-auto"
             onClick={() => openLeadForm({ source: "home-select-office" })}
           >
-            Подобрать офис
+            {t.common.selectOffice}
             <ArrowRight className="h-4 w-4" />
           </Button>
         </Reveal>

@@ -2,16 +2,26 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { createPortal } from "react-dom"
 import { X } from "lucide-react"
 import { LeadForm } from "./LeadForm"
-import {
-  LEAD_MODAL_TITLES,
-  LeadFormContext,
-  type OpenLeadFormOptions,
-} from "../../lib/leadFormContext"
+import { LeadFormContext, type OpenLeadFormOptions } from "../../lib/leadFormContext"
 import { track } from "../../lib/site"
+import { useLocale } from "../../lib/i18n/LocaleProvider"
+import type { LeadSource } from "../../lib/leadForm"
+import type { Messages } from "../../lib/i18n/messages"
+
+const LEAD_MODAL_KEYS: Record<LeadSource, keyof Messages["leadModal"]> = {
+  "hero-select-office": "heroSelect",
+  "home-select-office": "homeSelect",
+  "serviced-office": "serviced",
+  viewing: "viewing",
+  "header-contact": "headerContact",
+  "property-contact": "propertyContact",
+  "footer-contact": "footerContact",
+}
 
 export function LeadFormProvider({ children }: { children: ReactNode }) {
   const [request, setRequest] = useState<OpenLeadFormOptions | null>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
+  const { t } = useLocale()
 
   const openLeadForm = useCallback((options: OpenLeadFormOptions) => {
     setRequest(options)
@@ -44,7 +54,7 @@ export function LeadFormProvider({ children }: { children: ReactNode }) {
     }
   }, [request, closeLeadForm])
 
-  const copy = request ? LEAD_MODAL_TITLES[request.source] : null
+  const copy = request ? t.leadModal[LEAD_MODAL_KEYS[request.source]] : null
 
   return (
     <LeadFormContext.Provider value={value}>
@@ -75,7 +85,7 @@ export function LeadFormProvider({ children }: { children: ReactNode }) {
                 <button
                   type="button"
                   onClick={closeLeadForm}
-                  aria-label="Закрыть форму"
+                  aria-label={t.common.closeForm}
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700 transition hover:bg-brand-100"
                 >
                   <X className="h-5 w-5" />

@@ -5,16 +5,19 @@ import { Reveal } from "../ui/Reveal"
 import { SmartImage } from "../ui/SmartImage"
 import { buttonVariants } from "../ui/buttonVariants"
 import { cn } from "../../lib/utils"
+import { useLocale } from "../../lib/i18n/LocaleProvider"
 import type { Property } from "../../lib/properties"
 
 /** Переходы на другие объекты (раздел 5.12 ТЗ): обложки — фотографии фасада снаружи. */
 export function OtherPropertiesSection({ properties }: { properties: Property[] }) {
+  const { t } = useLocale()
+
   return (
     <Section tone="white" size="lg">
       <SectionHeading
-        eyebrow="Другие объекты"
-        title="Другие бизнес-центры TMK WorkFlow"
-        description="Откройте страницу объекта, чтобы посмотреть свободные площади, характеристики и фотографии."
+        eyebrow={t.property.otherEyebrow}
+        title={t.property.otherTitle}
+        description={t.property.otherDescription}
       />
 
       <div className="mt-10 grid gap-6 lg:grid-cols-2">
@@ -28,7 +31,7 @@ export function OtherPropertiesSection({ properties }: { properties: Property[] 
                 <SmartImage
                   src={property.cover}
                   alt={property.coverAlt}
-                  placeholderLabel={`Фасад — ${property.name}`}
+                  placeholderLabel={property.name}
                   sizes="(max-width: 1024px) 100vw, 50vw"
                 />
               </div>
@@ -56,7 +59,7 @@ export function OtherPropertiesSection({ properties }: { properties: Property[] 
                     "mt-6 pointer-events-none"
                   )}
                 >
-                  Смотреть {property.name}
+                  {t.home.viewObject} {property.name}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </span>
               </div>

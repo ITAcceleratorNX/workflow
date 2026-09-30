@@ -5,20 +5,24 @@ import { Reveal } from "../ui/Reveal"
 import { SmartImage } from "../ui/SmartImage"
 import { buttonVariants } from "../ui/buttonVariants"
 import { cn } from "../../lib/utils"
-import { PROPERTIES } from "../../lib/properties"
+import { useLocale } from "../../lib/i18n/LocaleProvider"
+import { getLocalizedProperties } from "../../lib/i18n/content"
 
 /** Три карточки БЦ сразу после Hero — переход на страницы объектов. */
 export function PropertyCardsSection() {
+  const { locale, t } = useLocale()
+  const properties = getLocalizedProperties(locale)
+
   return (
     <Section tone="white" size="lg" id="objects">
       <SectionHeading
-        eyebrow="Бизнес-центры"
-        title="Выберите объект"
-        description="Три бизнес-центра класса А в Алматы — откройте страницу, чтобы посмотреть площади, ставки и фото."
+        eyebrow={t.home.objectsEyebrow}
+        title={t.home.objectsTitle}
+        description={t.home.objectsDescription}
       />
 
       <ul className="mt-10 grid gap-6 md:grid-cols-3">
-        {PROPERTIES.map((property, index) => (
+        {properties.map((property, index) => (
           <Reveal as="li" key={property.slug} delay={index * 90}>
             <Link
               to={property.path}
@@ -28,7 +32,7 @@ export function PropertyCardsSection() {
                 <SmartImage
                   src={property.cover}
                   alt={property.coverAlt}
-                  placeholderLabel={`Фасад — ${property.name}`}
+                  placeholderLabel={`${property.name}`}
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
               </div>
@@ -51,7 +55,7 @@ export function PropertyCardsSection() {
                     "mt-6 w-full pointer-events-none sm:w-auto"
                   )}
                 >
-                  Смотреть {property.name}
+                  {t.home.viewObject} {property.name}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </span>
               </div>

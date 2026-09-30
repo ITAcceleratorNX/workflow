@@ -3,6 +3,8 @@ import { useLocation } from "react-router-dom"
 import { Header } from "./Header"
 import { Footer } from "./Footer"
 import { SITE_URL } from "../../lib/site"
+import { useLocale } from "../../lib/i18n/LocaleProvider"
+import { LOCALE_OG } from "../../lib/i18n/types"
 
 export function Layout({ children }: { children: ReactNode }) {
   return (
@@ -63,6 +65,7 @@ const ogMeta = (property: string, value: string) =>
 export function Seo({ title, description, path, image = "/og-image.webp" }: SeoProps) {
   const url = `${SITE_URL}${path === "/" ? "" : path}`
   const imageUrl = `${SITE_URL}${image}`
+  const { locale } = useLocale()
 
   useEffect(() => {
     document.title = title
@@ -75,7 +78,7 @@ export function Seo({ title, description, path, image = "/og-image.webp" }: SeoP
 
     ogMeta("og:type", "website")
     ogMeta("og:site_name", "TMK WorkFlow")
-    ogMeta("og:locale", "ru_RU")
+    ogMeta("og:locale", LOCALE_OG[locale])
     ogMeta("og:title", title)
     ogMeta("og:description", description)
     ogMeta("og:url", url)
@@ -91,7 +94,7 @@ export function Seo({ title, description, path, image = "/og-image.webp" }: SeoP
       "href",
       url
     )
-  }, [title, description, url, imageUrl])
+  }, [title, description, url, imageUrl, locale])
 
   return null
 }

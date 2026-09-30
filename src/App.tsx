@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { Layout, ScrollToTop } from "./components/layout/Layout"
 import { LeadFormProvider } from "./components/lead/LeadFormProvider"
 import { WhatsAppGateProvider } from "./components/lead/WhatsAppGateProvider"
+import { LocaleProvider } from "./lib/i18n/LocaleProvider"
 import { HomePage } from "./pages/HomePage"
 import { PropertyPage } from "./pages/PropertyPage"
 import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage"
@@ -14,20 +15,22 @@ const CrmPage = lazy(() => import("./crm/CrmPage"))
 /** Публичный сайт: общая шапка, подвал и модальная форма заявки. */
 function SiteRoutes() {
   return (
-    <LeadFormProvider>
-      <WhatsAppGateProvider>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/time-square" element={<PropertyPage slug="time-square" />} />
-            <Route path="/venus" element={<PropertyPage slug="venus" />} />
-            <Route path="/koktem-towers" element={<PropertyPage slug="koktem-towers" />} />
-            <Route path="/privacy" element={<PrivacyPolicyPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Layout>
-      </WhatsAppGateProvider>
-    </LeadFormProvider>
+    <LocaleProvider>
+      <LeadFormProvider>
+        <WhatsAppGateProvider>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/time-square" element={<PropertyPage slug="time-square" />} />
+              <Route path="/venus" element={<PropertyPage slug="venus" />} />
+              <Route path="/koktem-towers" element={<PropertyPage slug="koktem-towers" />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Layout>
+        </WhatsAppGateProvider>
+      </LeadFormProvider>
+    </LocaleProvider>
   )
 }
 

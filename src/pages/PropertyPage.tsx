@@ -1,11 +1,14 @@
 import { Seo } from "../components/layout/Layout"
 import { PropertyShowcase } from "../components/property/PropertyShowcase"
 import { OtherPropertiesSection } from "../components/home/OtherPropertiesSection"
-import { PROPERTIES, getProperty, type PropertySlug } from "../lib/properties"
+import type { PropertySlug } from "../lib/properties"
+import { useLocale } from "../lib/i18n/LocaleProvider"
+import { getLocalizedProperties, getLocalizedProperty } from "../lib/i18n/content"
 
 export function PropertyPage({ slug }: { slug: PropertySlug }) {
-  const property = getProperty(slug)
-  const others = PROPERTIES.filter((item) => item.slug !== slug)
+  const { locale } = useLocale()
+  const property = getLocalizedProperty(slug, locale)
+  const others = getLocalizedProperties(locale).filter((item) => item.slug !== slug)
 
   return (
     <>

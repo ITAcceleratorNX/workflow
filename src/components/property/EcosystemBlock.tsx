@@ -1,7 +1,8 @@
 import { Handshake, Network, TrendingUp } from "lucide-react"
 import { Section } from "../ui/Section"
 import { Reveal } from "../ui/Reveal"
-import { ECOSYSTEM } from "../../lib/properties"
+import { useLocale } from "../../lib/i18n/LocaleProvider"
+import { getLocalizedEcosystem } from "../../lib/i18n/content"
 
 const ACCENTS = [Network, Handshake, TrendingUp]
 
@@ -10,6 +11,9 @@ const ACCENTS = [Network, Handshake, TrendingUp]
  * Присутствует на страницах всех трёх объектов.
  */
 export function EcosystemBlock({ level: Heading }: { level: "h2" | "h3" }) {
+  const { locale } = useLocale()
+  const ecosystem = getLocalizedEcosystem(locale)
+
   return (
     <Section tone="deep" size="lg">
       <Reveal className="mx-auto max-w-4xl">
@@ -25,11 +29,11 @@ export function EcosystemBlock({ level: Heading }: { level: "h2" | "h3" }) {
         </div>
 
         <Heading className="mt-6 text-3xl text-white sm:text-4xl lg:text-[42px]">
-          {ECOSYSTEM.title}
+          {ecosystem.title}
         </Heading>
 
         <div className="mt-6 space-y-5">
-          {ECOSYSTEM.paragraphs.map((paragraph, index) => (
+          {ecosystem.paragraphs.map((paragraph, index) => (
             <p
               key={index}
               className={

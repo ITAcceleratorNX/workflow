@@ -4,6 +4,7 @@ import { Button } from "../ui/button"
 import { Section } from "../ui/Section"
 import { Reveal } from "../ui/Reveal"
 import { useLeadForm } from "../../lib/leadFormContext"
+import { useLocale } from "../../lib/i18n/LocaleProvider"
 import type { Property } from "../../lib/properties"
 
 /**
@@ -22,6 +23,7 @@ export function AvailabilityAndSpecs({
   level: "h2" | "h3"
 }) {
   const { openLeadForm } = useLeadForm()
+  const { t } = useLocale()
   const [selectedArea, setSelectedArea] = useState<string | null>(null)
 
   const selectArea = (area: string) => {
@@ -34,8 +36,8 @@ export function AvailabilityAndSpecs({
       <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
         <div>
           <Reveal>
-            <p className="eyebrow">Свободно к аренде</p>
-            <Heading className="mt-3 text-2xl sm:text-3xl">Доступные площади</Heading>
+            <p className="eyebrow">{t.property.availabilityEyebrow}</p>
+            <Heading className="mt-3 text-2xl sm:text-3xl">{t.property.availabilityTitle}</Heading>
           </Reveal>
 
           <ul className="mt-6 space-y-3">
@@ -44,7 +46,7 @@ export function AvailabilityAndSpecs({
                 <div className="flex items-center gap-4 rounded-2xl border border-brand-100 bg-white p-5 shadow-card transition hover:border-orange-200">
                   <button
                     type="button"
-                    aria-label={`Выбрать площадь ${item.area} и записаться на просмотр`}
+                    aria-label={t.property.selectAreaAria.replace("{area}", item.area)}
                     aria-pressed={selectedArea === item.area}
                     onClick={() => selectArea(item.area)}
                     className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-xl bg-orange-50 text-orange-500 transition hover:bg-orange-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
@@ -93,15 +95,15 @@ export function AvailabilityAndSpecs({
               className="mt-6 w-full sm:w-auto"
               onClick={() => openLeadForm({ source: "viewing", property: property.name })}
             >
-              Записаться на просмотр
+              {t.common.bookViewing}
             </Button>
           </Reveal>
         </div>
 
         <div>
           <Reveal>
-            <p className="eyebrow">Характеристики</p>
-            <Heading className="mt-3 text-2xl sm:text-3xl">Краткая карточка объекта</Heading>
+            <p className="eyebrow">{t.property.specsEyebrow}</p>
+            <Heading className="mt-3 text-2xl sm:text-3xl">{t.property.specsTitle}</Heading>
           </Reveal>
 
           <Reveal delay={80}>

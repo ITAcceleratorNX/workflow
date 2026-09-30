@@ -3,13 +3,16 @@ import { Mail, MapPin, Phone } from "lucide-react"
 import { Button } from "../ui/button"
 import { WhatsAppIcon } from "../ui/WhatsAppIcon"
 import { CONTACTS, track } from "../../lib/site"
-import { PROPERTIES } from "../../lib/properties"
 import { useLeadForm } from "../../lib/leadFormContext"
 import { useWhatsAppGate } from "../../lib/whatsappGateContext"
+import { useLocale } from "../../lib/i18n/LocaleProvider"
+import { getLocalizedProperties } from "../../lib/i18n/content"
 
 export function Footer() {
   const { openLeadForm } = useLeadForm()
   const { openWhatsAppGate } = useWhatsAppGate()
+  const { locale, t } = useLocale()
+  const properties = getLocalizedProperties(locale)
 
   return (
     <footer className="bg-brand-900 text-white">
@@ -30,24 +33,21 @@ export function Footer() {
                 TMK <span className="text-orange-400">WorkFlow</span>
               </span>
             </Link>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-brand-200">
-              Офисные и коммерческие помещения в Алматы. Подберём формат под задачи вашей компании
-              и сопроводим от заявки до заезда.
-            </p>
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-brand-200">{t.footer.about}</p>
             <Button
               onClick={() => openLeadForm({ source: "footer-contact" })}
               className="mt-6"
             >
-              Связаться с нами
+              {t.nav.contactUs}
             </Button>
           </div>
 
-          <nav aria-label="Объекты в подвале">
+          <nav aria-label={t.footer.objects}>
             <h2 className="text-sm font-semibold uppercase tracking-wider text-brand-300">
-              Объекты
+              {t.footer.objects}
             </h2>
             <ul className="mt-4 space-y-3">
-              {PROPERTIES.map((property) => (
+              {properties.map((property) => (
                 <li key={property.slug}>
                   <Link
                     to={property.path}
@@ -66,7 +66,7 @@ export function Footer() {
 
           <div>
             <h2 className="text-sm font-semibold uppercase tracking-wider text-brand-300">
-              Контакты
+              {t.footer.contacts}
             </h2>
             <ul className="mt-4 space-y-3 text-[15px]">
               <li>
@@ -95,15 +95,17 @@ export function Footer() {
               className="mt-5 border-white/25 bg-transparent text-white hover:border-white/50 hover:bg-white/10"
             >
               <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
-              Написать в WhatsApp
+              {t.form.writeWhatsApp}
             </Button>
           </div>
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-sm text-brand-300 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} TMK WorkFlow. Все права защищены.</p>
+          <p>
+            © {new Date().getFullYear()} TMK WorkFlow. {t.footer.rights}
+          </p>
           <Link to="/privacy" className="transition hover:text-orange-400">
-            Политика конфиденциальности
+            {t.footer.privacy}
           </Link>
         </div>
       </div>

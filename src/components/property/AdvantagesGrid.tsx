@@ -1,6 +1,7 @@
 import { Section, SectionHeading } from "../ui/Section"
 import { Reveal } from "../ui/Reveal"
 import { ADVANTAGE_ICONS } from "../../lib/advantageIcons"
+import { useLocale } from "../../lib/i18n/LocaleProvider"
 import type { Property } from "../../lib/properties"
 
 /** Основные преимущества иконками с короткими подписями (5.9 / 6.5 / 7.5 ТЗ). */
@@ -11,9 +12,15 @@ export function AdvantagesGrid({
   property: Property
   level: "h2" | "h3"
 }) {
+  const { t } = useLocale()
+
   return (
     <Section tone="white" size="md">
-      <SectionHeading eyebrow="Преимущества" title="Основные преимущества" level={level} />
+      <SectionHeading
+        eyebrow={t.property.advantagesEyebrow}
+        title={t.property.advantagesTitle}
+        level={level}
+      />
 
       <ul className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {property.advantages.map((advantage, index) => {

@@ -7,6 +7,7 @@ import { LeadForm } from "../lead/LeadForm"
 import { CONTACTS, track } from "../../lib/site"
 import { useLeadForm } from "../../lib/leadFormContext"
 import { useWhatsAppGate } from "../../lib/whatsappGateContext"
+import { useLocale } from "../../lib/i18n/LocaleProvider"
 import type { Property } from "../../lib/properties"
 
 /**
@@ -23,19 +24,19 @@ export function ViewingSection({
 }) {
   const { openLeadForm } = useLeadForm()
   const { openWhatsAppGate } = useWhatsAppGate()
+  const { t } = useLocale()
   const sectionId = property ? `viewing-${property.slug}` : "viewing"
-  const title = property ? `Посмотрите ${property.name} вживую` : "Посмотрите вживую"
+  const title = property
+    ? t.property.viewingTitle.replace("{name}", property.name)
+    : t.home.viewingTitle
 
   return (
     <Section id={sectionId} tone="deep" size="lg">
       <div className="grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:gap-16">
         <Reveal>
-          <p className="eyebrow text-brand-300">Запись на просмотр</p>
+          <p className="eyebrow text-brand-300">{t.home.viewingEyebrow}</p>
           <Heading className="mt-3 text-3xl text-white sm:text-4xl">{title}</Heading>
-          <p className="mt-4 text-base leading-relaxed text-brand-100">
-            Оставьте заявку — согласуем удобное время, покажем свободные помещения и ответим на
-            вопросы по условиям аренды.
-          </p>
+          <p className="mt-4 text-base leading-relaxed text-brand-100">{t.home.viewingDescription}</p>
 
           <div className="mt-8 space-y-4">
             <a
@@ -71,7 +72,7 @@ export function ViewingSection({
                   })
                 }
               >
-                Связаться с нами
+                {t.nav.contactUs}
               </Button>
               <Button
                 onClick={() =>
@@ -84,7 +85,7 @@ export function ViewingSection({
                 className="border-white/25 bg-transparent text-white hover:border-white/50 hover:bg-white/10"
               >
                 <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
-                Написать в WhatsApp
+                {t.form.writeWhatsApp}
               </Button>
             </div>
           </div>

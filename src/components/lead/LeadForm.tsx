@@ -9,7 +9,6 @@ import { PROPERTY_OPTIONS } from "../../lib/properties"
 import {
   EMPTY_LEAD,
   PHONE_PLACEHOLDER,
-  SUCCESS_MESSAGE,
   formatPhoneDigits,
   normalizePhoneDigits,
   submitLead,
@@ -18,6 +17,7 @@ import {
   type LeadFormValues,
   type LeadSource,
 } from "../../lib/leadForm"
+import { useLocale } from "../../lib/i18n/LocaleProvider"
 
 interface LeadFormProps {
   source: LeadSource
@@ -43,6 +43,7 @@ export function LeadForm({
   inverted = false,
   onSuccess,
 }: LeadFormProps) {
+  const { t } = useLocale()
   const uid = useId()
   /* Отметка старта заполнения — по ней отсекается мгновенная отправка ботом */
   const startedAt = useRef(0)
@@ -96,7 +97,7 @@ export function LeadForm({
       onSuccess?.()
     } else {
       setStatus("error")
-      setSubmitError(result.error ?? "Не удалось отправить заявку")
+      setSubmitError(result.error ?? t.form.errorRetry)
     }
   }
 
@@ -113,7 +114,7 @@ export function LeadForm({
           <Check className="h-7 w-7" />
         </span>
         <p className={cn("max-w-md text-lg font-semibold", inverted ? "text-white" : "text-brand-900")}>
-          {SUCCESS_MESSAGE}
+          {t.form.success}
         </p>
       </div>
     )
@@ -126,7 +127,7 @@ export function LeadForm({
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
       {/* Honeypot: скрыт от пользователей, заполняется только ботами */}
       <div className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
-        <label htmlFor={`${uid}-website`}>Не заполняйте это поле</label>
+        <label htmlFor={`${uid}-website`}>{t.form.honeypot}</label>
         <input
           id={`${uid}-website`}
           name="website"
@@ -141,7 +142,7 @@ export function LeadForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className={labelClass} htmlFor={`${uid}-name`}>
-            Имя <span className="text-orange-500">*</span>
+            {t.form.name} <span className="text-orange-500">*</span>
           </label>
           <input
             id={`${uid}-name`}
@@ -151,7 +152,7 @@ export function LeadForm({
             value={values.name}
             onChange={(event) => setField("name", event.target.value)}
             className={fieldClass(Boolean(errors.name), inverted)}
-            placeholder="Как к вам обращаться"
+            placeholder={t.form.namePlaceholder}
             aria-invalid={Boolean(errors.name)}
             aria-describedby={errors.name ? `${uid}-name-error` : undefined}
           />
@@ -164,7 +165,7 @@ export function LeadForm({
 
         <div>
           <label className={labelClass} htmlFor={`${uid}-company`}>
-            Компания
+            {t.form.company}
           </label>
           <input
             id={`${uid}-company`}
@@ -174,13 +175,13 @@ export function LeadForm({
             value={values.company}
             onChange={(event) => setField("company", event.target.value)}
             className={fieldClass(false, inverted)}
-            placeholder="Название компании"
+            placeholder={t.form.companyPlaceholder}
           />
         </div>
 
         <div>
           <label className={labelClass} htmlFor={`${uid}-phone`}>
-            Телефон <span className="text-orange-500">*</span>
+            {t.form.phone} <span className="text-orange-500">*</span>
           </label>
           <div
             className={cn(
@@ -213,7 +214,7 @@ export function LeadForm({
 
         <div>
           <label className={labelClass} htmlFor={`${uid}-email`}>
-            Email
+            {t.form.email}
           </label>
           <input
             id={`${uid}-email`}
@@ -224,7 +225,7 @@ export function LeadForm({
             value={values.email}
             onChange={(event) => setField("email", event.target.value)}
             className={fieldClass(Boolean(errors.email), inverted)}
-            placeholder="name@company.kz"
+            placeholder={t.form.emailPlaceholder}
             aria-invalid={Boolean(errors.email)}
             aria-describedby={errors.email ? `${uid}-email-error` : undefined}
           />
@@ -238,7 +239,7 @@ export function LeadForm({
 
       <div>
         <label className={labelClass} htmlFor={`${uid}-property`}>
-          Интересующий объект <span className="text-orange-500">*</span>
+          {t.form.property} <span className="text-orange-500">*</span>
         </label>
         <select
           id={`${uid}-property`}
@@ -255,7 +256,7 @@ export function LeadForm({
           aria-invalid={Boolean(errors.property)}
           aria-describedby={errors.property ? `${uid}-property-error` : undefined}
         >
-          <option value="">Выберите объект</option>
+          <option value="">{t.form.propertyPlaceholder}</option>
           {PROPERTY_OPTIONS.map((option) => (
             <option key={option} value={option}>
               {option}
@@ -271,7 +272,7 @@ export function LeadForm({
 
       <div>
         <label className={labelClass} htmlFor={`${uid}-comment`}>
-          Комментарий
+          {t.form.comment}
         </label>
         <textarea
           id={`${uid}-comment`}
@@ -280,7 +281,7 @@ export function LeadForm({
           value={values.comment}
           onChange={(event) => setField("comment", event.target.value)}
           className={cn(fieldClass(false, inverted), "resize-y")}
-          placeholder="Нужная площадь, сроки заезда, пожелания"
+          placeholder={t.form.commentPlaceholder}
         />
       </div>
 
@@ -297,15 +298,15 @@ export function LeadForm({
             aria-describedby={errors.consent ? `${uid}-consent-error` : undefined}
           />
           <span className={cn("text-sm leading-snug", inverted ? "text-brand-100" : "text-ink-muted")}>
-            Я согласен на обработку персональных данных в соответствии с{" "}
+            {t.common.privacyConsentPrefix}{" "}
             <Link
               to="/privacy"
               target="_blank"
               className={cn("underline underline-offset-2", inverted ? "text-white" : "text-brand-700 hover:text-orange-600")}
             >
-              политикой конфиденциальности
+              {t.common.privacyPolicy}
             </Link>
-            .
+            {t.common.privacyConsentSuffix}
           </span>
         </label>
         {errors.consent && (
@@ -323,8 +324,7 @@ export function LeadForm({
           <p className="flex items-start gap-2">
             <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" />
             <span>
-              {submitError}. Попробуйте отправить ещё раз или напишите нам в WhatsApp — ответим
-              быстро.
+              {submitError}. {t.form.errorRetry}
             </span>
           </p>
           <LinkButton
@@ -337,7 +337,7 @@ export function LeadForm({
             onClick={() => track("whatsapp_click", { source: "form-error" })}
           >
             <WhatsAppIcon className="h-4 w-4" />
-            Написать в WhatsApp
+            {t.form.writeWhatsApp}
           </LinkButton>
         </div>
       )}
@@ -347,17 +347,17 @@ export function LeadForm({
           {status === "submitting" ? (
             <>
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-              Отправляем…
+              {t.common.submitting}
             </>
           ) : (
             <>
               <Send className="h-4 w-4" />
-              Отправить заявку
+              {t.common.sendRequest}
             </>
           )}
         </Button>
         <p className={cn("text-xs leading-snug", inverted ? "text-brand-200" : "text-ink-soft")}>
-          Или позвоните:{" "}
+          {t.common.orCall}{" "}
           <a href={CONTACTS.phoneHref} className="font-medium underline underline-offset-2">
             {CONTACTS.phone}
           </a>

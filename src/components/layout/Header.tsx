@@ -3,11 +3,13 @@ import { Link, NavLink, useLocation } from "react-router-dom"
 import { Menu, Phone, X } from "lucide-react"
 import { Button } from "../ui/button"
 import { WhatsAppIcon } from "../ui/WhatsAppIcon"
+import { LanguageSwitcher } from "./LanguageSwitcher"
 import { cn } from "../../lib/utils"
 import { CONTACTS, track } from "../../lib/site"
 import { PROPERTIES } from "../../lib/properties"
 import { useLeadForm } from "../../lib/leadFormContext"
 import { useWhatsAppGate } from "../../lib/whatsappGateContext"
+import { useLocale } from "../../lib/i18n/LocaleProvider"
 
 export function Header() {
   const { pathname } = useLocation()
@@ -17,6 +19,7 @@ export function Header() {
   const [overHero, setOverHero] = useState(isHome)
   const { openLeadForm } = useLeadForm()
   const { openWhatsAppGate } = useWhatsAppGate()
+  const { t } = useLocale()
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : ""
@@ -98,12 +101,12 @@ export function Header() {
                 TMK <span className="text-orange-500">WorkFlow</span>
               </span>
               <span className="hidden text-[11px] font-medium uppercase tracking-wider text-ink-soft sm:block">
-                Коммерческая недвижимость
+                {t.nav.tagline}
               </span>
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-8 lg:flex" aria-label="Объекты">
+          <nav className="hidden items-center gap-8 lg:flex" aria-label={t.nav.objects}>
             {PROPERTIES.map((property) => (
               <NavLink key={property.slug} to={property.path} end className={navLinkClass}>
                 {property.name}
@@ -112,6 +115,8 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-2">
+            <LanguageSwitcher className="hidden sm:inline-flex" />
+
             <a
               href={CONTACTS.phoneHref}
               onClick={() => track("phone_click", { placement: "header" })}
@@ -124,7 +129,7 @@ export function Header() {
             <a
               href={CONTACTS.phoneHref}
               onClick={() => track("phone_click", { placement: "header-mobile" })}
-              aria-label={`Позвонить ${CONTACTS.phone}`}
+              aria-label={`${t.nav.call} ${CONTACTS.phone}`}
               className="flex h-11 w-11 items-center justify-center rounded-xl border border-brand-200 text-brand-800 transition hover:border-brand-400 hover:bg-brand-50 xl:hidden"
             >
               <Phone className="h-5 w-5" />
@@ -134,24 +139,24 @@ export function Header() {
               onClick={() => openWhatsAppGate({ placement: "header" })}
               variant="outline"
               size="icon"
-              aria-label="Написать в WhatsApp"
+              aria-label={t.form.writeWhatsApp}
               className="sm:w-auto sm:px-4"
             >
               <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
-              <span className="hidden sm:inline">WhatsApp</span>
+              <span className="hidden sm:inline">{t.common.whatsapp}</span>
             </Button>
 
             <Button
               onClick={() => openLeadForm({ source: "header-contact" })}
               className="hidden lg:inline-flex"
             >
-              Связаться с нами
+              {t.nav.contactUs}
             </Button>
 
             <button
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
-              aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
+              aria-label={menuOpen ? t.nav.closeMenu : t.nav.openMenu}
               aria-expanded={menuOpen}
               className="flex h-11 w-11 items-center justify-center rounded-xl border border-brand-200 text-brand-800 transition hover:bg-brand-50 lg:hidden"
             >
@@ -164,9 +169,12 @@ export function Header() {
       {menuOpen && (
         <div className="border-t border-brand-100 bg-white lg:hidden">
           <div className="container-site flex flex-col gap-1 py-4">
-            <p className="px-1 pb-2 text-xs font-semibold uppercase tracking-wider text-ink-soft">
-              Объекты
-            </p>
+            <div className="mb-2 flex items-center justify-between gap-3 px-1">
+              <p className="text-xs font-semibold uppercase tracking-wider text-ink-soft">
+                {t.nav.objects}
+              </p>
+              <LanguageSwitcher />
+            </div>
             {PROPERTIES.map((property) => (
               <NavLink
                 key={property.slug}
@@ -193,7 +201,7 @@ export function Header() {
               size="lg"
               className="mt-3 w-full"
             >
-              Связаться с нами
+              {t.nav.contactUs}
             </Button>
 
             <a

@@ -24,11 +24,13 @@ import {
   type OpenWhatsAppGateOptions,
 } from "../../lib/whatsappGate"
 import { WhatsAppGateContext, type WhatsAppGateContextValue } from "../../lib/whatsappGateContext"
+import { useLocale } from "../../lib/i18n/LocaleProvider"
 
 type GateStatus = "form" | "submitting" | "done"
 
 export function WhatsAppGateProvider({ children }: { children: ReactNode }) {
   const { pathname } = useLocation()
+  const { t } = useLocale()
   const [request, setRequest] = useState<OpenWhatsAppGateOptions | null>(null)
   const [status, setStatus] = useState<GateStatus>("form")
   const [phone, setPhone] = useState("")
@@ -97,7 +99,7 @@ export function WhatsAppGateProvider({ children }: { children: ReactNode }) {
     if (!request || status === "submitting" || status === "done") return
 
     if (phone.length < PHONE_DIGITS) {
-      setError("Введите номер полностью: +7 (___) ___-__-__")
+      setError(t.whatsappGate.phoneError)
       return
     }
 
@@ -146,16 +148,16 @@ export function WhatsAppGateProvider({ children }: { children: ReactNode }) {
               <div className="mb-5 flex items-start justify-between gap-4">
                 <div>
                   <h2 id="whatsapp-gate-title" className="text-xl font-bold text-brand-900 sm:text-2xl">
-                    Оставьте телефон, чтобы связаться в WhatsApp
+                    {t.whatsappGate.title}
                   </h2>
                   <p className="mt-2 text-sm text-ink-muted sm:text-base">
-                    Мы откроем WhatsApp после отправки телефона
+                    {t.whatsappGate.description}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={closeWhatsAppGate}
-                  aria-label="Закрыть"
+                  aria-label={t.common.closeForm}
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700 transition hover:bg-brand-100"
                 >
                   <X className="h-5 w-5" />
@@ -164,9 +166,7 @@ export function WhatsAppGateProvider({ children }: { children: ReactNode }) {
 
               {status === "done" ? (
                 <div className="flex flex-col gap-4">
-                  <p className="text-sm leading-relaxed text-ink-muted">
-                    Если WhatsApp не открылся автоматически, нажмите кнопку ниже.
-                  </p>
+                  <p className="text-sm leading-relaxed text-ink-muted">{t.whatsappGate.fallbackHint}</p>
                   <LinkButton
                     href={waHref}
                     target="_blank"
@@ -175,14 +175,14 @@ export function WhatsAppGateProvider({ children }: { children: ReactNode }) {
                     className="w-full"
                   >
                     <WhatsAppIcon className="h-5 w-5 text-white" />
-                    Открыть WhatsApp
+                    {t.whatsappGate.openWhatsApp}
                   </LinkButton>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
                   <div>
                     <label className="mb-1.5 block text-sm font-medium text-brand-800" htmlFor={uid}>
-                      Телефон <span className="text-orange-500">*</span>
+                      {t.form.phone} <span className="text-orange-500">*</span>
                     </label>
                     <div
                       className={cn(
@@ -222,24 +222,24 @@ export function WhatsAppGateProvider({ children }: { children: ReactNode }) {
                     {status === "submitting" ? (
                       <>
                         <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-                        Отправляем…
+                        {t.common.submitting}
                       </>
                     ) : (
                       <>
                         <WhatsAppIcon className="h-5 w-5" />
-                        Перейти в WhatsApp
+                        {t.whatsappGate.submit}
                       </>
                     )}
                   </Button>
 
                   <p className="text-center text-xs leading-snug text-ink-soft">
-                    Нажимая кнопку, вы соглашаетесь на{" "}
+                    {t.whatsappGate.consent}.{" "}
                     <Link
                       to="/privacy"
                       target="_blank"
                       className="underline underline-offset-2 hover:text-orange-600"
                     >
-                      обработку персональных данных
+                      {t.footer.privacy}
                     </Link>
                   </p>
                 </form>
