@@ -6,10 +6,16 @@
   "framework": "vite",
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/",
       "has": [{ "type": "host", "value": "tmk-workflow.vercel.app" }],
-      "destination": "https://tmk-workflow.kz/:path*",
-      "permanent": true
+      "destination": "https://tmk-workflow.kz/",
+      "statusCode": 301
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "tmk-workflow.vercel.app" }],
+      "destination": "https://tmk-workflow.kz/$1",
+      "statusCode": 301
     }
   ],
   "rewrites": [
