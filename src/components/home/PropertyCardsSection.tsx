@@ -38,21 +38,21 @@ export function PropertyCardsSection() {
               </div>
 
               <div className="flex flex-1 flex-col p-5 sm:p-6">
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-orange-600">
                   {property.shortLabel}
                 </p>
                 <h3 className="mt-2 text-2xl text-brand-900">{property.name}</h3>
-                <p className="mt-2 flex items-start gap-2 text-sm text-ink-muted">
-                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" />
+                <p className="mt-2 flex items-start gap-2 text-sm text-ink-soft">
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
                   {property.address}
                 </p>
                 <p className="mt-4 flex-1 text-[15px] leading-relaxed text-ink-muted">
-                  {property.cardBlurb}
+                  {property.cardFacts.join(" • ")}
                 </p>
                 <span
                   className={cn(
                     buttonVariants({ variant: "primary", size: "md" }),
-                    "mt-6 w-full pointer-events-none sm:w-auto"
+                    "mt-6 w-full pointer-events-none"
                   )}
                 >
                   {t.home.viewObject} {property.name}

@@ -100,13 +100,13 @@ export function Header() {
               <span className="text-lg font-extrabold tracking-tight text-brand-900">
                 TMK <span className="text-orange-500">WorkFlow</span>
               </span>
-              <span className="hidden text-[11px] font-medium uppercase tracking-wider text-ink-soft sm:block">
+              <span className="hidden whitespace-nowrap text-[11px] font-medium uppercase tracking-wide text-ink-soft sm:block lg:hidden xl:block">
                 {t.nav.tagline}
               </span>
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-8 lg:flex" aria-label={t.nav.objects}>
+          <nav className="hidden items-center gap-5 whitespace-nowrap lg:flex" aria-label={t.nav.objects}>
             {PROPERTIES.map((property) => (
               <NavLink key={property.slug} to={property.path} end className={navLinkClass}>
                 {property.name}
@@ -120,7 +120,7 @@ export function Header() {
             <a
               href={CONTACTS.phoneHref}
               onClick={() => track("phone_click", { placement: "header" })}
-              className="hidden items-center gap-2 rounded-xl px-3 py-2 text-[15px] font-semibold text-brand-900 transition hover:text-orange-600 xl:flex"
+              className="hidden items-center gap-2 whitespace-nowrap rounded-xl px-2 py-2 text-[15px] font-semibold text-brand-900 transition hover:text-orange-600 xl:flex"
             >
               <Phone className="h-4 w-4 text-orange-500" />
               {CONTACTS.phone}
@@ -140,15 +140,15 @@ export function Header() {
               variant="outline"
               size="icon"
               aria-label={t.form.writeWhatsApp}
-              className="sm:w-auto sm:px-4"
+              className="sm:w-auto sm:px-4 lg:w-11 lg:px-0 xl:w-auto xl:px-4"
             >
               <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
-              <span className="hidden sm:inline">{t.common.whatsapp}</span>
+              <span className="hidden sm:inline lg:hidden xl:inline">{t.common.whatsapp}</span>
             </Button>
 
             <Button
               onClick={() => openLeadForm({ source: "header-contact" })}
-              className="hidden lg:inline-flex"
+              className="hidden whitespace-nowrap px-4 lg:inline-flex 2xl:px-6"
             >
               {t.nav.contactUs}
             </Button>

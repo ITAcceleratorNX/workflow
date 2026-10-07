@@ -34,19 +34,34 @@ export const OFFICE_FORMATS = {
     {
       title: "Офис",
       text: "Классический офис в бизнес-центре под аренду: выбираете площадь и этаж под структуру команды.",
-      image: "/Carousel/TMK_11440.jpg.webp",
+      images: [
+        "/Koktem Tower/TMK_11442.webp",
+        "/Koktem Tower/floor9-2.webp",
+        "/TimeSquare/office-render-1.webp",
+        "/TimeSquare/office-render-2.webp",
+      ],
       imageAlt: "Современное офисное пространство с зоной отдыха и переговорными",
     },
     {
       title: "Сервисный офис",
       text: "Готовое рабочее пространство с мебелью, инфраструктурой и обслуживанием — можно заехать быстрее.",
-      image: "/Carousel/TMK_11483.jpg.webp",
+      images: [
+        "/Venus/office70-1.webp",
+        "/Venus/common-4.webp",
+        "/Venus/TMK_11397.webp",
+        "/Venus/common-1.webp",
+      ],
       imageAlt: "Сервисный офис с мебелью и лаунж-зоной",
     },
     {
       title: "Офис под ключ",
       text: "Решение под задачи бизнеса: подбор, планировка и подготовка пространства к заезду.",
-      image: "/TimeSquare/office-3.webp",
+      images: [
+        "/TimeSquare/office-5.webp",
+        "/TimeSquare/office-render-4.webp",
+        "/TimeSquare/office-render-3.webp",
+        "/Koktem Tower/floor9-3.webp",
+      ],
       imageAlt: "Свободное помещение под отделку офиса под ключ",
     },
   ],

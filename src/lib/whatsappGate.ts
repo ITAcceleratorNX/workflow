@@ -2,7 +2,7 @@ import { readAdParams } from "./attribution"
 import { PROPERTIES } from "./properties"
 import { whatsappLink } from "./site"
 
-export type WhatsAppPlacement = "header" | "footer" | "viewing"
+export type WhatsAppPlacement = "header" | "hero" | "footer" | "viewing"
 
 export interface OpenWhatsAppGateOptions {
   placement: WhatsAppPlacement

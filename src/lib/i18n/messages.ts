@@ -37,6 +37,15 @@ export interface Messages {
     objectsTitle: string
     objectsDescription: string
     viewObject: string
+    availabilityEyebrow: string
+    availabilityTitle: string
+    availabilityColumns: { property: string; floor: string; area: string; rate: string; action: string }
+    /** {value} — площадь или сумма */
+    areaFrom: string
+    rateFrom: string
+    /** {unit} — «м²/мес без НДС» */
+    ratePer: string
+    book: string
     mapEyebrow: string
     mapTitle: string
     mapDescription: string
@@ -71,11 +80,14 @@ export interface Messages {
     galleryTitle: string
     galleryHint: string
     showAllPhotos: string
+    photosCount: string
     otherEyebrow: string
     otherTitle: string
     otherDescription: string
     viewingTitle: string
     selectAreaAria: string
+    openPhotosAria: string
+    ratesTitle: string
     allPhotos: string
   }
   form: {
@@ -171,8 +183,21 @@ const ru: Messages = {
     objectsEyebrow: "Бизнес-центры",
     objectsTitle: "Выберите объект",
     objectsDescription:
-      "Три бизнес-центра класса А в Алматы — откройте страницу, чтобы посмотреть площади, ставки и фото.",
+      "Премиальные офисы и сервисные пространства в ключевых деловых локациях Алматы. Выберите объект, чтобы изучить планировки и условия аренды.",
     viewObject: "Смотреть",
+    availabilityEyebrow: "Доступно сейчас",
+    availabilityTitle: "Актуальные площади по всем БЦ",
+    availabilityColumns: {
+      property: "Бизнес-центр",
+      floor: "Этаж / блок",
+      area: "Площадь",
+      rate: "Ставка",
+      action: "Запись на просмотр",
+    },
+    areaFrom: "от {value}",
+    rateFrom: "от {value}",
+    ratePer: "за {unit}",
+    book: "Записаться",
     mapEyebrow: "Подбор офиса",
     mapTitle: "Не знаете, какой офис выбрать?",
     mapDescription:
@@ -227,12 +252,15 @@ const ru: Messages = {
     galleryTitle: "Как выглядит",
     galleryHint: "Нажмите на фотографию, чтобы открыть её в увеличенном виде.",
     showAllPhotos: "Показать все фото",
+    photosCount: "фото",
     otherEyebrow: "Другие объекты",
     otherTitle: "Другие бизнес-центры TMK WorkFlow",
     otherDescription:
       "Откройте страницу объекта, чтобы посмотреть свободные площади, характеристики и фотографии.",
     viewingTitle: "Посмотрите {name} вживую",
-    selectAreaAria: "Выбрать площадь {area} и записаться на просмотр",
+    selectAreaAria: "Записаться на просмотр: {area}",
+    openPhotosAria: "Открыть фото: {area}",
+    ratesTitle: "Ставки",
     allPhotos: "Все",
   },
   form: {
@@ -302,9 +330,15 @@ const ru: Messages = {
   },
   photoCategories: {
     facade: "Фасад с дрона",
+    ground: "Вид с земли",
     entrance: "Входная группа",
     hall: "Холл",
+    commerce: "Коммерция",
+    kitchen: "Кухня",
+    meeting: "Переговорные",
     offices: "Офисы",
+    office3: "Офис, 3 этаж",
+    office9: "Офис, 9 этаж",
     elevators: "Лифты",
     common: "Общие зоны",
     parking: "Паркинг",
@@ -361,8 +395,21 @@ const kk: Messages = {
     objectsEyebrow: "Бизнес-орталықтар",
     objectsTitle: "Нысанды таңдаңыз",
     objectsDescription:
-      "Алматыдағы А класты үш бизнес-орталық — алаңдарды, ставкаларды және фотоларды көру үшін бетті ашыңыз.",
+      "Алматының негізгі іскерлік аймақтарындағы премиум офистер мен сервистік кеңістіктер. Жоспарлар мен жалдау шарттарын көру үшін нысанды таңдаңыз.",
     viewObject: "Қарау",
+    availabilityEyebrow: "Қазір қолжетімді",
+    availabilityTitle: "Барлық БО бойынша өзекті алаңдар",
+    availabilityColumns: {
+      property: "Бизнес-орталық",
+      floor: "Қабат / блок",
+      area: "Алаң",
+      rate: "Ставка",
+      action: "Қарауға жазылу",
+    },
+    areaFrom: "{value}-ден бастап",
+    rateFrom: "{value}-ден бастап",
+    ratePer: "{unit}",
+    book: "Жазылу",
     mapEyebrow: "Офис таңдау",
     mapTitle: "Қай офисті таңдау керектігін білмейсіз бе?",
     mapDescription:
@@ -417,12 +464,15 @@ const kk: Messages = {
     galleryTitle: "Қандай көрінеді",
     galleryHint: "Үлкейтіп көру үшін фотосуретті басыңыз.",
     showAllPhotos: "Барлық фотоны көрсету",
+    photosCount: "фото",
     otherEyebrow: "Басқа нысандар",
     otherTitle: "TMK WorkFlow басқа бизнес-орталықтары",
     otherDescription:
       "Бос алаңдарды, сипаттамаларды және фотоларды көру үшін нысан бетін ашыңыз.",
     viewingTitle: "{name} нысанын өз көзіңізбен қараңыз",
-    selectAreaAria: "{area} алаңын таңдап, қарауға жазылу",
+    selectAreaAria: "Қарауға жазылу: {area}",
+    openPhotosAria: "Фотоларды ашу: {area}",
+    ratesTitle: "Ставкалар",
     allPhotos: "Барлығы",
   },
   form: {
@@ -491,9 +541,15 @@ const kk: Messages = {
   },
   photoCategories: {
     facade: "Дроннан қасбет",
+    ground: "Жерден көрініс",
     entrance: "Кіреберіс тобы",
     hall: "Холл",
+    commerce: "Коммерция",
+    kitchen: "Асүй",
+    meeting: "Келіссөз бөлмелері",
     offices: "Офистер",
+    office3: "Офис, 3-қабат",
+    office9: "Офис, 9-қабат",
     elevators: "Лифтілер",
     common: "Ортақ аймақтар",
     parking: "Паркинг",

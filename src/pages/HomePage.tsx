@@ -2,6 +2,7 @@ import { Seo } from "../components/layout/Layout"
 import { HeroSection } from "../components/home/HeroSection"
 import { OfficeFormatsSection } from "../components/home/OfficeFormatsSection"
 import { PropertyCardsSection } from "../components/home/PropertyCardsSection"
+import { AvailabilityTableSection } from "../components/home/AvailabilityTableSection"
 import { MapLeadSection } from "../components/home/MapLeadSection"
 import { ViewingSection } from "../components/property/ViewingSection"
 import { useLocale } from "../lib/i18n/LocaleProvider"
@@ -15,6 +16,7 @@ export function HomePage() {
       <HeroSection />
       <PropertyCardsSection />
       <OfficeFormatsSection />
+      <AvailabilityTableSection />
       <MapLeadSection />
       <ViewingSection />
     </>

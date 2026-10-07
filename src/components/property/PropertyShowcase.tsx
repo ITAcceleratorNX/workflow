@@ -16,9 +16,9 @@ interface PropertyShowcaseProps {
 }
 
 /**
- * Полный блок объекта в порядке ТЗ:
- * фото → информация → экосистема TMK → свободные площади и характеристики →
- * преимущества → фотографии → запись на просмотр.
+ * Полный блок объекта:
+ * фото → фотографии → информация → свободные площади и характеристики →
+ * экосистема TMK → преимущества → запись на просмотр.
  */
 export function PropertyShowcase({
   property,
@@ -38,11 +38,11 @@ export function PropertyShowcase({
         eyebrow={eyebrow}
         priority={priority}
       />
-      <PropertyInfo property={property} level={level} />
-      <EcosystemBlock level={level} />
-      <AvailabilityAndSpecs property={property} level={level} />
-      <AdvantagesGrid property={property} level={level} />
       <PropertyGallery property={property} level={level} />
+      <PropertyInfo property={property} level={level} />
+      <AvailabilityAndSpecs property={property} level={level} />
+      <EcosystemBlock level={level} />
+      <AdvantagesGrid property={property} level={level} />
       <ViewingSection property={property} level={level} />
     </>
   )

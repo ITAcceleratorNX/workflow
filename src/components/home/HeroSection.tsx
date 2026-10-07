@@ -1,13 +1,19 @@
 import { ArrowRight } from "lucide-react"
 import { Button } from "../ui/button"
+import { cn } from "../../lib/utils"
+import { WhatsAppIcon } from "../ui/WhatsAppIcon"
 import { HeroVideoMontage } from "./HeroVideoMontage"
 import { useLeadForm } from "../../lib/leadFormContext"
 import { useLocale } from "../../lib/i18n/LocaleProvider"
+import { useWhatsAppGate } from "../../lib/whatsappGateContext"
 
 /** Hero: full-screen видео и стеклянная панель по центру. */
 export function HeroSection() {
   const { openLeadForm } = useLeadForm()
   const { t } = useLocale()
+  const { openWhatsAppGate } = useWhatsAppGate()
+  /* Длинный заголовок (казахская версия) набираем мельче, чтобы он не уходил на лишнюю строку */
+  const longTitle = t.hero.title.length > 20
 
   return (
     <section
@@ -33,12 +39,21 @@ export function HeroSection() {
               {t.hero.eyebrow}
             </p>
 
-            <h1 className="hero-fade hero-fade-2 mt-5 text-[clamp(2.4rem,1.4rem+4.5vw,4.25rem)] font-bold leading-[1.05] tracking-tight text-white [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]">
+            <h1
+              className={cn(
+                "hero-fade hero-fade-2 mt-5 font-bold tracking-tight text-white [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]",
+                longTitle
+                  ? "text-[clamp(2rem,1.1rem+3.4vw,3.25rem)]"
+                  : "text-[clamp(2.4rem,1.4rem+4.5vw,4.25rem)]",
+                /* Межстрочный интервал — после размера: иначе класс размера его сбрасывает */
+                "leading-[1.05]"
+              )}
+            >
               {t.hero.title}
               <span className="mt-1 block text-white/90">{t.hero.titleAccent}</span>
             </h1>
 
-            <p className="hero-fade hero-fade-3 mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/90 sm:mt-7 sm:text-lg md:text-xl">
+            <p className="hero-fade hero-fade-3 mx-auto mt-6 max-w-3xl text-base leading-relaxed text-white/90 sm:mt-7 sm:text-lg md:text-xl">
               {t.hero.description}
             </p>
 
@@ -51,8 +66,17 @@ export function HeroSection() {
                 {t.hero.cta}
                 <ArrowRight className="h-5 w-5" />
               </Button>
-              <p className="text-sm text-white/75 sm:text-base">{t.hero.objectsLine}</p>
+              <Button
+                size="lg"
+                className="min-h-12 w-full bg-[#25D366] px-8 text-base shadow-[0_8px_20px_-8px_rgba(37,211,102,0.7)] hover:bg-[#1ebe5b] hover:shadow-[0_12px_26px_-8px_rgba(37,211,102,0.75)] sm:w-auto sm:min-h-14 sm:text-lg"
+                onClick={() => openWhatsAppGate({ placement: "hero" })}
+              >
+                <WhatsAppIcon className="h-5 w-5 text-white" />
+                {t.common.whatsapp}
+              </Button>
             </div>
+
+            <p className="hero-fade hero-fade-4 mt-6 text-sm text-white/75 sm:mt-8 sm:text-base">{t.hero.objectsLine}</p>
           </div>
         </div>
       </div>

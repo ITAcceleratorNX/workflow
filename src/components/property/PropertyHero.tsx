@@ -12,7 +12,7 @@ interface PropertyHeroProps {
 
 /**
  * Крупная фотография объекта, открывающая блок (разделы 5.4 / 6.1 / 7.1 ТЗ).
- * Кадрирование по центру, чтобы не срезать ключевые элементы фасада.
+ * Кадрирование по центру, если у объекта не задано своё (heroPhotoPosition).
  */
 export function PropertyHero({
   property,
@@ -33,7 +33,7 @@ export function PropertyHero({
           priority={priority}
           placeholderLabel={`Фото фасада — ${property.name}`}
           sizes="100vw"
-          className="object-center"
+          className={property.heroPhotoPosition ?? "object-center"}
         />
         <div
           className="absolute inset-0"

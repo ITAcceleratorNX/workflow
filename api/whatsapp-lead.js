@@ -11,7 +11,7 @@ const registryUrl = () => process.env.LEADS_REGISTRY_URL || ""
 const registryToken = () => process.env.LEADS_REGISTRY_TOKEN || ""
 
 const PROPERTIES = ["Time Square", "Venus", "Koktem Towers"]
-const PLACEMENTS = ["header", "footer", "viewing"]
+const PLACEMENTS = ["header", "hero", "footer", "viewing"]
 const PHONE_PATTERN = /^\+7\d{10}$/
 
 const RATE_LIMIT_WINDOW_MS = 60_000

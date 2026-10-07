@@ -1,138 +1,113 @@
-import { useMemo, useRef, useState } from "react"
-import { ChevronDown, ChevronUp, Maximize } from "lucide-react"
-import { Section, SectionHeading } from "../ui/Section"
+import { useMemo, useState } from "react"
+import { ArrowUpRight } from "lucide-react"
+import { Section } from "../ui/Section"
 import { Reveal } from "../ui/Reveal"
 import { SmartImage } from "../ui/SmartImage"
 import { Lightbox } from "../ui/Lightbox"
-import { Button } from "../ui/button"
 import { cn } from "../../lib/utils"
 import { useLocale } from "../../lib/i18n/LocaleProvider"
 import { getPhotoCategoryLabel } from "../../lib/i18n/content"
 import type { PhotoCategory, Property } from "../../lib/properties"
 
-/** Сколько кадров показываем до нажатия «Показать все» */
-const PREVIEW_COUNT = 6
+/** Сколько разделов показываем плитками; остальные фото доступны в Lightbox */
+const MAX_TILES = 3
 
-const CATEGORY_ORDER: PhotoCategory[] = [
-  "facade",
-  "entrance",
-  "hall",
-  "offices",
-  "elevators",
-  "common",
-  "parking",
-  "renders",
-  "infrastructure",
-]
-
-/** Фотогалерея с фильтром по назначению и просмотром увеличенного изображения (5.10 / 6.6 / 7.6). */
+/**
+ * Компактная фотогалерея сразу под первым экраном — «фото по разделам».
+ * Три плитки: первый раздел (фасад) и два самых наполненных. На плитке — обложка,
+ * название и число кадров. Плитка открывает Lightbox с первого фото раздела,
+ * дальше можно листать все фотографии объекта подряд.
+ */
 export function PropertyGallery({
   property,
-  level,
+  level: Heading,
 }: {
   property: Property
   level: "h2" | "h3"
 }) {
   const { locale, t } = useLocale()
-  const [activeCategory, setActiveCategory] = useState<PhotoCategory | "all">("all")
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
-  const [expanded, setExpanded] = useState(false)
-  const gridRef = useRef<HTMLUListElement>(null)
+  const photos = property.photos
 
-  const categories = useMemo(
-    () => CATEGORY_ORDER.filter((category) => property.photos.some((p) => p.category === category)),
-    [property.photos]
-  )
+  /* Разделы в том порядке, в каком они идут в списке фото объекта */
+  const groups = useMemo(() => {
+    const result: Array<{ category: PhotoCategory; firstIndex: number; count: number }> = []
+    photos.forEach((photo, index) => {
+      const group = result.find((item) => item.category === photo.category)
+      if (group) group.count += 1
+      else result.push({ category: photo.category, firstIndex: index, count: 1 })
+    })
+    if (result.length <= MAX_TILES) return result
+    /* Первый раздел оставляем всегда, остальные места — разделам с наибольшим числом фото */
+    const [first, ...rest] = result
+    const largest = [...rest].sort((a, b) => b.count - a.count).slice(0, MAX_TILES - 1)
+    return [first, ...rest.filter((group) => largest.includes(group))]
+  }, [photos])
 
-  const photos = useMemo(
-    () =>
-      activeCategory === "all"
-        ? property.photos
-        : property.photos.filter((photo) => photo.category === activeCategory),
-    [property.photos, activeCategory]
-  )
-
-  /* Показываем первые кадры, остальные — по кнопке: галереи объектов бывают большими */
-  const visiblePhotos = expanded ? photos : photos.slice(0, PREVIEW_COUNT)
-
-  const selectCategory = (category: PhotoCategory | "all") => {
-    setActiveCategory(category)
-    setExpanded(false)
-  }
-
-  const collapse = () => {
-    setExpanded(false)
-    gridRef.current?.scrollIntoView({ block: "start", behavior: "smooth" })
-  }
-
-  const categoryLabel = (category: PhotoCategory) => getPhotoCategoryLabel(category, locale)
+  if (groups.length === 0) return null
 
   return (
-    <Section tone="brand" size="md">
-      <SectionHeading
-        eyebrow={t.property.galleryEyebrow}
-        title={`${t.property.galleryTitle} ${property.name}`}
-        description={t.property.galleryHint}
-        level={level}
-      />
-
-      <Reveal className="mt-8 flex gap-2 overflow-x-auto pb-2 no-scrollbar" delay={60}>
-        <FilterChip
-          label={t.property.allPhotos}
-          active={activeCategory === "all"}
-          onClick={() => selectCategory("all")}
-        />
-        {categories.map((category) => (
-          <FilterChip
-            key={category}
-            label={categoryLabel(category)}
-            active={activeCategory === category}
-            onClick={() => selectCategory(category)}
-          />
-        ))}
+    <Section tone="white" size="sm" className="pb-0 sm:pb-0">
+      <Reveal className="flex items-baseline justify-between gap-4">
+        <Heading className="eyebrow">{t.property.galleryEyebrow}</Heading>
+        <button
+          type="button"
+          onClick={() => setLightboxIndex(0)}
+          className="text-sm font-semibold text-orange-600 transition hover:text-orange-700"
+        >
+          {t.property.showAllPhotos} ({photos.length})
+        </button>
       </Reveal>
 
-      <ul ref={gridRef} className="mt-6 grid scroll-mt-24 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {visiblePhotos.map((photo, index) => (
-          <Reveal as="li" key={photo.src} delay={(index % 3) * 60}>
-            <button
-              type="button"
-              onClick={() => setLightboxIndex(index)}
-              className="zoom-media group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl bg-brand-100 shadow-card transition hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
-            >
-              <SmartImage
-                src={photo.src}
-                alt={photo.alt}
-                placeholderLabel={categoryLabel(photo.category)}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              />
-              <span className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-brand-900/85 to-transparent p-4 text-left">
-                <span className="text-sm font-medium text-white">{categoryLabel(photo.category)}</span>
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/15 text-white opacity-0 transition group-hover:opacity-100">
-                  <Maximize className="h-4 w-4" />
-                </span>
-              </span>
-            </button>
-          </Reveal>
-        ))}
-      </ul>
-
-      {photos.length > PREVIEW_COUNT && (
-        <div className="mt-8 flex justify-center">
-          {expanded ? (
-            <Button variant="outline" size="lg" onClick={collapse}>
-              Свернуть
-              <ChevronUp className="h-4 w-4" />
-            </Button>
-          ) : (
-            <Button variant="outline" size="lg" onClick={() => setExpanded(true)}>
-              {t.property.showAllPhotos}
-              <span className="text-ink-soft">({photos.length})</span>
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-      )}
+      <Reveal delay={60}>
+        {/* На узких экранах ряд прокручивается пальцем, на широких плитки делят ширину */}
+        <ul className="no-scrollbar -mx-4 mt-4 flex snap-x gap-3 overflow-x-auto px-4 sm:mx-0 sm:overflow-visible sm:px-0">
+          {groups.map((group, position) => {
+            const cover = photos[group.firstIndex]
+            const label = getPhotoCategoryLabel(group.category, locale)
+            return (
+              <li
+                /* Ключ по файлу, а не по разделу: иначе при переходе между объектами
+                   плитка одноимённого раздела оставляет картинку прошлого объекта */
+                key={cover.src}
+                className={cn(
+                  "w-[62vw] shrink-0 snap-start sm:w-auto sm:shrink sm:basis-0",
+                  /* Первый раздел — обычно фасад — крупнее остальных */
+                  position === 0 ? "sm:grow-[2]" : "sm:grow"
+                )}
+              >
+                <button
+                  type="button"
+                  onClick={() => setLightboxIndex(group.firstIndex)}
+                  aria-label={`${label}: ${group.count}`}
+                  className="zoom-media group relative block h-44 w-full overflow-hidden rounded-2xl bg-brand-100 shadow-card transition hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 sm:h-56 lg:h-72"
+                >
+                  <SmartImage
+                    src={cover.src}
+                    alt={cover.alt}
+                    placeholderLabel={label}
+                    sizes="(max-width: 640px) 62vw, 50vw"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                  <span className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-brand-900/95 via-brand-900/70 to-transparent p-4 pt-20 text-left">
+                    <span>
+                      <span className="block text-base font-semibold leading-tight text-white sm:text-lg">
+                        {label}
+                      </span>
+                      <span className="mt-0.5 block text-sm text-white/85">
+                        {group.count} {t.property.photosCount}
+                      </span>
+                    </span>
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15 text-white transition group-hover:bg-orange-500">
+                      <ArrowUpRight className="h-4 w-4" />
+                    </span>
+                  </span>
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      </Reveal>
 
       {lightboxIndex !== null && (
         <Lightbox
@@ -143,31 +118,5 @@ export function PropertyGallery({
         />
       )}
     </Section>
-  )
-}
-
-function FilterChip({
-  label,
-  active,
-  onClick,
-}: {
-  label: string
-  active: boolean
-  onClick: () => void
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      className={cn(
-        "shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition",
-        active
-          ? "border-orange-500 bg-orange-500 text-white"
-          : "border-brand-200 bg-white text-brand-800 hover:border-brand-400"
-      )}
-    >
-      {label}
-    </button>
   )
 }

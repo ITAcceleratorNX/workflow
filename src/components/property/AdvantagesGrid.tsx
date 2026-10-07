@@ -31,9 +31,16 @@ export function AdvantagesGrid({
                 <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
                   <Icon className="h-5 w-5" />
                 </span>
-                <p className="text-sm font-medium leading-snug text-brand-900 sm:text-[15px]">
-                  {advantage.label}
-                </p>
+                <div>
+                  <p className="text-sm font-semibold leading-snug text-brand-900 sm:text-[15px]">
+                    {advantage.label}
+                  </p>
+                  {advantage.text && (
+                    <p className="mt-1.5 text-[13px] leading-snug text-ink-muted sm:text-sm">
+                      {advantage.text}
+                    </p>
+                  )}
+                </div>
               </div>
             </Reveal>
           )

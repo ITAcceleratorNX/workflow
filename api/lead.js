@@ -31,9 +31,9 @@ const registryToken = () => process.env.LEADS_REGISTRY_TOKEN || ""
 
 const PROPERTIES = ["Time Square", "Venus", "Koktem Towers"]
 const AREAS_BY_PROPERTY = {
-  "Time Square": ["400 м²", "850 м²", "1 700 м²", "3 400 м²"],
-  Venus: ["70 м²", "50 м²"],
-  "Koktem Towers": ["643 м²"],
+  "Time Square": ["900 м²", "400 м²"],
+  Venus: ["70 м²", "40 м²"],
+  "Koktem Towers": ["95 м²", "642 м²"],
 }
 const PHONE_PATTERN = /^\+7\d{10}$/
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/
