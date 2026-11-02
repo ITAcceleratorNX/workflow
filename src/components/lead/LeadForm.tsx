@@ -5,7 +5,7 @@ import { Button, LinkButton } from "../ui/button"
 import { WhatsAppIcon } from "../ui/WhatsAppIcon"
 import { cn } from "../../lib/utils"
 import { CONTACTS, track, trackFormSubmitSuccess, whatsappLink } from "../../lib/site"
-import { PROPERTY_OPTIONS } from "../../lib/properties"
+import { HELP_SELECT_PROPERTY, PROPERTY_OPTIONS } from "../../lib/properties"
 import {
   EMPTY_LEAD,
   PHONE_PLACEHOLDER,
@@ -259,7 +259,7 @@ export function LeadForm({
           <option value="">{t.form.propertyPlaceholder}</option>
           {PROPERTY_OPTIONS.map((option) => (
             <option key={option} value={option}>
-              {option}
+              {option === HELP_SELECT_PROPERTY ? t.form.helpSelectProperty : option}
             </option>
           ))}
         </select>

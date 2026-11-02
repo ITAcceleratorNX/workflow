@@ -122,6 +122,8 @@ const SCHEMA_SQL = `
     form_comment      text,
     page              text,
     gclid             text,
+    gbraid            text,
+    wbraid            text,
     utm_source        text,
     utm_campaign      text,
     utm_term          text,
@@ -174,6 +176,10 @@ const SCHEMA_SQL = `
   CREATE INDEX IF NOT EXISTS crm_leads_status_idx      ON crm_leads (status);
   CREATE INDEX IF NOT EXISTS crm_leads_processing_idx  ON crm_leads (processing);
   CREATE INDEX IF NOT EXISTS crm_leads_manager_idx     ON crm_leads (manager);
+
+  -- Метки Privacy Sandbox / iOS: добавляем к уже существующим таблицам
+  ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS gbraid text;
+  ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS wbraid text;
 `
 
 /**

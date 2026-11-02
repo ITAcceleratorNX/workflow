@@ -97,6 +97,7 @@ export interface Messages {
     email: string
     property: string
     propertyPlaceholder: string
+    helpSelectProperty: string
     comment: string
     commentPlaceholder: string
     namePlaceholder: string
@@ -270,6 +271,7 @@ const ru: Messages = {
     email: "Email",
     property: "Интересующий объект",
     propertyPlaceholder: "Выберите объект",
+    helpSelectProperty: "Помогите подобрать",
     comment: "Комментарий",
     commentPlaceholder: "Нужная площадь, сроки заезда, пожелания",
     namePlaceholder: "Как к вам обращаться",
@@ -482,6 +484,7 @@ const kk: Messages = {
     email: "Email",
     property: "Қызықтырған нысан",
     propertyPlaceholder: "Нысанды таңдаңыз",
+    helpSelectProperty: "Таңдауға көмектесіңіз",
     comment: "Пікір",
     commentPlaceholder: "Қажетті алаң, кіру мерзімі, тілектер",
     namePlaceholder: "Сізге қалай жүгінейік",

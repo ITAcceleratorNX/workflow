@@ -13,7 +13,7 @@ import {
   PHONE_PLACEHOLDER,
   toE164,
 } from "../../lib/leadForm"
-import { track } from "../../lib/site"
+import { track, trackWhatsAppFormSubmit } from "../../lib/site"
 import {
   hasSentWhatsAppPhone,
   markWhatsAppPhoneSent,
@@ -109,6 +109,12 @@ export function WhatsAppGateProvider({ children }: { children: ReactNode }) {
     setWaHref(href)
     setError("")
 
+    /* Конверсию шлём до открытия WhatsApp: на телефоне страница уходит в фон */
+    trackWhatsAppFormSubmit({
+      property: property || undefined,
+      placement,
+    })
+
     /* Сразу в обработчике клика — до любого await, иначе браузер блокирует окно */
     openWhatsApp(href)
     markWhatsAppPhoneSent()
@@ -119,13 +125,6 @@ export function WhatsAppGateProvider({ children }: { children: ReactNode }) {
       property,
       placement,
       page: pathname,
-    }).then((result) => {
-      if (result.countConversion) {
-        track("whatsapp_form_submit", {
-          property: property || undefined,
-          placement,
-        })
-      }
     })
   }
 

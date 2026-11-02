@@ -53,6 +53,8 @@ export interface Lead {
   form_comment: string | null
   page: string | null
   gclid: string | null
+  gbraid: string | null
+  wbraid: string | null
   utm_source: string | null
   utm_campaign: string | null
   utm_term: string | null
@@ -104,7 +106,16 @@ export interface Lead {
 /** Редактируемая часть лида: всё, кроме служебных полей и меток рекламы. */
 export type LeadDraft = Omit<
   Lead,
-  "id" | "created_at" | "updated_at" | "source" | "gclid" | "utm_source" | "utm_campaign" | "utm_term"
+  | "id"
+  | "created_at"
+  | "updated_at"
+  | "source"
+  | "gclid"
+  | "gbraid"
+  | "wbraid"
+  | "utm_source"
+  | "utm_campaign"
+  | "utm_term"
 >
 
 /** Состояние панели фильтров главного экрана (раздел 4 ТЗ). */

@@ -1,13 +1,23 @@
 /**
  * Метки рекламы (ТЗ Bankai.Agency от 04.09.2026).
  *
- * gclid и utm-параметры есть в адресе только на первой странице после клика по
- * объявлению. Человек может пройтись по сайту и отправить форму уже со страницы
- * объекта — там меток в адресе нет. Поэтому запоминаем их при первом заходе
- * и подставляем в заявку в момент отправки.
+ * gclid / gbraid / wbraid и utm-параметры есть в адресе только на первой странице
+ * после клика по объявлению. Человек может пройтись по сайту и отправить форму
+ * уже со страницы объекта — там меток в адресе нет. Поэтому запоминаем их при
+ * первом заходе и подставляем в заявку в момент отправки.
+ *
+ * gbraid/wbraid приходят вместо gclid в iOS/Privacy Sandbox — без них атрибуция
+ * Google Ads теряется.
  */
 
-export const AD_PARAMS = ["gclid", "utm_source", "utm_campaign", "utm_term"] as const
+export const AD_PARAMS = [
+  "gclid",
+  "gbraid",
+  "wbraid",
+  "utm_source",
+  "utm_campaign",
+  "utm_term",
+] as const
 
 export type AdParam = (typeof AD_PARAMS)[number]
 export type AdParams = Partial<Record<AdParam, string>>

@@ -611,6 +611,8 @@ function RequestMeta({ lead }: { lead: Lead }) {
     ["Страница заявки", dash(lead.page)],
     ["Телефон для звонка", formatPhone(lead.phone)],
     ["GCLID", dash(lead.gclid)],
+    ["GBRAID", dash(lead.gbraid)],
+    ["WBRAID", dash(lead.wbraid)],
     ["utm_source", dash(lead.utm_source)],
     ["utm_campaign", dash(lead.utm_campaign)],
     ["utm_term", dash(lead.utm_term)],

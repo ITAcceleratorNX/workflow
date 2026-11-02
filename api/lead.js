@@ -29,7 +29,7 @@ const fromEmail = () => process.env.LEAD_FROM_EMAIL || "TMK WorkFlow <noreply@tm
 const registryUrl = () => process.env.LEADS_REGISTRY_URL || ""
 const registryToken = () => process.env.LEADS_REGISTRY_TOKEN || ""
 
-const PROPERTIES = ["Time Square", "Venus", "Koktem Towers"]
+const PROPERTIES = ["Time Square", "Venus", "Koktem Towers", "Помогите подобрать"]
 const AREAS_BY_PROPERTY = {
   "Time Square": ["900 м²", "400 м²"],
   Venus: ["70 м²", "40 м²"],

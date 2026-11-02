@@ -32,6 +32,7 @@ export const PROPERTY_OPTIONS = /** @type {const} */ ([
   "Time Square",
   "Venus",
   "Koktem Towers",
+  "Помогите подобрать",
   "Несколько объектов",
   "Любой подходящий объект",
   "Ищет другой объект / офис",
@@ -278,13 +279,22 @@ export const READONLY_FIELDS = /** @type {const} */ ([
   "updated_at",
   "source",
   "gclid",
+  "gbraid",
+  "wbraid",
   "utm_source",
   "utm_campaign",
   "utm_term",
 ])
 
 /** Метки рекламы (раздел 15.3). Совпадают с AD_PARAMS в src/lib/attribution.ts. */
-export const AD_PARAMS = /** @type {const} */ (["gclid", "utm_source", "utm_campaign", "utm_term"])
+export const AD_PARAMS = /** @type {const} */ ([
+  "gclid",
+  "gbraid",
+  "wbraid",
+  "utm_source",
+  "utm_campaign",
+  "utm_term",
+])
 
 /* ------------------------------------------------------------------ */
 /* Условная логика полей по статусам (раздел 10)                        */

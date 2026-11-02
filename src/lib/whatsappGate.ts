@@ -12,7 +12,6 @@ export interface OpenWhatsAppGateOptions {
 
 const STORAGE_KEY = "tmk_wa_phone_sent"
 const STORAGE_DAYS = 30
-const SUBMIT_TIMEOUT_MS = 5000
 
 export function propertyFromPath(pathname: string): string {
   return PROPERTIES.find((property) => property.path === pathname)?.name ?? ""
@@ -54,37 +53,22 @@ export function markWhatsAppPhoneSent(): void {
   }
 }
 
-export async function submitWhatsAppLead(payload: {
+/** Заявка в реестр/CRM. Конверсию в GA шлём отдельно до открытия WhatsApp. */
+export function submitWhatsAppLead(payload: {
   phone: string
   property: string
   placement: WhatsAppPlacement
   page: string
-}): Promise<{ countConversion: boolean }> {
-  const request = fetch("/api/whatsapp-lead", {
+}): void {
+  void fetch("/api/whatsapp-lead", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    /* keepalive: запрос успеет уйти, даже если вкладка ушла в фон после WhatsApp */
+    keepalive: true,
     body: JSON.stringify({ ...payload, ...readAdParams() }),
+  }).catch(() => {
+    /* сеть не должна мешать уже открытому WhatsApp */
   })
-    .then(async (response) => {
-      if (!response.ok) return false
-      const data = (await response.json().catch(() => null)) as { ok?: boolean } | null
-      if (data?.ok === false) return false
-      return true
-    })
-    .catch(() => true)
-
-  /* Не abort-им запрос: Apps Script может отвечать 10–30 с, строка всё равно пишется.
-     Через 5 с считаем конверсию, даже если ответ ещё не пришёл. */
-  const timedOut = new Promise<true>((resolve) => {
-    window.setTimeout(() => resolve(true), SUBMIT_TIMEOUT_MS)
-  })
-
-  const winner = await Promise.race([
-    request.then((ok) => ({ source: "request" as const, ok })),
-    timedOut.then(() => ({ source: "timeout" as const, ok: true })),
-  ])
-
-  return { countConversion: winner.ok }
 }
 
 /** Открывать синхронно в обработчике клика — после await браузер блокирует popup. */

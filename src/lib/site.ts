@@ -60,3 +60,26 @@ export function track(event: string, payload: TrackPayload = {}) {
     /* аналитика не должна ломать интерфейс */
   }
 }
+
+/**
+ * Конверсия WhatsApp: шлём до window.open, иначе на телефоне вкладка уходит
+ * в фон и обычный gtag/dataLayer часто не успевает уйти. beacon — надёжнее.
+ */
+export function trackWhatsAppFormSubmit(payload: {
+  property?: string
+  placement: string
+}) {
+  if (typeof window === "undefined") return
+  const w = window as AnalyticsWindow
+
+  try {
+    w.dataLayer = w.dataLayer ?? []
+    w.dataLayer.push({ event: "whatsapp_form_submit", ...payload })
+    w.gtag?.("event", "whatsapp_form_submit", {
+      ...payload,
+      transport_type: "beacon",
+    })
+  } catch {
+    /* аналитика не должна ломать интерфейс */
+  }
+}

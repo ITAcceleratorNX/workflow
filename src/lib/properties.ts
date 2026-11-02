@@ -444,4 +444,6 @@ export const VENUS = venus
 export const KOKTEM_TOWERS = koktemTowers
 
 /** Варианты поля «Интересующий объект» в формах (9.2 ТЗ) */
-export const PROPERTY_OPTIONS = PROPERTIES.map((p) => p.name)
+export const HELP_SELECT_PROPERTY = "Помогите подобрать"
+
+export const PROPERTY_OPTIONS = [...PROPERTIES.map((p) => p.name), HELP_SELECT_PROPERTY]
